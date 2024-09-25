@@ -38,7 +38,11 @@ public class Deck {
         Card bottomCard = deck.remove(0);
         deck.add(0, card);
         return bottomCard;
-    } 
+    }
+
+    public int getDeckSize() {
+        return this.deck.size();
+    }
 
     @Override
     public String toString() {

@@ -61,6 +61,10 @@ public class Card {
         return number;
     }
 
+    public int getScore() {
+        return CARD_SCORE_WITH_SKIP[this.number];
+    }
+
     @Override
     public String toString() {
         return this.suit + ":" + this.number;

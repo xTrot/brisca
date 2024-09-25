@@ -12,18 +12,28 @@ public class Hand {
     }
 
     public void pickUp(Card card) {
-        if(cards.size() <= MAX_HAND_SIZE) {
-            System.err.println("Picked up card " + card);
-            cards.add(card);
-        }
+        cards.add(card);
     }
 
     public Card play() {
-        return cards.get(0);
+        return cards.remove(0);
+    }
+
+    public Card putDownCard(int index) {
+        return cards.remove(index);
     }
 
     public int count(){
         return cards.size();
+    }
+
+    public String toString() {
+        String rtn = "{ ";
+        for (Card card : cards) {
+            rtn += card + " ";
+        }
+        rtn += "}";
+        return rtn;
     }
 
 }

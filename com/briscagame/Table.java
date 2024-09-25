@@ -15,7 +15,8 @@ public class Table {
         this.cardsInPlay = new ArrayList<Card>();
     }
 
-    public void judge() {
+    public int judge() {
+        int rtn = -1;
         int bestMatchingCardIndex = -1;
         
         int bestCardIndex = 0;
@@ -50,9 +51,19 @@ public class Table {
         }
 
         if (bestMatchingCardIndex > 0) {
+            rtn = bestMatchingCardIndex;
             System.out.println("Round won by player " + (bestMatchingCardIndex + 1));
         } else {
+            rtn = bestCardIndex;
             System.out.println("Round won by player " + (bestCardIndex + 1));
+        }
+
+        return rtn;
+    }
+
+    public void awardCards (Player player) {
+        while (cardsInPlay.size() > 0) {
+            player.addScoreCard(cardsInPlay.remove(0));
         }
     }
 
