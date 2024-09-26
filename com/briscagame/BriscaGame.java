@@ -19,12 +19,12 @@ public class BriscaGame {
         Hand hand2 = new Hand();
         
         while (Hand.MAX_HAND_SIZE > hand1.count()) {
-            System.err.print("Hand1 ");
+            System.out.print("Hand1 ");
             hand1.pickUp(deck.draw());
         }
 
         while (Hand.MAX_HAND_SIZE > hand2.count()) {
-            System.err.print("Hand2 ");
+            System.out.print("Hand2 ");
             hand2.pickUp(deck.draw());
         }
         
@@ -47,13 +47,13 @@ public class BriscaGame {
         Hand hand4 = new Hand();
         
         while (Hand.MAX_HAND_SIZE > hand1.count()) {
-            System.err.print("Hand1 ");
+            System.out.print("Hand1 ");
             hand1.pickUp(deck.draw());
-            System.err.print("Hand2 ");
+            System.out.print("Hand2 ");
             hand2.pickUp(deck.draw());
-            System.err.print("Hand3 ");
+            System.out.print("Hand3 ");
             hand3.pickUp(deck.draw());
-            System.err.print("Hand4 ");
+            System.out.print("Hand4 ");
             hand4.pickUp(deck.draw());
         }
 
