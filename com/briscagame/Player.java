@@ -20,7 +20,7 @@ public class Player {
 
     public void pickUpCard(Card card) {
         hand.pickUp(card);
-        System.out.println(this.playerName + " picked up card " + card + ", Hand " + this.hand);
+        // System.out.println(this.playerName + " picked up card " + card + ", Hand " + this.hand);
     }
 
     public Card putDownCard(int index) {
