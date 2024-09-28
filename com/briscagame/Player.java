@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class Player {
 
     private String playerName;
-    private Hand hand;
+    private ArrayList<Card> hand;
     private ArrayList<Card> scorePile;
 
     public Player(String playerName) {
         this.playerName = playerName;
-        this.hand = new Hand();
+        this.hand = new ArrayList<Card>();
         this.scorePile = new ArrayList<Card>();
     }
 
@@ -19,12 +19,12 @@ public class Player {
     }
 
     public void pickUpCard(Card card) {
-        hand.pickUp(card);
+        hand.add(card);
         // System.out.println(this.playerName + " picked up card " + card + ", Hand " + this.hand);
     }
 
     public Card putDownCard(int index) {
-        return hand.putDownCard(index);
+        return hand.remove(index);
     }
 
     public void addScoreCard(Card scoreCard) {
@@ -41,7 +41,7 @@ public class Player {
     }
 
     public int getHandSize() {
-        return this.hand.count();
+        return this.hand.size();
     }
 
     public int getScore() {

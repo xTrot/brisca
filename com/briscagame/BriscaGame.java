@@ -28,21 +28,6 @@ public class BriscaGame {
         brisca1.beats(brisca2);
 
         System.out.println(deck);
-        Hand hand1 = new Hand();
-        Hand hand2 = new Hand();
-        
-        while (Hand.MAX_HAND_SIZE > hand1.count()) {
-            System.out.print("Hand1 ");
-            hand1.pickUp(deck.draw());
-        }
-
-        while (Hand.MAX_HAND_SIZE > hand2.count()) {
-            System.out.print("Hand2 ");
-            hand2.pickUp(deck.draw());
-        }
-        
-        brisca1 = hand1.play();
-        brisca2 = hand2.play();
         brisca1.beats(brisca2);
 
         System.out.println(deck);
@@ -54,31 +39,7 @@ public class BriscaGame {
         System.out.println("This bottom card was picked " + table.bottomCard);
         System.out.println(table.deck);
 
-        hand1 = new Hand();
-        hand2 = new Hand();
-        Hand hand3 = new Hand();
-        Hand hand4 = new Hand();
-        
-        while (Hand.MAX_HAND_SIZE > hand1.count()) {
-            hand1.pickUp(deck.draw());
-            hand2.pickUp(deck.draw());
-            hand3.pickUp(deck.draw());
-            hand4.pickUp(deck.draw());
-        }
-
         System.out.println(table.deck);
-
-        table.cardsInPlay.add(hand1.play());
-        table.cardsInPlay.add(hand2.play());
-        table.cardsInPlay.add(hand3.play());
-        table.cardsInPlay.add(hand4.play());
-
-        table.judge();
-
-        System.out.println(hand1);
-        System.out.println(hand2);
-        System.out.println(hand3);
-        System.out.println(hand4);
 
         Player player1 = new Player("Player #1");
         Player player2 = new Player("Player #2");
