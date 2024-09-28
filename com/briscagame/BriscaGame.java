@@ -60,13 +60,9 @@ public class BriscaGame {
         Hand hand4 = new Hand();
         
         while (Hand.MAX_HAND_SIZE > hand1.count()) {
-            System.out.print("Hand1 ");
             hand1.pickUp(deck.draw());
-            System.out.print("Hand2 ");
             hand2.pickUp(deck.draw());
-            System.out.print("Hand3 ");
             hand3.pickUp(deck.draw());
-            System.out.print("Hand4 ");
             hand4.pickUp(deck.draw());
         }
 

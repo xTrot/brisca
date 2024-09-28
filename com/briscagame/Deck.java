@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Stack;
 
 public class Deck {
-    public static final int FULL_DECK_SIZE = Card.SUITS_SIZE * Card.CARD_NUMBERS_WITH_SKIP.length;
+    public static final int FULL_DECK_SIZE = Card.SUITS_SIZE * Card.CARDS_WITH_SKIP.length;
 
     private static final int THIS_CARD_NUMBER_CAN_SWAP = 2;
 
@@ -13,7 +13,7 @@ public class Deck {
     public Deck() {
         this.deck = new Stack<Card>();
         for (Card.SUIT suit : Card.SUITS) {
-            for (int i = 0; i < Card.CARD_NUMBERS_WITH_SKIP.length; i++) {
+            for (int i = 0; i < Card.CARDS_WITH_SKIP.length; i++) {
                 deck.add(new Card(suit, i));
             }
         }
@@ -46,15 +46,7 @@ public class Deck {
 
     @Override
     public String toString() {
-        String str = "";
-        int count = 1;
-        for (Card brisca : deck) {
-            str += brisca + ", ";
-            if (count++ % 10 == 0) {
-                str += "\n";
-            }
-        }
-        return str;
+        return this.deck.toString();
     }
 
 }

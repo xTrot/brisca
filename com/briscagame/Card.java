@@ -15,17 +15,49 @@ public class Card {
     public static final List<SUIT> SUITS =
     Collections.unmodifiableList(Arrays.asList(SUIT.values()));
     public static final int SUITS_SIZE = SUITS.size();
-    public static final int[] CARD_NUMBERS_WITH_SKIP = { 1, 2, 3, 4, 5, 6, 7, 10, 11, 12 };
-    public static final int[] CARD_SCORE_WITH_SKIP = { 11, 0, 10, 0, 0, 0, 0, 2, 3, 4 };
 
-    static final int[] VALUE = {0, 12, 1, 11, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    public static final int CARD_NUMBER_INDEX = 0;
+    public static final int CARD_VALUE_INDEX = 1;
+    public static final int CARD_SCORE_INDEX = 2;
+    public static final int[][] CARDS_WITH_SKIP = {
+        { 1, 12, 11 },
+        { 2, 1, 0   },
+        { 3, 11, 10 },
+        { 4, 2, 0   },
+        { 5, 3, 0   },
+        { 6, 4, 0   },
+        { 7, 5, 0   },
+        { 10, 8, 2  },
+        { 11, 9, 3  },
+        { 12, 10, 4 }
+    };
+
+    public static final int[][] CARDS_WITHOUT_SKIP = {
+        { 1, 12, 11 },
+        { 2, 1, 0   },
+        { 3, 11, 10 },
+        { 4, 2, 0   },
+        { 5, 3, 0   },
+        { 6, 4, 0   },
+        { 7, 5, 0   },
+        { 8, 6, 0   },
+        { 9, 7, 0   },
+        { 10, 8, 2  },
+        { 11, 9, 3  },
+        { 12, 10, 4 }
+    };
+
     private static Random rand = new Random();
 
     private SUIT suit;
     private int number;
+    private int value;
+    private int score;
 
     public Card() {
-        this.number = CARD_NUMBERS_WITH_SKIP[rand.nextInt(CARD_NUMBERS_WITH_SKIP.length)];
+        this.number = CARDS_WITH_SKIP[rand.nextInt(CARDS_WITH_SKIP.length)][CARD_NUMBER_INDEX];
+        this.value = CARDS_WITH_SKIP[rand.nextInt(CARDS_WITH_SKIP.length)][CARD_VALUE_INDEX];
+        this.score = CARDS_WITH_SKIP[rand.nextInt(CARDS_WITH_SKIP.length)][CARD_SCORE_INDEX];
         this.suit = SUITS.get(rand.nextInt(SUITS_SIZE));
 
         System.out.println("Created random brisca " + this);
@@ -33,7 +65,9 @@ public class Card {
 
     public Card(SUIT suit, int index) {
         this.suit = suit;
-        this.number = CARD_NUMBERS_WITH_SKIP[index];
+        this.number = CARDS_WITH_SKIP[index][CARD_NUMBER_INDEX];
+        this.value = CARDS_WITH_SKIP[index][CARD_VALUE_INDEX];
+        this.score = CARDS_WITH_SKIP[index][CARD_SCORE_INDEX];
         
         // System.out.println("Created brisca " + this);
     }
@@ -41,10 +75,10 @@ public class Card {
     public void beats(Card that) {
         Card winner;
 
-        if (VALUE[this.number] == VALUE[that.number]){
+        if (this.value == that.value){
             System.out.println(this + " vs " + that + ", draw.");
             return;
-        } else if (VALUE[this.number] > VALUE[that.number]) {
+        } else if (this.value > that.value) {
             winner = this;
         } else {
             winner = that;
@@ -62,11 +96,11 @@ public class Card {
     }
 
     public int getScore() {
-        return CARD_SCORE_WITH_SKIP[this.number];
+        return score;
     }
 
     public int getValue () {
-        return Card.VALUE[this.number];
+        return value;
     }
 
     @Override
