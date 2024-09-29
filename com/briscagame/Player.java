@@ -33,10 +33,11 @@ public class Player {
 
     @Override
     public String toString() {
-        String rtn = "";
-        rtn += this.playerName + "\n";
-        rtn += this.hand + "\n";
-        rtn += this.scorePile + "\n";
+        String rtn = "User: ";
+        rtn += this.playerName + "\n Hand: ";
+        rtn += this.hand + "\n Score Pile: ";
+        rtn += this.scorePile + "\n Score: ";
+        rtn += this.getScore() + "\n";
         return rtn;
     }
 
@@ -47,7 +48,7 @@ public class Player {
     public int getScore() {
         int score = 0;
         for (Card card : scorePile) {
-            score += card.getNumber();
+            score += card.getScore();
         }
         return score;
     }

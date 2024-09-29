@@ -6,10 +6,12 @@ import com.briscagame.Card.SUIT;
 
 public class Table {
 
-    public Deck deck;
-    public Card bottomCard;
-    public ArrayList<Card> cardsInPlay;
-    public SUIT suitForThisGame;
+    public static final int MAX_PLAYERS = 4;
+
+    private Deck deck;
+    private Card bottomCard;
+    private SUIT suitForThisGame;
+    private ArrayList<Card> cardsInPlay;
 
     public Table(Deck deck) {
         this.deck = deck;
@@ -50,7 +52,7 @@ public class Table {
 
         }
 
-        System.out.println("Round won by player " + (bestCardIndex + 1));
+        // System.out.println("Round won by player " + (bestCardIndex + 1));
 
         return bestCardIndex;
     }
@@ -59,6 +61,18 @@ public class Table {
         while (cardsInPlay.size() > 0) {
             player.addScoreCard(cardsInPlay.remove(0));
         }
+    }
+
+    public Deck getDeck() {
+        return this.deck;
+    }
+
+    public Card getBottomCard() {
+        return this.bottomCard;
+    }
+
+    public void addToCardsInPlay(Card putDownCard) {
+        this.cardsInPlay.add(putDownCard);
     }
 
 }

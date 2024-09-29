@@ -35,11 +35,13 @@ public class BriscaGame {
         deck = new Deck();
         System.out.println(deck);
 
-        Table table = new Table(deck);
-        System.out.println("This bottom card was picked " + table.bottomCard);
-        System.out.println(table.deck);
+        GameManager gameManager = new GameManager();
+        gameManager.startSim();
+        if ( deck != null ) return;
 
-        System.out.println(table.deck);
+        Table table = new Table(deck);
+        System.out.println("This bottom card was picked " + table.getBottomCard());
+        System.out.println(table.getDeck());
 
         Player player1 = new Player("Player #1");
         Player player2 = new Player("Player #2");
@@ -48,8 +50,8 @@ public class BriscaGame {
         System.out.println(deck);
 
         table = new Table(deck);
-        System.out.println("This bottom card was picked " + table.bottomCard);
-        System.out.println(table.deck);
+        System.out.println("This bottom card was picked " + table.getBottomCard());
+        System.out.println(table.getDeck());
 
         for (int i = 3; i > 0 ; i--) {
             player1.pickUpCard(deck.draw());
@@ -61,11 +63,11 @@ public class BriscaGame {
         while (player1.getHandSize() > 0) {
 
             if (turnIndex == 0){
-                table.cardsInPlay.add(player1.putDownCard(0));
-                table.cardsInPlay.add(player2.putDownCard(0));
+                table.addToCardsInPlay(player1.putDownCard(0));
+                table.addToCardsInPlay(player2.putDownCard(0));
             } else {
-                table.cardsInPlay.add(player2.putDownCard(0));
-                table.cardsInPlay.add(player1.putDownCard(0));
+                table.addToCardsInPlay(player2.putDownCard(0));
+                table.addToCardsInPlay(player1.putDownCard(0));
             }
 
             turnIndex = table.judge();
@@ -108,7 +110,7 @@ public class BriscaGame {
 
         table = new Table(deck);
         System.out.println("\nNew game has started!");
-        System.out.println("This will be the suit for the game " + table.bottomCard);
+        System.out.println("This will be the suit for the game " + table.getBottomCard());
         // System.out.println(table.deck);
 
         for (int i = 3; i > 0 ; i--) {
@@ -125,19 +127,19 @@ public class BriscaGame {
             if (turnIndex == 0){
                 System.out.println("Your turn, " + player1);
                 cardIndex = askCardIndex("Which card do you want to play? (1,2,3)") - 1;
-                table.cardsInPlay.add(player1.putDownCard(cardIndex));
+                table.addToCardsInPlay(player1.putDownCard(cardIndex));
 
                 oponentCard = player2.putDownCard(0);
                 System.out.println(player2 + " played " + oponentCard);
-                table.cardsInPlay.add(oponentCard);
+                table.addToCardsInPlay(oponentCard);
             } else {
                 oponentCard = player2.putDownCard(0);
                 System.out.println(player2 + " played " + oponentCard);
-                table.cardsInPlay.add(oponentCard);
+                table.addToCardsInPlay(oponentCard);
 
                 System.out.println("Your turn, " + player1);
                 cardIndex = askCardIndex("Which card do you want to play? (1,2,3)") - 1;
-                table.cardsInPlay.add(player1.putDownCard(cardIndex));
+                table.addToCardsInPlay(player1.putDownCard(cardIndex));
             }
 
             turnIndex = table.judge();
