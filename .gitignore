@@ -1,6 +1,8 @@
 # Personal vscode preferences
 .vscode/
-*.log
+
+# Maven output
+target/
 
 # Compiled class file
 *.class

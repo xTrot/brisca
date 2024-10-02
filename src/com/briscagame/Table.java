@@ -1,7 +1,6 @@
 package com.briscagame;
 
 import java.util.ArrayList;
-
 import com.briscagame.Card.SUIT;
 
 public class Table {

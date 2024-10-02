@@ -31,6 +31,10 @@ public class Player {
         this.scorePile.add(scoreCard);
     }
 
+    public int thinking() {
+        return 0;
+    }
+
     @Override
     public String toString() {
         String rtn = "User: ";

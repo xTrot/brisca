@@ -10,7 +10,6 @@ public class GameManager {
     private ArrayList<Player> players;
     private int maxPlayers;
     private int startingHandSize;
-    private int noThinking;
     private int turn;
 
     private static Random rand = new Random();
@@ -18,7 +17,6 @@ public class GameManager {
     public GameManager() {
         this.maxPlayers = 4;
         this.startingHandSize = 3;
-        this.noThinking = 0;
     }
 
     public void startSim() {
@@ -33,6 +31,27 @@ public class GameManager {
             draw();
         }
         judgeGame();
+    }
+
+    public void startOnePlayer() {
+        setSimPlayers();
+        setOneUser();
+        if (players.size() == 4) {
+            setTeamsRandomly();
+        }
+        setTheTable();
+        while (turns()) {
+            judgeTurn();
+            awardCards();
+            draw();
+        }
+        judgeGame();
+    }
+
+    private void setOneUser() {
+        int swapPlayer = rand.nextInt(players.size());
+        User user = new User("Net Player");
+        players.set(swapPlayer, user);
     }
 
     private void setSimPlayers() {
@@ -100,7 +119,7 @@ public class GameManager {
         Card currentCard;
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
             currentPlayer = i % playersPlaying; // Rotate around players.
-            currentCard = players.get(currentPlayer).putDownCard(this.noThinking);
+            currentCard = players.get(currentPlayer).putDownCard(players.get(currentPlayer).thinking());
             table.addToCardsInPlay(currentCard);
             System.out.println(players.get(currentPlayer).getPlayerName() + " played card " + currentCard);
         }
