@@ -7,17 +7,14 @@ import java.util.Scanner;
 import com.sun.net.httpserver.HttpExchange;
 
 public class HandlerHelper {
-    private static final int NO_RESPONSE = 0;
+    private static final String NO_RESPONSE_BODY = "";
     private static final int NOT_FOUND = 404;
     
     static String post(HttpExchange exchange) throws IOException {
         System.out.println("'"+exchange.getRequestMethod()+"'");
         if (exchange.getRequestMethod().compareTo("POST") != 0){
-            exchange.sendResponseHeaders(NOT_FOUND, NO_RESPONSE);
             System.out.println("Warning: 404 on " + exchange.getRequestURI());
-            OutputStream os = exchange.getResponseBody();
-            os.write("".getBytes());
-            os.close();
+            sendStatus(exchange, NOT_FOUND);
             return null;
         }
         Scanner s = new Scanner(exchange.getRequestBody());
@@ -28,5 +25,16 @@ public class HandlerHelper {
         s.close();
 
         return result;
+    }
+
+    static void sendResponse(HttpExchange x, int code, String response) throws IOException {
+        x.sendResponseHeaders(code, response.length());
+        OutputStream os = x.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    static void sendStatus(HttpExchange x, int code) throws IOException{
+        sendResponse(x, code, NO_RESPONSE_BODY);
     }
 }

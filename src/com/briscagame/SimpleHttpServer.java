@@ -2,7 +2,7 @@ package com.briscagame;
 
 // Java Program to Set up a Basic HTTP Server
 import com.sun.net.httpserver.HttpServer;
-import com.briscagame.httpHandlers.PlayCard;
+import com.briscagame.httpHandlers.PlayCardHandler;
 import com.briscagame.httpHandlers.RootHandler;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class SimpleHttpServer 
 {
     private static int port = 8000;
-    private static PlayCard playCardHandler = new PlayCard();
+    private static PlayCardHandler playCardHandler = new PlayCardHandler();
     // Main Method
     public static void start(String[] args) throws IOException
     {
@@ -34,7 +34,7 @@ public class SimpleHttpServer
         System.out.println("Server is running on port " + port);
     }
 
-    public static PlayCard getPlayCardHandler() {
+    public static PlayCardHandler getPlayCardHandler() {
         return playCardHandler;
     }
 }
