@@ -14,15 +14,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class SimpleHttpServer 
 {
     private static int port = 8000;
+    private static RootHandler rootHandler = new RootHandler();
     private static PlayCardHandler playCardHandler = new PlayCardHandler();
     // Main Method
-    public static void start(String[] args) throws IOException
+    public static void start() throws IOException
     {
         // Create an HttpServer instance
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         // Create a context for a specific path and set the handler
-        server.createContext("/", new RootHandler());
+        server.createContext("/", rootHandler);
         server.createContext("/playcard", playCardHandler);
 
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)Executors.newCachedThreadPool();

@@ -114,6 +114,8 @@ public class GameManager {
             // plays his card.
         }
 
+        System.out.println("New turn started.");
+
         int playersPlaying = players.size();
         int currentPlayer;
         Card currentCard;
@@ -148,7 +150,6 @@ public class GameManager {
             } else {
                 break;
             }
-            System.out.println(players.get(currentPlayer).getPlayerName() + " drew a card.");
         }
     }
 
