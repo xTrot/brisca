@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameManager {
+    private static final int STARTING_HAND_SIZE = 3;
+    private static final int MAX_PLAYERS = 4;
+
 
     private Table table;
     private Deck deck;
     private ArrayList<Player> players;
-    private int maxPlayers;
-    private int startingHandSize;
     private int turn;
 
     private static Random rand = new Random();
 
     public GameManager() {
-        this.maxPlayers = 4;
-        this.startingHandSize = 3;
     }
 
     public void startSim() {
@@ -56,7 +55,7 @@ public class GameManager {
 
     private void setSimPlayers() {
         this.players = new ArrayList<Player>();
-        for (int i = 0; i < maxPlayers; i++) {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
             players.add(new Player("Sim Player #" + (i + 1)));
         }
     }
@@ -92,7 +91,7 @@ public class GameManager {
         System.out.println("This bottom card was picked " + bottomCard);
         System.out.println("This is the suit for the game " + bottomCard.getSuit());
 
-        for (int i = 0; i < this.startingHandSize; i++) {
+        for (int i = 0; i < STARTING_HAND_SIZE; i++) {
             for (Player player : players) {
                 player.pickUpCard(deck.draw());
             }

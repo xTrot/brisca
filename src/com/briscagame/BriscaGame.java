@@ -1,19 +1,21 @@
 package com.briscagame;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class BriscaGame {
 
     public static void main(String[] args) throws IOException {
 
-        
-        SimpleHttpServer.start();
+        ThreadPoolExecutor tpe = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        SimpleHttpServer.start(tpe);
 
         GameManager gameManager = new GameManager();
         gameManager.startSim();
 
-        gameManager = new GameManager();
-        gameManager.startOnePlayer();
+        Game game = new Game();
+        tpe.execute(game);
     }
 
 }
