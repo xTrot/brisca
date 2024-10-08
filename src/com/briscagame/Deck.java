@@ -10,7 +10,7 @@ public class Deck {
 
     private Stack<Card> deck;
 
-    public Deck() {
+    public Deck(Game game) {
         this.deck = new Stack<Card>();
         for (Card.SUIT suit : Card.SUITS) {
             for (int i = 0; i < Card.CARDS_WITH_SKIP.length; i++) {

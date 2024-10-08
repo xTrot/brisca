@@ -1,6 +1,6 @@
 package com.briscagame;
 
-import org.json.JSONStringer;
+import org.json.JSONObject;
 
 public class GameConfiguration {
 
@@ -11,7 +11,7 @@ public class GameConfiguration {
     }
 
     public String toString(){
-        return JSONStringer.valueToString(this);
+        return (new JSONObject(this)).toString();
     }
 
     public boolean getSwapBottomCard () {

@@ -3,6 +3,8 @@ package com.briscagame;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.json.JSONObject;
+
 public class Game implements Runnable {
 
     private ArrayList<PlayAction> list = new ArrayList<PlayAction>();
@@ -16,14 +18,16 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        GameManager gm = new GameManager();
+        GameManager gm = new GameManager(this);
         gm.startOnePlayer();
     }
     
     private static void registerConfigAction(Game game, GameConfiguration gameConfiguration) {
-        String configString = gameConfiguration.toString();
-        PlayAction action = new PlayAction(PlayAction.ActionType.GAME_CONFIGURATION);
-        action.setPayload(configString);
+        PlayAction action = new PlayAction(PlayAction.ActionType.GAME_SETUP_COMPLETED, new JSONObject(gameConfiguration));
+        game.listReference.get().add(action);
+    }
+
+    public static void registerAction(Game game, PlayAction action) {
         game.listReference.get().add(action);
     }
 

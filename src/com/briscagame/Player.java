@@ -2,13 +2,18 @@ package com.briscagame;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 public class Player {
 
     private String playerName;
     private ArrayList<Card> hand;
     private ArrayList<Card> scorePile;
+    private Game game;
+    private int seat;
 
-    public Player(String playerName) {
+    public Player(Game game, String playerName) {
+        this.game = game;
         this.playerName = playerName;
         this.hand = new ArrayList<Card>();
         this.scorePile = new ArrayList<Card>();
@@ -54,6 +59,28 @@ public class Player {
             score += card.getScore();
         }
         return score;
+    }
+
+    public int getSeat() {
+        return this.seat;
+    }
+
+    public Card playCard() {
+        int index = this.thinking();
+        Card cardPlayed = this.putDownCard(index);
+
+        JSONObject payload = new JSONObject();
+        payload.put("seat", this.seat);
+        payload.put("index", index);
+        payload.put("card", cardPlayed.toString());
+        PlayAction action = new PlayAction(PlayAction.ActionType.CARD_PLAYED, payload);
+        Game.registerAction(this.game, action);
+
+        return cardPlayed;
+    }
+
+    public void sit(int seat) {
+        this.seat = seat;
     }
 
 }

@@ -1,27 +1,33 @@
 package com.briscagame;
 
-import org.json.JSONStringer;
+import org.json.JSONObject;
 
 public class PlayAction {
     public static enum ActionType {
-        GAME_CONFIGURATION,
-        DRAW_CARD
+        GAME_SETUP_COMPLETED,
+        FIRST_PLAYER_SELECTED,
+        BOTTOM_CARD_SELECTED,
+        CARD_DRAWN,
+        CARD_PLAYED,
+        TURN_WON,
+        GAME_WON
     }
 
     private ActionType type;
-    private String payload;
+    private JSONObject payload = null;
 
     public PlayAction(ActionType type) {
-        this.type = type;
-        System.out.println("New Action of type " + this.type + "was taken.");
+        this(type, null);
     }
 
-    public void setPayload(String payload) {
+    public PlayAction(ActionType type, JSONObject payload) {
+        this.type = type;
         this.payload = payload;
+        System.out.println("New Action of type " + this.type + " was taken.");
         System.out.println(this);
     }
 
-    public String getPayload() {
+    public JSONObject getPayload() {
         return this.payload;
     }
 
@@ -30,7 +36,7 @@ public class PlayAction {
     }
 
     public String toString(){
-        return JSONStringer.valueToString(this);
+        return (new JSONObject(this)).toString();
     }
 
 }

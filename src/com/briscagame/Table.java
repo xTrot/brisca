@@ -12,7 +12,7 @@ public class Table {
     private SUIT suitForThisGame;
     private ArrayList<Card> cardsInPlay;
 
-    public Table(Deck deck) {
+    public Table(Game game, Deck deck) {
         this.deck = deck;
         this.bottomCard = deck.draw();
         this.suitForThisGame = this.bottomCard.getSuit();

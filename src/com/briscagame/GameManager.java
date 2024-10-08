@@ -12,10 +12,12 @@ public class GameManager {
     private Deck deck;
     private ArrayList<Player> players;
     private int turn;
+    private Game game;
 
     private static Random rand = new Random();
 
-    public GameManager() {
+    public GameManager(Game game) {
+        this.game = game;
     }
 
     public void startSim() {
@@ -49,14 +51,16 @@ public class GameManager {
 
     private void setOneUser() {
         int swapPlayer = rand.nextInt(players.size());
-        User user = new User("Net Player");
+        User user = new User(this.game, "Net Player");
+        user.sit(swapPlayer);
         players.set(swapPlayer, user);
     }
 
     private void setSimPlayers() {
         this.players = new ArrayList<Player>();
         for (int i = 0; i < MAX_PLAYERS; i++) {
-            players.add(new Player("Sim Player #" + (i + 1)));
+            players.add(new Player(this.game, "Sim Player #" + (i + 1)));
+            players.get(i).sit(i);
         }
     }
 
@@ -84,8 +88,8 @@ public class GameManager {
     }
 
     private void setTheTable() {
-        this.deck = new Deck();
-        this.table = new Table(this.deck);
+        this.deck = new Deck(game);
+        this.table = new Table(game, this.deck);
         Card bottomCard = table.getBottomCard();
         System.out.println("\n\nStarting a new game!.");
         System.out.println("This bottom card was picked " + bottomCard);
@@ -116,13 +120,15 @@ public class GameManager {
         System.out.println("New turn started.");
 
         int playersPlaying = players.size();
-        int currentPlayer;
+        int currentPlayerIndex;
         Card currentCard;
+        Player currentPlayer;
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
-            currentPlayer = i % playersPlaying; // Rotate around players.
-            currentCard = players.get(currentPlayer).putDownCard(players.get(currentPlayer).thinking());
+            currentPlayerIndex = i % playersPlaying; // Rotate around players.
+            currentPlayer = players.get(currentPlayerIndex);
+            currentCard = currentPlayer.playCard();
             table.addToCardsInPlay(currentCard);
-            System.out.println(players.get(currentPlayer).getPlayerName() + " played card " + currentCard);
+            System.out.println(players.get(currentPlayerIndex).getPlayerName() + " played card " + currentCard);
         }
 
         return true;
@@ -141,11 +147,11 @@ public class GameManager {
 
     private void draw() {
         int playersPlaying = players.size();
-        int currentPlayer;
+        int currentPlayerIndex;
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
-            currentPlayer = i % playersPlaying; // Rotate around players.
+            currentPlayerIndex = i % playersPlaying; // Rotate around players.
             if (deck.getDeckSize() > 0){
-                players.get(currentPlayer).pickUpCard(deck.draw());
+                players.get(currentPlayerIndex).pickUpCard(deck.draw());
             } else {
                 break;
             }
