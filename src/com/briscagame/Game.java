@@ -9,17 +9,19 @@ public class Game implements Runnable {
 
     private ArrayList<PlayAction> list = new ArrayList<PlayAction>();
     private AtomicReference<ArrayList<PlayAction>> listReference = new AtomicReference<ArrayList<PlayAction>>(list);
+    private GameManager gameManager;
+    private GameConfiguration gameConfiguration;
 
     public Game() {
-
-        Game.registerConfigAction(this, new GameConfiguration());
+        this.gameConfiguration = new GameConfiguration();
+        Game.registerConfigAction(this, this.gameConfiguration);
         
     }
 
     @Override
     public void run() {
-        GameManager gm = new GameManager(this);
-        gm.startOnePlayer();
+        this.gameManager = new GameManager(this, this.gameConfiguration);
+        gameManager.startOnePlayer();
     }
     
     private static void registerConfigAction(Game game, GameConfiguration gameConfiguration) {

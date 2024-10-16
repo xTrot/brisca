@@ -7,7 +7,7 @@ import com.briscagame.Card.SUIT;
 
 public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
-    private static final int MAX_PLAYERS = 4;
+    private static final int MAX_PLAYERS = GameConfiguration.MAX_PLAYERS;
 
 
     private Deck deck;
@@ -17,11 +17,13 @@ public class GameManager {
     private Card bottomCard;
     private SUIT suitForThisGame;
     private ArrayList<Card> cardsInPlay;
+    private GameConfiguration gameConfiguration;
 
     private static Random rand = new Random();
 
-    public GameManager(Game game) {
+    public GameManager(Game game, GameConfiguration gameConfiguration) {
         this.game = game;
+        this.gameConfiguration = gameConfiguration;
     }
 
     public void startSim() {
@@ -125,6 +127,11 @@ public class GameManager {
 
         System.out.println("New turn started.");
 
+        Deck canSwapBottomCardDeck = null;
+        if (this.gameConfiguration.getSwapBottomCard()) {
+            canSwapBottomCardDeck = this.deck;
+        }
+
         int playersPlaying = playerSeats.size();
         int currentPlayerIndex;
         Card currentCard;
@@ -132,7 +139,7 @@ public class GameManager {
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
             currentPlayerIndex = i % playersPlaying; // Rotate around playerSeats.
             currentPlayer = playerSeats.get(currentPlayerIndex);
-            currentCard = currentPlayer.playCard();
+            currentCard = currentPlayer.yourTurn();
             this.addToCardsInPlay(currentCard);
             System.out.println(playerSeats.get(currentPlayerIndex).getPlayerName() + " played card " + currentCard);
         }

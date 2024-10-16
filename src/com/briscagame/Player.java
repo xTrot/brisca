@@ -65,7 +65,7 @@ public class Player {
         return this.seat;
     }
 
-    public Card playCard() {
+    public Card yourTurn() {
         int index = this.thinking();
         Card cardPlayed = this.putDownCard(index);
 
