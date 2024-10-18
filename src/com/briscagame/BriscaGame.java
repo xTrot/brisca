@@ -11,7 +11,7 @@ public class BriscaGame {
         // ThreadPoolExecutor tpe = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         // SimpleHttpServer.start(tpe);
 
-        GameManager gameManager = new GameManager(new Game());
+        GameManager gameManager = new GameManager(new Game(), new GameConfiguration());
         gameManager.startSim();
 
         // Game game = new Game();

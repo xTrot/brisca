@@ -14,9 +14,7 @@ public class GameManager {
     private ArrayList<Player> playerSeats;
     private int turn;
     private Game game;
-    private Card bottomCard;
-    private SUIT suitForThisGame;
-    private ArrayList<Card> cardsInPlay;
+    private Table table;
     private GameConfiguration gameConfiguration;
 
     private static Random rand = new Random();
@@ -24,6 +22,8 @@ public class GameManager {
     public GameManager(Game game, GameConfiguration gameConfiguration) {
         this.game = game;
         this.gameConfiguration = gameConfiguration;
+        this.deck = new Deck(game);
+        this.table = new Table(this.game, this.deck);
     }
 
     public void startSim() {
@@ -32,7 +32,7 @@ public class GameManager {
             setTeamsRandomly();
         }
         setTheTable();
-        while (turns()) {
+        while (rounds()) {
             judgeTurn();
             awardCards();
             draw();
@@ -47,7 +47,7 @@ public class GameManager {
             setTeamsRandomly();
         }
         setTheTable();
-        while (turns()) {
+        while (rounds()) {
             judgeTurn();
             awardCards();
             draw();
@@ -57,7 +57,7 @@ public class GameManager {
 
     private void setOneUser() {
         int swapPlayer = rand.nextInt(playerSeats.size());
-        User user = new User(this.game, "Net Player");
+        User user = new User(this.table, "Net Player");
         user.sit(swapPlayer);
         playerSeats.set(swapPlayer, user);
     }
@@ -65,7 +65,7 @@ public class GameManager {
     private void setSimPlayers() {
         this.playerSeats = new ArrayList<Player>();
         for (int i = 0; i < MAX_PLAYERS; i++) {
-            playerSeats.add(new Player(this.game, "Sim Player #" + (i + 1)));
+            playerSeats.add(new Player(this.table, "Sim Player #" + (i + 1)));
             playerSeats.get(i).sit(i);
         }
     }
@@ -94,18 +94,14 @@ public class GameManager {
     }
 
     private void setTheTable() {
-        this.deck = new Deck(game);
-        this.bottomCard = deck.draw();
-        this.suitForThisGame = this.bottomCard.getSuit();
-        deck.putBottomCardBack(bottomCard);
-        this.cardsInPlay = new ArrayList<Card>();
+
         System.out.println("\n\nStarting a new game!.");
-        System.out.println("This bottom card was picked " + this.bottomCard);
-        System.out.println("This is the suit for the game " + this.bottomCard.getSuit());
+        System.out.println("This bottom card was picked " + table.bottomCard);
+        System.out.println("This is the suit for the game " + table.bottomCard.getSuit());
 
         for (int i = 0; i < STARTING_HAND_SIZE; i++) {
             for (Player player : playerSeats) {
-                player.pickUpCard(deck.draw());
+                player.draw();
             }
         }
         System.out.println("Starting hands have been dealt to playerSeats.");
@@ -115,7 +111,7 @@ public class GameManager {
 
     }
 
-    private boolean turns() {
+    private boolean rounds() {
         for (Player player : playerSeats) {
             if (player.getHandSize() == 0) {
                 return false;
@@ -127,21 +123,13 @@ public class GameManager {
 
         System.out.println("New turn started.");
 
-        Deck canSwapBottomCardDeck = null;
-        if (this.gameConfiguration.getSwapBottomCard()) {
-            canSwapBottomCardDeck = this.deck;
-        }
-
         int playersPlaying = playerSeats.size();
         int currentPlayerIndex;
-        Card currentCard;
         Player currentPlayer;
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
             currentPlayerIndex = i % playersPlaying; // Rotate around playerSeats.
             currentPlayer = playerSeats.get(currentPlayerIndex);
-            currentCard = currentPlayer.yourTurn();
-            this.addToCardsInPlay(currentCard);
-            System.out.println(playerSeats.get(currentPlayerIndex).getPlayerName() + " played card " + currentCard);
+            currentPlayer.yourTurn();
         }
 
         return true;
@@ -160,7 +148,7 @@ public class GameManager {
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
             currentPlayerIndex = i % playersPlaying; // Rotate around playerSeats.
             if (deck.getDeckSize() > 0){
-                playerSeats.get(currentPlayerIndex).pickUpCard(deck.draw());
+                playerSeats.get(currentPlayerIndex).draw();
             } else {
                 break;
             }
@@ -232,19 +220,19 @@ public class GameManager {
     public int judge() {
         
         int bestCardIndex = 0;
-        Card bestCard = cardsInPlay.get(0);
+        Card bestCard = table.cardsInPlay.get(0);
         SUIT suitForThisPlay = bestCard.getSuit();
         int bestCardValue = bestCard.getValue();
 
         Card currentCard;
         int currentCardValue;
         SUIT currentCardSuit;
-        for (int i = 1; i < cardsInPlay.size(); i++) {
-            currentCard = cardsInPlay.get(i);
+        for (int i = 1; i < table.cardsInPlay.size(); i++) {
+            currentCard = table.cardsInPlay.get(i);
             currentCardValue = currentCard.getValue();
             currentCardSuit = currentCard.getSuit();
 
-            if (currentCardSuit == suitForThisGame && suitForThisPlay != suitForThisGame){
+            if (currentCardSuit == table.suitForThisGame && suitForThisPlay != table.suitForThisGame){
                 System.out.println("Card was bested by suit, " + bestCard + " beaten by " + currentCard);
                     bestCardIndex = i;
                     bestCard = currentCard;
@@ -265,13 +253,9 @@ public class GameManager {
 
     private void awardCards() {
         Player player = playerSeats.get(turn);
-        while (cardsInPlay.size() > 0) {
-            player.addScoreCard(cardsInPlay.remove(0));
+        while (table.cardsInPlay.size() > 0) {
+            player.addScoreCard(table.cardsInPlay.remove(0));
         }
-    }
-
-    public void addToCardsInPlay(Card putDownCard) {
-        this.cardsInPlay.add(putDownCard);
     }
 
 }

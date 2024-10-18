@@ -11,8 +11,8 @@ public class User extends Player implements EventListener {
     private boolean thinking = false;
     private AtomicInteger indexIdea;
 
-    public User(Game game, String playerName) {
-        super(game, playerName);
+    public User(Table table, String playerName) {
+        super(table, playerName);
         this.indexIdea = new AtomicInteger(-1);
         SimpleHttpServer.getPlayCardHandler().addListener(this);
     }

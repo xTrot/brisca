@@ -9,11 +9,11 @@ public class Player {
     private String playerName;
     private ArrayList<Card> hand;
     private ArrayList<Card> scorePile;
-    private Game game;
     private int seat;
+    private Table table;
 
-    public Player(Game game, String playerName) {
-        this.game = game;
+    public Player(Table table, String playerName) {
+        this.table = table;
         this.playerName = playerName;
         this.hand = new ArrayList<Card>();
         this.scorePile = new ArrayList<Card>();
@@ -23,12 +23,14 @@ public class Player {
         return this.playerName;
     }
 
-    public void pickUpCard(Card card) {
-        hand.add(card);
+    public void draw() {
+        hand.add(table.deck.draw());
     }
 
-    public Card putDownCard(int index) {
-        return hand.remove(index);
+    public Card playCard(int index) {
+        Card playedCard = hand.remove(index);
+        table.addToCardsInPlay(playedCard);
+        return playedCard;
     }
 
     public void addScoreCard(Card scoreCard) {
@@ -65,18 +67,16 @@ public class Player {
         return this.seat;
     }
 
-    public Card yourTurn() {
+    public void yourTurn() {
         int index = this.thinking();
-        Card cardPlayed = this.putDownCard(index);
+        Card cardPlayed = this.playCard(index);
 
         JSONObject payload = new JSONObject();
         payload.put("seat", this.seat);
         payload.put("index", index);
         payload.put("card", cardPlayed.toString());
         PlayAction action = new PlayAction(PlayAction.ActionType.CARD_PLAYED, payload);
-        Game.registerAction(this.game, action);
-
-        return cardPlayed;
+        Game.registerAction(this.table.game, action);
     }
 
     public void sit(int seat) {
