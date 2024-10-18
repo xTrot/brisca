@@ -7,7 +7,6 @@ import com.briscagame.Card.SUIT;
 
 public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
-    private static final int MAX_PLAYERS = GameConfiguration.MAX_PLAYERS;
 
 
     private Deck deck;
@@ -33,7 +32,7 @@ public class GameManager {
         }
         setTheTable();
         while (rounds()) {
-            judgeTurn();
+            judgeRound();
             awardCards();
             draw();
         }
@@ -48,7 +47,7 @@ public class GameManager {
         }
         setTheTable();
         while (rounds()) {
-            judgeTurn();
+            judgeRound();
             awardCards();
             draw();
         }
@@ -64,7 +63,7 @@ public class GameManager {
 
     private void setSimPlayers() {
         this.playerSeats = new ArrayList<Player>();
-        for (int i = 0; i < MAX_PLAYERS; i++) {
+        for (int i = 0; i < gameConfiguration.maxPlayers; i++) {
             playerSeats.add(new Player(this.table, "Sim Player #" + (i + 1)));
             playerSeats.get(i).sit(i);
         }
@@ -135,7 +134,7 @@ public class GameManager {
         return true;
     }
 
-    private void judgeTurn() {
+    private void judgeRound() {
         int winningCardIndex = this.judge();
         int winningPlayer = (this.turn + winningCardIndex) % playerSeats.size();
         this.turn = winningPlayer;

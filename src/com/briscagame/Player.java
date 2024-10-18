@@ -29,7 +29,7 @@ public class Player {
 
     public Card playCard(int index) {
         Card playedCard = hand.remove(index);
-        table.addToCardsInPlay(playedCard);
+        table.cardsInPlay.add(playedCard);
         return playedCard;
     }
 
@@ -57,6 +57,9 @@ public class Player {
 
     public int getScore() {
         int score = 0;
+        for (Card card : hand) {
+            scorePile.add(card);
+        }
         for (Card card : scorePile) {
             score += card.getScore();
         }

@@ -7,11 +7,11 @@ public class Table {
 
     public static final int MAX_PLAYERS = 4;
 
-    public Game game;
-    public Deck deck;
-    public Card bottomCard;
-    public SUIT suitForThisGame;
-    public ArrayList<Card> cardsInPlay;
+    Game game;
+    Deck deck;
+    Card bottomCard;
+    SUIT suitForThisGame;
+    ArrayList<Card> cardsInPlay;
 
     public Table(Game game, Deck deck) {
         this.game = game;
@@ -40,10 +40,6 @@ public class Table {
 
     public ArrayList<Card> getCardsInPlay() {
         return this.cardsInPlay;
-    }
-
-    public void addToCardsInPlay(Card playedCard) {
-        this.cardsInPlay.add(playedCard);
     }
 
 }

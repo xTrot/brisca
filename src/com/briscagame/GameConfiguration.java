@@ -5,8 +5,8 @@ import org.json.JSONObject;
 public class GameConfiguration {
     public static final int MAX_PLAYERS = 4;
 
-    private boolean swapBottomCard;
-    private int maxPlayers;
+    boolean swapBottomCard;
+    int maxPlayers;
 
     public GameConfiguration(){
         this.swapBottomCard = false;
