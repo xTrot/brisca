@@ -12,6 +12,7 @@ public class Table {
     Card bottomCard;
     SUIT suitForThisGame;
     ArrayList<Card> cardsInPlay;
+    boolean swapBottomCard;
 
     public Table(Game game, Deck deck) {
         this.game = game;
@@ -20,6 +21,7 @@ public class Table {
         this.suitForThisGame = this.bottomCard.getSuit();
         deck.putBottomCardBack(bottomCard);
         this.cardsInPlay = new ArrayList<Card>();
+        this.swapBottomCard = false;
     }
 
     public Game getGame() {
@@ -40,6 +42,10 @@ public class Table {
 
     public ArrayList<Card> getCardsInPlay() {
         return this.cardsInPlay;
+    }
+
+    public boolean getSwapBottomCard() {
+        return this.swapBottomCard;
     }
 
 }

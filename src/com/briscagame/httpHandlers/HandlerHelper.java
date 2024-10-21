@@ -12,7 +12,7 @@ public class HandlerHelper {
     
     static String post(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0){
-            System.out.println("Warning: 404 on " + exchange.getRequestURI());
+            // System.out.println("Warning: 404 on " + exchange.getRequestURI());
             sendStatus(exchange, NOT_FOUND);
             return null;
         }

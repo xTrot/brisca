@@ -38,6 +38,20 @@ public class Player {
     }
 
     public int thinking() {
+        if (table.swapBottomCard && !table.deck.empty()) {
+            int size = hand.size();
+            for (int i = 0; i < size; i++) {
+                Card currentCard = hand.get(i);
+                if (
+                    currentCard.getSuit() == table.suitForThisGame 
+                    && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP
+                ) {
+                    Card bottomCard = table.deck.swapBottomCard(hand.remove(i));
+                    hand.add(bottomCard);
+                    System.out.println(this.playerName + " swapped " + currentCard + " for " + bottomCard);
+                }
+            }
+        }
         return 0;
     }
 
@@ -57,8 +71,9 @@ public class Player {
 
     public int getScore() {
         int score = 0;
-        for (Card card : hand) {
-            scorePile.add(card);
+        for (int i = 0; i < hand.size(); i++) {
+                scorePile.add(hand.remove(i));
+    
         }
         for (Card card : scorePile) {
             score += card.getScore();

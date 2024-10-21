@@ -41,7 +41,7 @@ public class User extends Player implements EventListener {
 
     @Override
     public int thinking(){
-        System.out.println(this);
+        // System.out.println(this);
         return this.startThinking();
     }
     

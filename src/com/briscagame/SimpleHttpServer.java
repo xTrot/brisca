@@ -29,7 +29,7 @@ public class SimpleHttpServer
         server.setExecutor(threadPoolExecutor); // Use the default executor
         server.start();
 
-        System.out.println("Server is running on port " + port);
+        // System.out.println("Server is running on port " + port);
     }
 
     public static PlayCardHandler getPlayCardHandler() {

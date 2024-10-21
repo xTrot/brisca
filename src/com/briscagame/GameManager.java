@@ -93,6 +93,7 @@ public class GameManager {
     }
 
     private void setTheTable() {
+        if (gameConfiguration.swapBottomCard) table.swapBottomCard = true;
 
         System.out.println("\n\nStarting a new game!.");
         System.out.println("This bottom card was picked " + table.bottomCard);
@@ -103,7 +104,7 @@ public class GameManager {
                 player.draw();
             }
         }
-        System.out.println("Starting hands have been dealt to playerSeats.");
+        // System.out.println("Starting hands have been dealt to playerSeats.");
 
         turn = rand.nextInt(playerSeats.size());
         System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
@@ -120,7 +121,7 @@ public class GameManager {
             // plays his card.
         }
 
-        System.out.println("New turn started.");
+        // System.out.println("New turn started.");
 
         int playersPlaying = playerSeats.size();
         int currentPlayerIndex;
@@ -138,7 +139,7 @@ public class GameManager {
         int winningCardIndex = this.judge();
         int winningPlayer = (this.turn + winningCardIndex) % playerSeats.size();
         this.turn = winningPlayer;
-        System.out.println(playerSeats.get(winningPlayer).getPlayerName() + " won the round.\n");
+        // System.out.println(playerSeats.get(winningPlayer).getPlayerName() + " won the round.\n");
     }
 
     private void draw() {
@@ -232,14 +233,14 @@ public class GameManager {
             currentCardSuit = currentCard.getSuit();
 
             if (currentCardSuit == table.suitForThisGame && suitForThisPlay != table.suitForThisGame){
-                System.out.println("Card was bested by suit, " + bestCard + " beaten by " + currentCard);
+                // System.out.println("Card was bested by suit, " + bestCard + " beaten by " + currentCard);
                     bestCardIndex = i;
                     bestCard = currentCard;
                     suitForThisPlay = currentCardSuit;
                     bestCardValue = currentCardValue;
             }
             if (currentCardSuit == suitForThisPlay && currentCardValue > bestCardValue){
-                System.out.println("Card was bested by value, " + bestCard + " beaten by " + currentCard);
+                // System.out.println("Card was bested by value, " + bestCard + " beaten by " + currentCard);
                     bestCardIndex = i;
                     bestCard = currentCard;
                     bestCardValue = currentCardValue;

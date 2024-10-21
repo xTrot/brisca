@@ -61,7 +61,7 @@ public class Card {
         this.score = CARDS_WITH_SKIP[rand.nextInt(CARDS_WITH_SKIP.length)][CARD_SCORE_INDEX];
         this.suit = SUITS.get(rand.nextInt(SUITS_SIZE));
 
-        System.out.println("Created random brisca " + this);
+        // System.out.println("Created random brisca " + this);
     }
 
     public Card(SUIT suit, int index) {
@@ -71,21 +71,6 @@ public class Card {
         this.score = CARDS_WITH_SKIP[index][CARD_SCORE_INDEX];
         
         // System.out.println("Created brisca " + this);
-    }
-
-    public void beats(Card that) {
-        Card winner;
-
-        if (this.value == that.value){
-            System.out.println(this + " vs " + that + ", draw.");
-            return;
-        } else if (this.value > that.value) {
-            winner = this;
-        } else {
-            winner = that;
-        }
-
-        System.out.println(this + " vs " + that + ", " + winner + " wins.");
     }
 
     public SUIT getSuit() {

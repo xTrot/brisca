@@ -23,8 +23,8 @@ public class PlayAction {
     public PlayAction(ActionType type, JSONObject payload) {
         this.type = type;
         this.payload = payload;
-        System.out.println("New Action of type " + this.type + " was taken.");
-        System.out.println(this);
+        // System.out.println("New Action of type " + this.type + " was taken.");
+        // System.out.println(this);
     }
 
     public JSONObject getPayload() {

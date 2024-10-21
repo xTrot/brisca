@@ -14,8 +14,8 @@ public class GameConfiguration {
     }
 
     public GameConfiguration(JSONObject json){
-        this.swapBottomCard = false;
-        this.maxPlayers = 4;
+        this.swapBottomCard = json.getBoolean("swapBottomCard");
+        this.maxPlayers = json.getInt("maxPlayers");
     }
 
     public String toString(){

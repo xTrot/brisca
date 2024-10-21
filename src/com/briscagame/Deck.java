@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Stack;
 
 public class Deck {
-    public static final int FULL_DECK_SIZE = Card.SUITS_SIZE * Card.CARDS_WITH_SKIP.length;
+    static final int FULL_DECK_SIZE = Card.SUITS_SIZE * Card.CARDS_WITH_SKIP.length;
 
-    private static final int THIS_CARD_NUMBER_CAN_SWAP = 2;
+    static final int THIS_CARD_NUMBER_CAN_SWAP = 2;
 
     private Stack<Card> deck;
 
@@ -31,7 +31,7 @@ public class Deck {
     public Card swapBottomCard(Card card) {
         if(
             this.deck.elementAt(0).getSuit() != card.getSuit() ||
-            THIS_CARD_NUMBER_CAN_SWAP == card.getNumber()
+            THIS_CARD_NUMBER_CAN_SWAP != card.getNumber()
         ){
             return card;
         }
@@ -42,6 +42,10 @@ public class Deck {
 
     public int getDeckSize() {
         return this.deck.size();
+    }
+
+    public boolean empty() {
+        return this.deck.empty();
     }
 
     @Override
