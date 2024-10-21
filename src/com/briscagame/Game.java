@@ -12,8 +12,8 @@ public class Game implements Runnable {
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
 
-    public Game() {
-        this.gameConfiguration = new GameConfiguration();
+    public Game(GameConfiguration gameConfiguration) {
+        this.gameConfiguration = gameConfiguration;
         Game.registerConfigAction(this, this.gameConfiguration);
         
     }
@@ -21,9 +21,15 @@ public class Game implements Runnable {
     @Override
     public void run() {
         this.gameManager = new GameManager(this, this.gameConfiguration);
+        if(gameConfiguration.gameType.equals("public")) this.waitingRoom();
         gameManager.startOnePlayer();
     }
     
+    private void waitingRoom() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'waitingRoom'");
+    }
+
     private static void registerConfigAction(Game game, GameConfiguration gameConfiguration) {
         PlayAction action = new PlayAction(PlayAction.ActionType.GAME_SETUP_COMPLETED, new JSONObject(gameConfiguration));
         game.listReference.get().add(action);

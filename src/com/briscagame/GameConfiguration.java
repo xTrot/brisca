@@ -7,15 +7,18 @@ public class GameConfiguration {
 
     boolean swapBottomCard;
     int maxPlayers;
+    String gameType;
 
     public GameConfiguration(){
         this.swapBottomCard = false;
         this.maxPlayers = 4;
+        this.gameType = "solo";
     }
 
     public GameConfiguration(JSONObject json){
         this.swapBottomCard = json.getBoolean("swapBottomCard");
         this.maxPlayers = json.getInt("maxPlayers");
+        this.gameType = json.getString("gameType");
     }
 
     public String toString(){
@@ -36,6 +39,14 @@ public class GameConfiguration {
 
     public void setSwapBottomCard(boolean swapBottomCard) {
         this.swapBottomCard = swapBottomCard;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
     }
 
 }
