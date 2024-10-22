@@ -33,10 +33,24 @@ public class GamePlan {
 
     private int askPositiveInt(String question, int min, int max) {
         int response = -1;
-        while (response < min || response > max) {
-            System.out.println(question);
-            response = scan.nextInt();
+        String range = "[" + min + "," + max + "]";
+        System.out.println(question + range);
+        while (scan.hasNext()) {
+            if (scan.hasNextInt()) {
+                response = scan.nextInt();
+                if (response < min || response > max) {
+                    System.out.println("Must be within range: " + range);
+                } else {
+                    break;
+                }
+            } else {
+                scan.next();
+                System.out.println("Must be an interger.");
+            }
+            System.out.println(question + range);
         }
+        
+        scan.nextLine();
         return response;
     }
 
