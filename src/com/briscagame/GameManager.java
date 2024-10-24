@@ -25,6 +25,17 @@ public class GameManager {
         this.table = new Table(this.game, this.deck);
     }
 
+    public void start(ArrayList<Player> players) {
+        this.playerSeats = players;
+        setTheTable();
+        while (rounds()) {
+            judgeRound();
+            awardCards();
+            draw();
+        }
+        judgeGame();
+    }
+
     public void startSim() {
         setSimPlayers();
         if (playerSeats.size() == 4) {
@@ -94,6 +105,12 @@ public class GameManager {
 
     private void setTheTable() {
         if (gameConfiguration.swapBottomCard) table.swapBottomCard = true;
+
+        for (int i=0; playerSeats.size() > i; i++) {
+            Player player = playerSeats.get(i);
+            player.setTable(this.table);
+            player.sit(STARTING_HAND_SIZE);
+        }
 
         System.out.println("\n\nStarting a new game!.");
         System.out.println("This bottom card was picked " + table.bottomCard);

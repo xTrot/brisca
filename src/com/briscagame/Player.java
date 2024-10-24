@@ -11,12 +11,14 @@ public class Player {
     private ArrayList<Card> scorePile;
     private int seat;
     private Table table;
+    private boolean ready;
 
     public Player(Table table, String playerName) {
         this.table = table;
         this.playerName = playerName;
         this.hand = new ArrayList<Card>();
         this.scorePile = new ArrayList<Card>();
+        this.ready = false;
     }
 
     public String getPlayerName() {
@@ -99,6 +101,14 @@ public class Player {
 
     public void sit(int seat) {
         this.seat = seat;
+    }
+
+    public boolean isReady() {
+        return this.ready;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
     }
 
 }

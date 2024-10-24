@@ -9,7 +9,45 @@ import com.sun.net.httpserver.HttpExchange;
 public class HandlerHelper {
     private static final String NO_RESPONSE_BODY = "";
     private static final int NOT_FOUND = 404;
+
+    static Session getSession(HttpExchange exchange) {
+        String cookies = "";
+
+        if (exchange.getRequestHeaders().containsKey("cookie")) {
+            cookies = exchange.getRequestHeaders().getFirst("cookie");
+        }
+
+        String uuid = getCookie("uuid", cookies);
+
+        Session rtnSession = null;
+
+        if (uuid == null) {
+            rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
+            cookies += "uuid=" + rtnSession.uuid + ";";
+        } else {
+
+            if (Session.sessions.containsKey(uuid)) {
+                rtnSession = Session.sessions.get(uuid);
+            } else {
+                System.err.println("What, wow, how did we get here?");
+                rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
+                cookies = "uuid=" + rtnSession.uuid + ";";
+            }
+
+        }
+        exchange.getResponseHeaders().add("set-cookie", cookies);
+        return rtnSession;
+    }
     
+    private static String getCookie(String key, String cookies) {
+        String[] individualCookies = cookies.split(";");
+        for (String cookie : individualCookies) {
+            if(cookie.contains(key))
+                return cookie.split("=")[1];
+        }
+        return null;
+    }
+
     static String post(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0){
             // System.out.println("Warning: 404 on " + exchange.getRequestURI());

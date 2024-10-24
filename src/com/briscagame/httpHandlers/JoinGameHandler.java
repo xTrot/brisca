@@ -6,12 +6,14 @@ import java.util.EventListener;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.CardPlayedEvent;
+import com.briscagame.Game;
+import com.briscagame.Player;
 import com.briscagame.User;
 import com.sun.net.httpserver.HttpExchange;
 
 import org.json.*;
 
-public class PlayCardHandler implements HttpHandler {
+public class JoinGameHandler implements HttpHandler {
     private static final int OK = 200;
     
     private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
@@ -25,25 +27,25 @@ public class PlayCardHandler implements HttpHandler {
         if (json != null) {
             
             JSONObject parsedJson = new JSONObject(json);
-            int index = parsedJson.getInt("index");
+            String gameId = parsedJson.getString("gameId");
+            
             Session userSession = HandlerHelper.getSession(exchange);
-            CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.uuid);
-            this.notifyEvent(event);
-
+            User user = new User(userSession);
+            this.notifyEvent(null, gameId, user);
             HandlerHelper.sendStatus(exchange,OK);
         }
         
     }
 
-    public void addListener(User user) {
-        listeners.add(user);
+    public void addListener(Game game) {
+        listeners.add(game);
     }
 
-    private void notifyEvent(CardPlayedEvent event) {
+    private void notifyEvent(CardPlayedEvent event, String gameId, Player user) {
         for(EventListener listener: listeners) {
-            User user = (User)listener;
-            if (event.getUuid().equals(user.getUuid())) {
-                user.doneThinking(event);
+            Game game = (Game) listener;
+            if (gameId.equals(game.getUUID())) {
+                game.addPlayer(user);
             }
         }
     }
