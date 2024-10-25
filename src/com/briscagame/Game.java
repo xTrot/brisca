@@ -59,8 +59,21 @@ public class Game implements Runnable, EventListener {
         Game.gamesReference.get().remove(this.uuid);
     }
 
-    public void addPlayer(Player user) {
+    public boolean addPlayer(User user) {
+        String uuid = user.getUuid();
+        System.out.println("Adding player " + user.getPlayerName() + ":" + uuid);
+        if (players.size() ==0){
+            this.players.add(user);
+            return true;
+        }
+        for (Player player : this.players) {
+            if (uuid.equals(((User)player).getUuid())) {
+                System.out.println("Player already joined, not added.");
+                return false;
+            }
+        }
         this.players.add(user);
+        return true;
     }
 
     private boolean ready(ArrayList<Player> players) {

@@ -38,6 +38,29 @@ public class HandlerHelper {
         exchange.getResponseHeaders().add("set-cookie", cookies);
         return rtnSession;
     }
+
+    public static boolean setCookie(HttpExchange exchange, String key, String setValue, boolean force) {
+        String cookies = "";
+        if (exchange.getRequestHeaders().containsKey("cookie")) {
+            cookies = exchange.getRequestHeaders().getFirst("cookie");
+        }
+
+        String value = getCookie(key, cookies);
+
+        if (value != null && force) {
+            System.out.println("Replacing Cookie " + value + ":" + setValue);
+            cookies.replace(value, setValue);
+            exchange.getResponseHeaders().add("set-cookie", cookies);
+            return true;
+        } else if (value != null) {
+            return false;
+        }
+
+        cookies += key + "=" + setValue;
+        exchange.getResponseHeaders().add("set-cookie", cookies);
+
+        return true;
+    }
     
     private static String getCookie(String key, String cookies) {
         String[] individualCookies = cookies.split(";");

@@ -13,6 +13,7 @@ import org.json.*;
 
 public class PlayCardHandler implements HttpHandler {
     private static final int OK = 200;
+    private static final int NOT_OK = 200;
     
     private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
 
@@ -31,7 +32,9 @@ public class PlayCardHandler implements HttpHandler {
             this.notifyEvent(event);
 
             HandlerHelper.sendStatus(exchange,OK);
+            return;
         }
+        HandlerHelper.sendStatus(exchange, NOT_OK);
         
     }
 
