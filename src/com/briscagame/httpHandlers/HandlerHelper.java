@@ -11,31 +11,23 @@ public class HandlerHelper {
     private static final int NOT_FOUND = 404;
 
     static Session getSession(HttpExchange exchange) {
-        String cookies = "";
-
-        if (exchange.getRequestHeaders().containsKey("cookie")) {
-            cookies = exchange.getRequestHeaders().getFirst("cookie");
-        }
-
-        String uuid = getCookie("uuid", cookies);
+        String uuid = getCookie(exchange, "uuid");
 
         Session rtnSession = null;
 
         if (uuid == null) {
             rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
-            cookies += "uuid=" + rtnSession.uuid + ";";
         } else {
 
             if (Session.sessions.containsKey(uuid)) {
-                rtnSession = Session.sessions.get(uuid);
+                return Session.sessions.get(uuid);
             } else {
                 System.err.println("What, wow, how did we get here?");
                 rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
-                cookies = "uuid=" + rtnSession.uuid + ";";
             }
 
         }
-        exchange.getResponseHeaders().add("set-cookie", cookies);
+        setCookie(exchange, "uuid", rtnSession.uuid,true);
         return rtnSession;
     }
 
@@ -45,7 +37,7 @@ public class HandlerHelper {
             cookies = exchange.getRequestHeaders().getFirst("cookie");
         }
 
-        String value = getCookie(key, cookies);
+        String value = getCookie(exchange, key);
 
         if (value != null && force) {
             System.out.println("Replacing Cookie " + value + ":" + setValue);
@@ -62,7 +54,12 @@ public class HandlerHelper {
         return true;
     }
     
-    private static String getCookie(String key, String cookies) {
+    public static String getCookie(HttpExchange exchange, String key) {
+        String cookies = "";
+        if (exchange.getRequestHeaders().containsKey("cookie")) {
+            cookies = exchange.getRequestHeaders().getFirst("cookie");
+        }
+
         String[] individualCookies = cookies.split(";");
         for (String cookie : individualCookies) {
             if(cookie.contains(key))

@@ -23,9 +23,10 @@ public class Game implements Runnable, EventListener {
 
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
-        Game.gamesReference.get().put(uuid,this);
+        Game.gamesReference.get().put(this.uuid,this);
         Game.registerConfigAction(this, this.gameConfiguration);
         SimpleHttpServer.getJoinGameHandler().addListener(this);
+        SimpleHttpServer.getReadyHandler().addListener(this);
         
     }
 
@@ -42,7 +43,7 @@ public class Game implements Runnable, EventListener {
     private void waitingRoom() {
         // Players should be able to join, leave an change teams.
         // While players not ready or 2 minutes veryone gets kicked.
-        System.out.println("Join game: " + uuid);
+        System.out.println("Join game: " + this.uuid);
         while (!ready(players)) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
@@ -60,20 +61,35 @@ public class Game implements Runnable, EventListener {
     }
 
     public boolean addPlayer(User user) {
-        String uuid = user.getUuid();
-        System.out.println("Adding player " + user.getPlayerName() + ":" + uuid);
+        String userId = user.getUuid();
+        System.out.println("Adding player " + user.getPlayerName() + ":" + userId);
         if (players.size() ==0){
             this.players.add(user);
             return true;
         }
         for (Player player : this.players) {
-            if (uuid.equals(((User)player).getUuid())) {
+            if (userId.equals(((User)player).getUuid())) {
                 System.out.println("Player already joined, not added.");
                 return false;
             }
         }
         this.players.add(user);
         return true;
+    }
+
+    public boolean readyPlayer(String userId) {
+        System.out.println("Wants to ready player " + userId);
+        if (players.size() == 0){
+            return false;
+        }
+        for (Player player : this.players) {
+            if (userId.equals(((User)player).getUuid())) {
+                System.out.println("Player found and readied.");
+                player.ready();
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean ready(ArrayList<Player> players) {

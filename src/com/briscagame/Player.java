@@ -107,6 +107,10 @@ public class Player {
         return this.ready;
     }
 
+    public void ready() {
+        this.ready = true;
+    }
+
     public void setTable(Table table) {
         this.table = table;
     }
