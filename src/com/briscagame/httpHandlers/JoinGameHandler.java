@@ -38,23 +38,20 @@ public class JoinGameHandler implements HttpHandler {
 
         String gameId = parsedJson.getString("gameId");
         LinkedHashMap<String,String> cookies = HandlerHelper.getCookies(exchange);
-
-        Session userSession = null;
-        if (!cookies.containsKey("userId")) {
-            userSession = new Session();
-            cookies.put("userId", userSession.uuid);
+        Session userSession = HandlerHelper.getSession(exchange);
+        if (userSession == null) {
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+            return;
         }
-
-        userSession = HandlerHelper.getSession(exchange);
 
         User user = new User(userSession);
         
         if (this.notifyEvent(null, gameId, user)){
             cookies.put("gameId", gameId);
-            HandlerHelper.setCookies(exchange, cookies);
+            HandlerHelper.setCookie(exchange, "gameId", gameId);
             HandlerHelper.sendStatus(exchange, OK);
         }
-        
+        HandlerHelper.sendStatus(exchange, NOT_OK);
     }
 
     public void addListener(Game game) {

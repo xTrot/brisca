@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.briscagame.httpHandlers.JoinGameHandler;
 import com.briscagame.httpHandlers.PlayCardHandler;
 import com.briscagame.httpHandlers.ReadyHandler;
+import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class SimpleHttpServer
 {
     private static int port = 8000;
     private static RootHandler rootHandler = new RootHandler();
+    private static RegisterHandler registerHandler = new RegisterHandler();
     private static PlayCardHandler playCardHandler = new PlayCardHandler();
     private static JoinGameHandler joinGameHandler = new JoinGameHandler();
     private static ReadyHandler readyHandler = new ReadyHandler();
@@ -27,9 +29,10 @@ public class SimpleHttpServer
 
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);
-        server.createContext("/playcard", playCardHandler);
+        server.createContext("/register", registerHandler);
         server.createContext("/joingame", joinGameHandler);
         server.createContext("/ready", readyHandler);
+        server.createContext("/playcard", playCardHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
