@@ -3,6 +3,7 @@ package com.briscagame.httpHandlers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.LinkedHashMap;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.CardPlayedEvent;
@@ -24,20 +25,35 @@ public class JoinGameHandler implements HttpHandler {
         // handle the request
         String json = HandlerHelper.post(exchange);
 
-        if (json != null) {
-            
-            JSONObject parsedJson = new JSONObject(json);
-            String gameId = parsedJson.getString("gameId");
-            
-            Session userSession = HandlerHelper.getSession(exchange);
-            User user = new User(userSession);
-            if (this.notifyEvent(null, gameId, user)) {
-                HandlerHelper.setCookie(exchange,"gameId", gameId, true);
-                HandlerHelper.sendStatus(exchange,OK);
-                return;
-            }
+        if (json == null){
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+            return;
         }
-        HandlerHelper.sendStatus(exchange, NOT_OK);
+
+        JSONObject parsedJson = new JSONObject(json);
+        if (parsedJson.isNull("gameId")) {
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+            return;
+        }
+
+        String gameId = parsedJson.getString("gameId");
+        LinkedHashMap<String,String> cookies = HandlerHelper.getCookies(exchange);
+
+        Session userSession = null;
+        if (!cookies.containsKey("userId")) {
+            userSession = new Session();
+            cookies.put("userId", userSession.uuid);
+        }
+
+        userSession = HandlerHelper.getSession(exchange);
+
+        User user = new User(userSession);
+        
+        if (this.notifyEvent(null, gameId, user)){
+            cookies.put("gameId", gameId);
+            HandlerHelper.setCookies(exchange, cookies);
+            HandlerHelper.sendStatus(exchange, OK);
+        }
         
     }
 

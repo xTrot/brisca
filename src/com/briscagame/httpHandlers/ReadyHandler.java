@@ -3,16 +3,12 @@ package com.briscagame.httpHandlers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventListener;
-
-import javax.print.DocFlavor.STRING;
+import java.util.LinkedHashMap;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.CardPlayedEvent;
 import com.briscagame.Game;
-import com.briscagame.User;
 import com.sun.net.httpserver.HttpExchange;
-
-import org.json.*;
 
 public class ReadyHandler implements HttpHandler {
     private static final int OK = 200;
@@ -27,7 +23,19 @@ public class ReadyHandler implements HttpHandler {
         HandlerHelper.post(exchange);
         
         String userId = HandlerHelper.getSession(exchange).uuid;
-        String gameId = HandlerHelper.getCookie(exchange, "gameId");
+        LinkedHashMap<String, String> cookies = HandlerHelper.getCookies(exchange);
+
+        if (!cookies.containsKey("userId")) {
+            System.out.println("Trying to ready w/o userId.");
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+        }
+
+        if (!cookies.containsKey("gameId")) {
+            System.out.println("Trying to ready w/o gameId.");
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+        }
+
+        String gameId = cookies.get("gameId");
         if (this.notifyEvent(null, gameId, userId)) {
             HandlerHelper.sendStatus(exchange,OK);
             return;

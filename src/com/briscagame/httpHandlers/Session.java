@@ -8,6 +8,11 @@ public class Session{
     public String username;
     public String uuid;
 
+    public Session() {
+        this("Net Player #" + (Session.sessions.size() + 1));
+        register();
+    }
+
     public Session(String username) {
         this.username = username;
         this.uuid = UUID.randomUUID().toString();

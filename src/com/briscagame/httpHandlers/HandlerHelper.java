@@ -2,6 +2,7 @@ package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -11,50 +12,21 @@ public class HandlerHelper {
     private static final int NOT_FOUND = 404;
 
     static Session getSession(HttpExchange exchange) {
-        String uuid = getCookie(exchange, "uuid");
-
+        LinkedHashMap<String, String> cookies = getCookies(exchange);
         Session rtnSession = null;
-
-        if (uuid == null) {
-            rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
-        } else {
-
-            if (Session.sessions.containsKey(uuid)) {
-                return Session.sessions.get(uuid);
-            } else {
-                System.err.println("What, wow, how did we get here?");
-                rtnSession = new Session("Net Player #" + (Session.sessions.size() + 1));
-            }
-
+        if (!cookies.containsKey("userId")) {
+            return rtnSession;
         }
-        setCookie(exchange, "uuid", rtnSession.uuid,true);
+        String userId = cookies.get("userId");
+        if (!Session.sessions.containsKey(userId)) {
+            return rtnSession;
+        }
+        rtnSession = Session.sessions.get(userId);
         return rtnSession;
     }
-
-    public static boolean setCookie(HttpExchange exchange, String key, String setValue, boolean force) {
-        String cookies = "";
-        if (exchange.getRequestHeaders().containsKey("cookie")) {
-            cookies = exchange.getRequestHeaders().getFirst("cookie");
-        }
-
-        String value = getCookie(exchange, key);
-
-        if (value != null && force) {
-            System.out.println("Replacing Cookie " + value + ":" + setValue);
-            cookies.replace(value, setValue);
-            exchange.getResponseHeaders().add("set-cookie", cookies);
-            return true;
-        } else if (value != null) {
-            return false;
-        }
-
-        cookies += key + "=" + setValue;
-        exchange.getResponseHeaders().add("set-cookie", cookies);
-
-        return true;
-    }
     
-    public static String getCookie(HttpExchange exchange, String key) {
+    public static LinkedHashMap<String,String> getCookies(HttpExchange exchange) {
+        LinkedHashMap<String,String> cookiesHashMap = new LinkedHashMap<String,String>();
         String cookies = "";
         if (exchange.getRequestHeaders().containsKey("cookie")) {
             cookies = exchange.getRequestHeaders().getFirst("cookie");
@@ -62,10 +34,23 @@ public class HandlerHelper {
 
         String[] individualCookies = cookies.split(";");
         for (String cookie : individualCookies) {
-            if(cookie.contains(key))
-                return cookie.split("=")[1];
+            if (cookie.contains("=")){
+                String[] kvPair = cookie.split("=");
+                cookiesHashMap.put(kvPair[0], kvPair[1]);
+            }
         }
-        return null;
+        return cookiesHashMap;
+    }
+    
+    public static void setCookies(HttpExchange exchange, LinkedHashMap<String,String> cookiesHashMap) {
+        StringBuilder cookies = new StringBuilder();
+        for (String key : cookiesHashMap.keySet()) {
+            cookies.append(key);
+            cookies.append("=");
+            cookies.append(cookiesHashMap.get(key));
+            cookies.append(";");
+        }
+        exchange.getResponseHeaders().add("set-cookie", cookies.toString());
     }
 
     static String post(HttpExchange exchange) throws IOException {
