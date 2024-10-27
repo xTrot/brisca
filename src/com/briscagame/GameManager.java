@@ -109,7 +109,7 @@ public class GameManager {
         for (int i=0; playerSeats.size() > i; i++) {
             Player player = playerSeats.get(i);
             player.setTable(this.table);
-            player.sit(STARTING_HAND_SIZE);
+            player.sit(i);
         }
 
         System.out.println("\n\nStarting a new game!.");
