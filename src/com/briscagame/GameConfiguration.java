@@ -1,20 +1,14 @@
 package com.briscagame;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameConfiguration {
     public static final int MAX_PLAYERS = 4;
-    public static final int MIN_PLAYERS = 4;
-    public static final List<String> GAME_TYPES = Collections.unmodifiableList(
-        new ArrayList<String>() {{
-            add("solo");
-            add("public");
-        }});
+    public static final int MIN_PLAYERS = 2;
+    public static final List<String> GAME_TYPES = List.of("solo", "public");
         
 
     boolean swapBottomCard;
