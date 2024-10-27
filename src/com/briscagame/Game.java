@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
 import java.util.EventListener;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 public class Game implements Runnable, EventListener {
     
+    private static ThreadPoolExecutor tpe;
     private static Hashtable<String,Game> games = new Hashtable<String,Game>();
     private static AtomicReference<Hashtable<String,Game>> gamesReference = new AtomicReference<Hashtable<String,Game>>(games);
 
@@ -92,6 +94,10 @@ public class Game implements Runnable, EventListener {
         return false;
     }
 
+    public void startGame() {
+        Game.tpe.execute(this);
+    }
+
     private boolean ready(ArrayList<Player> players) {
         if (players.size() != gameConfiguration.maxPlayers) return false;
         for (Player player : players) {
@@ -115,6 +121,10 @@ public class Game implements Runnable, EventListener {
 
     public String getUUID() {
         return this.uuid;
+    }
+
+    public static void setTpe(ThreadPoolExecutor tpe) {
+        Game.tpe = tpe;
     }
 
 }

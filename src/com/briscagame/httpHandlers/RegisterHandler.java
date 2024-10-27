@@ -40,6 +40,14 @@ public class RegisterHandler implements HttpHandler {
         }
 
         userSession = HandlerHelper.getSession(exchange);
+        if (userSession == null) {
+            userSession = new Session(username);
+            System.out.println("Refreshing session for " + username);
+            HandlerHelper.setCookie(exchange, "userId", userSession.uuid);
+            HandlerHelper.sendStatus(exchange, OK);
+            return;
+        }
+
         userSession.username = username;
         HandlerHelper.sendStatus(exchange, OK);
         
