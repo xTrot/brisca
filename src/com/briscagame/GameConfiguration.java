@@ -1,9 +1,21 @@
 package com.briscagame;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameConfiguration {
     public static final int MAX_PLAYERS = 4;
+    public static final int MIN_PLAYERS = 4;
+    public static final List<String> GAME_TYPES = Collections.unmodifiableList(
+        new ArrayList<String>() {{
+            add("solo");
+            add("public");
+        }});
+        
 
     boolean swapBottomCard;
     int maxPlayers;
@@ -19,6 +31,12 @@ public class GameConfiguration {
         this.swapBottomCard = json.getBoolean("swapBottomCard");
         this.maxPlayers = json.getInt("maxPlayers");
         this.gameType = json.getString("gameType");
+        if (this.maxPlayers > MAX_PLAYERS || this.maxPlayers < MIN_PLAYERS) {
+            throw new JSONException("maxPlayers out of bounds.");
+        }
+        if (!GAME_TYPES.contains(this.gameType)) {
+            throw new JSONException("gameType not valid.");
+        }
     }
 
     public String toString(){
