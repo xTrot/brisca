@@ -23,19 +23,22 @@ public class PlayCardHandler implements HttpHandler {
         // handle the request
         String json = HandlerHelper.post(exchange);
 
-        if (json != null) {
-            
-            JSONObject parsedJson = new JSONObject(json);
-            int index = parsedJson.getInt("index");
-            Session userSession = HandlerHelper.getSession(exchange);
-            CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.uuid);
-            this.notifyEvent(event);
-
-            HandlerHelper.sendStatus(exchange,OK);
+        if (json == null){
+            HandlerHelper.sendStatus(exchange, NOT_OK);
             return;
         }
-        HandlerHelper.sendStatus(exchange, NOT_OK);
-        
+
+        JSONObject parsedJson = new JSONObject(json);
+        if (parsedJson.isNull("index")) {
+            HandlerHelper.sendStatus(exchange, NOT_OK);
+            return;
+        }
+
+        int index = parsedJson.optInt("index");
+        Session userSession = HandlerHelper.getSession(exchange);
+        CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.uuid);
+        this.notifyEvent(event);
+        HandlerHelper.sendStatus(exchange,OK);
     }
 
     public void addListener(User user) {
