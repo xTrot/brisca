@@ -9,7 +9,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 public class HandlerHelper {
     private static final String NO_RESPONSE_BODY = "";
-    private static final int NOT_FOUND = 404;
 
     static Session getSession(HttpExchange exchange) {
         Session rtnSession = null;
@@ -90,7 +89,7 @@ public class HandlerHelper {
     static String post(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0){
             // System.out.println("Warning: 404 on " + exchange.getRequestURI());
-            sendStatus(exchange, NOT_FOUND);
+            sendStatus(exchange, Status.NOT_FOUND);
             return null;
         }
         Scanner s = new Scanner(exchange.getRequestBody());

@@ -8,8 +8,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.*;
 
 public class RegisterHandler implements HttpHandler {
-    private static final int OK = 200;
-    private static final int NOT_OK = 400;
 
     @Override
     public void handle(HttpExchange exchange) throws IOException 
@@ -18,13 +16,13 @@ public class RegisterHandler implements HttpHandler {
         String json = HandlerHelper.post(exchange);
 
         if (json == null){
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         JSONObject parsedJson = new JSONObject(json);
         if (parsedJson.isNull("username")) {
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -35,7 +33,7 @@ public class RegisterHandler implements HttpHandler {
         if (userId == null) {
             userSession = new Session(username);
             HandlerHelper.setCookie(exchange, "userId", userSession.uuid);
-            HandlerHelper.sendStatus(exchange, OK);
+            HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
 
@@ -44,12 +42,12 @@ public class RegisterHandler implements HttpHandler {
             userSession = new Session(username);
             System.out.println("Refreshing session for " + username);
             HandlerHelper.setCookie(exchange, "userId", userSession.uuid);
-            HandlerHelper.sendStatus(exchange, OK);
+            HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
 
         userSession.username = username;
-        HandlerHelper.sendStatus(exchange, OK);
+        HandlerHelper.sendStatus(exchange, Status.OK);
         
     }
 

@@ -11,6 +11,6 @@ public class RootHandler implements HttpHandler {
     {
         // handle the request
         String response = "Hello, this is a simple HTTP server response!";
-        HandlerHelper.sendResponse(exchange, 200, response);
+        HandlerHelper.sendResponse(exchange, Status.OK, response);
     }
 }

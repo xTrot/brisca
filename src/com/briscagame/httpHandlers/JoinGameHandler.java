@@ -14,8 +14,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.*;
 
 public class JoinGameHandler implements HttpHandler {
-    private static final int OK = 200;
-    private static final int NOT_OK = 400;
     
     private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
 
@@ -26,13 +24,13 @@ public class JoinGameHandler implements HttpHandler {
         String json = HandlerHelper.post(exchange);
 
         if (json == null){
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         JSONObject parsedJson = new JSONObject(json);
         if (parsedJson.isNull("gameId")) {
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -40,7 +38,7 @@ public class JoinGameHandler implements HttpHandler {
         LinkedHashMap<String,String> cookies = HandlerHelper.getCookies(exchange);
         Session userSession = HandlerHelper.getSession(exchange);
         if (userSession == null) {
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -49,9 +47,9 @@ public class JoinGameHandler implements HttpHandler {
         if (this.notifyEvent(null, gameId, user)){
             cookies.put("gameId", gameId);
             HandlerHelper.setCookie(exchange, "gameId", gameId);
-            HandlerHelper.sendStatus(exchange, OK);
+            HandlerHelper.sendStatus(exchange, Status.OK);
         }
-        HandlerHelper.sendStatus(exchange, NOT_OK);
+        HandlerHelper.sendStatus(exchange, Status.NOT_OK);
     }
 
     public void addListener(Game game) {

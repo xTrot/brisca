@@ -11,8 +11,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.*;
 
 public class MakeGameHandler implements HttpHandler {
-    private static final int OK = 200;
-    private static final int NOT_OK = 400;
 
     @Override
     public void handle(HttpExchange exchange) throws IOException 
@@ -21,7 +19,7 @@ public class MakeGameHandler implements HttpHandler {
         String json = HandlerHelper.post(exchange);
 
         if (json == null){
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -31,14 +29,14 @@ public class MakeGameHandler implements HttpHandler {
             || parsedJson.isNull("swapBottomCard")
             || parsedJson.isNull("gameType")
         ) {
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
         
 
         Session userSession = HandlerHelper.getSession(exchange);
         if (userSession ==  null){
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -47,7 +45,7 @@ public class MakeGameHandler implements HttpHandler {
             gc = new GameConfiguration(parsedJson);
         } catch (JSONException je){
             System.err.println(je.getMessage());
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -59,7 +57,7 @@ public class MakeGameHandler implements HttpHandler {
         newGame.addPlayer(user);
 
         HandlerHelper.setCookie(exchange, "gameId", gameId);
-        HandlerHelper.sendStatus(exchange, OK);
+        HandlerHelper.sendStatus(exchange, Status.OK);
     }
 
 }

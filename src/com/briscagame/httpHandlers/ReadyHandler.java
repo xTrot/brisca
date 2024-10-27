@@ -11,8 +11,6 @@ import com.briscagame.Game;
 import com.sun.net.httpserver.HttpExchange;
 
 public class ReadyHandler implements HttpHandler {
-    private static final int OK = 200;
-    private static final int NOT_OK = 400;
     
     private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
 
@@ -27,21 +25,21 @@ public class ReadyHandler implements HttpHandler {
 
         if (!cookies.containsKey("userId")) {
             System.out.println("Trying to ready w/o userId.");
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
         }
 
         if (!cookies.containsKey("gameId")) {
             System.out.println("Trying to ready w/o gameId.");
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
         }
 
         String gameId = cookies.get("gameId");
         if (this.notifyEvent(null, gameId, userId)) {
-            HandlerHelper.sendStatus(exchange,OK);
+            HandlerHelper.sendStatus(exchange,Status.OK);
             return;
         }
         
-        HandlerHelper.sendStatus(exchange, NOT_OK);
+        HandlerHelper.sendStatus(exchange, Status.NOT_OK);
         
     }
 

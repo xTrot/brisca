@@ -12,8 +12,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.*;
 
 public class PlayCardHandler implements HttpHandler {
-    private static final int OK = 200;
-    private static final int NOT_OK = 200;
     
     private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
 
@@ -24,13 +22,13 @@ public class PlayCardHandler implements HttpHandler {
         String json = HandlerHelper.post(exchange);
 
         if (json == null){
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         JSONObject parsedJson = new JSONObject(json);
         if (parsedJson.isNull("index")) {
-            HandlerHelper.sendStatus(exchange, NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
@@ -38,7 +36,7 @@ public class PlayCardHandler implements HttpHandler {
         Session userSession = HandlerHelper.getSession(exchange);
         CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.uuid);
         this.notifyEvent(event);
-        HandlerHelper.sendStatus(exchange,OK);
+        HandlerHelper.sendStatus(exchange, Status.OK);
     }
 
     public void addListener(User user) {
