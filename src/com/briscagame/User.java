@@ -12,7 +12,7 @@ public class User extends Player implements EventListener {
 
     private boolean thinking = false;
     private AtomicInteger indexIdea;
-    private String uuid;
+    private String userId;
 
     public User(Table table, String playerName) {
         super(table, playerName);
@@ -21,8 +21,8 @@ public class User extends Player implements EventListener {
     }
 
     public User(Session userSession) {
-        this(null, userSession.username);
-        this.uuid = userSession.uuid;
+        this(null, userSession.getUsername());
+        this.userId = userSession.getUserId();
     }
 
     public int startThinking() {
@@ -54,7 +54,7 @@ public class User extends Player implements EventListener {
     }
 
     public String getUuid() {
-        return uuid;
+        return userId;
     }
     
 }

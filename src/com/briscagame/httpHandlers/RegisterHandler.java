@@ -32,7 +32,7 @@ public class RegisterHandler implements HttpHandler {
         Session userSession = null;
         if (userId == null) {
             userSession = new Session(username);
-            HandlerHelper.setCookie(exchange, "userId", userSession.uuid);
+            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId());
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
@@ -41,12 +41,12 @@ public class RegisterHandler implements HttpHandler {
         if (userSession == null) {
             userSession = new Session(username);
             System.out.println("Refreshing session for " + username);
-            HandlerHelper.setCookie(exchange, "userId", userSession.uuid);
+            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId());
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
 
-        userSession.username = username;
+        userSession.setUsername(username);
         HandlerHelper.sendStatus(exchange, Status.OK);
         
     }

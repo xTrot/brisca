@@ -6,26 +6,25 @@ import java.util.UUID;
 import java.util.EventListener;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONObject;
 
 public class Game implements Runnable, EventListener {
     
     private static ThreadPoolExecutor tpe;
-    private static Hashtable<String,Game> games = new Hashtable<String,Game>();
-    private static AtomicReference<Hashtable<String,Game>> gamesReference = new AtomicReference<Hashtable<String,Game>>(games);
 
+    // Protect these synchro
+    private static Hashtable<String,Game> games = new Hashtable<String,Game>();
     private ArrayList<PlayAction> actions = new ArrayList<PlayAction>();
-    private AtomicReference<ArrayList<PlayAction>> listReference = new AtomicReference<ArrayList<PlayAction>>(actions);
+    private ArrayList<Player> players = new ArrayList<Player>();
+
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
-    private ArrayList<Player> players = new ArrayList<Player>();
     private String uuid = UUID.randomUUID().toString();
 
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
-        Game.gamesReference.get().put(this.uuid,this);
+        Game.games.put(this.uuid,this);
         Game.registerConfigAction(this, this.gameConfiguration);
         SimpleHttpServer.getJoinGameHandler().addListener(this);
         SimpleHttpServer.getReadyHandler().addListener(this);
@@ -46,26 +45,29 @@ public class Game implements Runnable, EventListener {
         // Players should be able to join, leave an change teams.
         // While players not ready or 2 minutes veryone gets kicked.
         System.out.println("Join game: " + this.uuid);
-        while (!ready(players)) {
-            try {
+        try {
+            while (!ready(this.players)) {
                 TimeUnit.MILLISECONDS.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                cleanUp();
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            cleanUp();
+        } catch (Exception e) {
+            e.printStackTrace();
+            cleanUp();
         }
-        gameManager.start(players);
+        
+        gameManager.start(this.players);
     }
 
     private void cleanUp() {
-        Game.gamesReference.get().remove(this.uuid);
+        Game.games.remove(this.uuid);
     }
 
-    public boolean addPlayer(User user) {
+    public synchronized boolean addPlayer(User user) {
         String userId = user.getUuid();
         System.out.println("Adding player " + user.getPlayerName() + ":" + userId);
-        if (players.size() ==0){
+        if (this.players.size() == 0){
             this.players.add(user);
             return true;
         }
@@ -79,17 +81,25 @@ public class Game implements Runnable, EventListener {
         return true;
     }
 
-    public boolean readyPlayer(String userId) {
+    public synchronized boolean readyPlayer(String userId) {
         System.out.println("Wants to ready player " + userId);
-        if (players.size() == 0){
+        if (this.players.size() == 0){
             return false;
         }
         for (Player player : this.players) {
             if (userId.equals(((User)player).getUuid())) {
                 System.out.println("Player found and readied.");
-                player.ready();
+                player.readyToggle();
                 return true;
             }
+        }
+        return false;
+    }
+
+    public synchronized boolean changeTeam(String userId, String team) {
+        if (this.players.size() == 0) return false;
+        for (Player player : this.players) {
+            return player.setTeam(team);
         }
         return false;
     }
@@ -103,20 +113,38 @@ public class Game implements Runnable, EventListener {
         for (Player player : players) {
             if (!player.isReady()) return false;
         }
+        if (this.gameConfiguration.maxPlayers == 4) {
+            int team1 = 0;
+            int teamA = 0;
+            for (Player player : players) {
+                int teamIndex = player.getTeam();
+                switch (teamIndex) {
+                    case 0:
+                        team1 +=1;
+                        break;
+                    case 1:
+                        teamA +=1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return (team1==2 && teamA==2);
+        }
         return true;
     }
 
     private static void registerConfigAction(Game game, GameConfiguration gameConfiguration) {
         PlayAction action = new PlayAction(PlayAction.ActionType.GAME_SETUP_COMPLETED, new JSONObject(gameConfiguration));
-        game.listReference.get().add(action);
+        game.actions.add(action);
     }
 
     public static void registerAction(Game game, PlayAction action) {
-        game.listReference.get().add(action);
+        game.actions.add(action);
     }
 
     public static Hashtable<String, Game> getGames() {
-        return Game.gamesReference.get();
+        return Game.games;
     }
 
     public String getUUID() {

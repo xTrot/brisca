@@ -20,7 +20,7 @@ public class ReadyHandler implements HttpHandler {
         // handle the request
         HandlerHelper.post(exchange);
         
-        String userId = HandlerHelper.getSession(exchange).uuid;
+        String userId = HandlerHelper.getSession(exchange).getUserId();
         LinkedHashMap<String, String> cookies = HandlerHelper.getCookies(exchange);
 
         if (!cookies.containsKey("userId")) {

@@ -56,6 +56,7 @@ public class MakeGameHandler implements HttpHandler {
         User user = new User(userSession);
         newGame.addPlayer(user);
 
+        userSession.setGameID(gameId);
         HandlerHelper.setCookie(exchange, "gameId", gameId);
         HandlerHelper.sendStatus(exchange, Status.OK);
     }

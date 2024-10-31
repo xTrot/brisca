@@ -1,10 +1,12 @@
 package com.briscagame;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONObject;
 
 public class Player {
+    public static final List<String> TEAM_TYPES = List.of("team1", "teamA", "spectator");
 
     private String playerName;
     private ArrayList<Card> hand;
@@ -12,6 +14,7 @@ public class Player {
     private int seat;
     private Table table;
     private boolean ready;
+    private int team = 0;
 
     public Player(Table table, String playerName) {
         this.table = table;
@@ -87,6 +90,10 @@ public class Player {
         return this.seat;
     }
 
+    public int getTeam() {
+        return team;
+    }
+
     public void yourTurn() {
         int index = this.thinking();
         Card cardPlayed = this.playCard(index);
@@ -107,12 +114,31 @@ public class Player {
         return this.ready;
     }
 
-    public void ready() {
-        this.ready = true;
+    public void readyToggle() {
+        this.ready = !this.ready;
     }
 
     public void setTable(Table table) {
         this.table = table;
+    }
+
+    public boolean setTeam(String team) {
+        if (team == null) {
+            // set to the other team
+            if (this.team == TEAM_TYPES.indexOf("team1")){
+                this.team = TEAM_TYPES.indexOf("teamA");
+                return true;
+            } else if (this.team == TEAM_TYPES.indexOf("teamA")) {
+                this.team = TEAM_TYPES.indexOf("team1");
+                return true;
+            }
+            throw new NullPointerException("This Null has to be handled.");
+        }
+        if (!TEAM_TYPES.contains(team)) {
+            return false;
+        }
+        this.team = TEAM_TYPES.indexOf(team);
+        return true;
     }
 
 }

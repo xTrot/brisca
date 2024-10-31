@@ -34,7 +34,7 @@ public class PlayCardHandler implements HttpHandler {
 
         int index = parsedJson.optInt("index");
         Session userSession = HandlerHelper.getSession(exchange);
-        CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.uuid);
+        CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.getUserId());
         this.notifyEvent(event);
         HandlerHelper.sendStatus(exchange, Status.OK);
     }

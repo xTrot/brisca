@@ -46,6 +46,7 @@ public class JoinGameHandler implements HttpHandler {
         
         if (this.notifyEvent(null, gameId, user)){
             cookies.put("gameId", gameId);
+            userSession.setGameID(gameId);
             HandlerHelper.setCookie(exchange, "gameId", gameId);
             HandlerHelper.sendStatus(exchange, Status.OK);
         }

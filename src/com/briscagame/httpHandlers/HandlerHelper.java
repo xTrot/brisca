@@ -11,13 +11,8 @@ public class HandlerHelper {
     private static final String NO_RESPONSE_BODY = "";
 
     static Session getSession(HttpExchange exchange) {
-        Session rtnSession = null;
         String userId = getCookie(exchange,"userId");
-        if (!Session.sessions.containsKey(userId)) {
-            return rtnSession;
-        }
-        rtnSession = Session.sessions.get(userId);
-        return rtnSession;
+        return Session.getSession(userId);
     }
     
     public static LinkedHashMap<String,String> getCookies(HttpExchange exchange) {
