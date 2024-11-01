@@ -56,7 +56,7 @@ public class Game implements Runnable, EventListener {
             e.printStackTrace();
             cleanUp();
         }
-        
+
         gameManager.start(this.players);
     }
 
@@ -79,6 +79,16 @@ public class Game implements Runnable, EventListener {
         }
         this.players.add(user);
         return true;
+    }
+
+    public synchronized boolean removePlayer(String userId) {
+        for (Player player : players) {
+            if(userId.equals(((User)player).getUuid())){
+                players.remove(player);
+                return true;
+            }
+        }
+        return false;
     }
 
     public synchronized boolean readyPlayer(String userId) {
