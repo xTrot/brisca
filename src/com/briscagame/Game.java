@@ -9,14 +9,19 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
 
+import com.briscagame.httpHandlers.Session;
+
 public class Game implements Runnable, EventListener {
     
+    private static final int HOST = 0;
+
     private static ThreadPoolExecutor tpe;
 
-    // Protect these synchro
+    // Protect these with synchro
     private static Hashtable<String,Game> games = new Hashtable<String,Game>();
     private ArrayList<PlayAction> actions = new ArrayList<PlayAction>();
     private ArrayList<Player> players = new ArrayList<Player>();
+    private boolean startGameLock = false;
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
@@ -26,8 +31,6 @@ public class Game implements Runnable, EventListener {
         this.gameConfiguration = gameConfiguration;
         Game.games.put(this.uuid,this);
         Game.registerConfigAction(this, this.gameConfiguration);
-        SimpleHttpServer.getJoinGameHandler().addListener(this);
-        SimpleHttpServer.getReadyHandler().addListener(this);
         
     }
 
@@ -39,22 +42,23 @@ public class Game implements Runnable, EventListener {
         } else {
             gameManager.startOnePlayer();
         }
+        this.cleanUp();
     }
     
     private void waitingRoom() {
-        // Players should be able to join, leave an change teams.
+        // Players should be able to join, leave an change teams. Done
         // While players not ready or 2 minutes veryone gets kicked.
         System.out.println("Join game: " + this.uuid);
         try {
-            while (!ready(this.players)) {
+            while (!this.startGameLock) {
                 TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-            cleanUp();
+            this.cleanUp();
         } catch (Exception e) {
             e.printStackTrace();
-            cleanUp();
+            this.cleanUp();
         }
 
         gameManager.start(this.players);
@@ -62,9 +66,13 @@ public class Game implements Runnable, EventListener {
 
     private void cleanUp() {
         Game.games.remove(this.uuid);
+        for (Player player : this.players) {
+            Session.getSession(((User)player).getUuid()).setGameID(null);;
+        }
     }
 
     public synchronized boolean addPlayer(User user) {
+        if (this.startGameLock) return false;
         String userId = user.getUuid();
         System.out.println("Adding player " + user.getPlayerName() + ":" + userId);
         if (this.players.size() == 0){
@@ -82,6 +90,7 @@ public class Game implements Runnable, EventListener {
     }
 
     public synchronized boolean removePlayer(String userId) {
+        if (this.startGameLock) return false;
         for (Player player : players) {
             if(userId.equals(((User)player).getUuid())){
                 players.remove(player);
@@ -93,6 +102,7 @@ public class Game implements Runnable, EventListener {
 
     public synchronized boolean readyPlayer(String userId) {
         System.out.println("Wants to ready player " + userId);
+        if (this.startGameLock) return false;
         if (this.players.size() == 0){
             return false;
         }
@@ -107,6 +117,7 @@ public class Game implements Runnable, EventListener {
     }
 
     public synchronized boolean changeTeam(String userId, String team) {
+        if (this.startGameLock) return false;
         if (this.players.size() == 0) return false;
         for (Player player : this.players) {
             return player.setTeam(team);
@@ -114,7 +125,19 @@ public class Game implements Runnable, EventListener {
         return false;
     }
 
-    public void startGame() {
+    public synchronized boolean startGame(String userId) {
+        if (this.startGameLock) return false;
+        if (!((User)players.get(HOST)).getUuid().equals(userId)){
+            return false;
+        }
+        if (!this.ready(players)){
+            return false;
+        }
+        this.startGameLock = true;
+        return true;
+    }
+
+    public void runGameThread() {
         Game.tpe.execute(this);
     }
 
@@ -153,8 +176,8 @@ public class Game implements Runnable, EventListener {
         game.actions.add(action);
     }
 
-    public static Hashtable<String, Game> getGames() {
-        return Game.games;
+    public static Game getGame(String gameId) {
+        return Game.games.get(gameId);
     }
 
     public String getUUID() {

@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.Game;
 import com.sun.net.httpserver.HttpExchange;
 
-public class ReadyHandler implements HttpHandler {
+public class StartGameHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException 
@@ -23,7 +23,7 @@ public class ReadyHandler implements HttpHandler {
         String userId = userSession.getUserId();
         String gameId = userSession.getGameID();
         Game game = Game.getGame(gameId);
-        if (game.readyPlayer(userId)) {
+        if (game.startGame(userId)) {
             HandlerHelper.sendStatus(exchange,Status.OK);
             return;
         }

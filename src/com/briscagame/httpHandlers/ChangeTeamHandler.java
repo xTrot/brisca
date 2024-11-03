@@ -43,7 +43,7 @@ public class ChangeTeamHandler implements HttpHandler {
             return;
         }
 
-        Game game = Game.getGames().get(gameId);
+        Game game = Game.getGame(gameId);
         if (game == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;

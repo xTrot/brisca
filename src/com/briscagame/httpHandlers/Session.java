@@ -2,13 +2,13 @@ package com.briscagame.httpHandlers;
 
 import java.util.LinkedHashMap;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Session{
-    private static LinkedHashMap<String, AtomicReference<Session>> sessions = new LinkedHashMap<String, AtomicReference<Session>>();
+    private static LinkedHashMap<String, Session> sessions = new LinkedHashMap<String, Session>();
 
-    private AtomicReference<Session> thisReference;
     private final String userId;
+
+    // Protect these with synchro
     private String username;
     private String gameID;
     private String team;
@@ -17,7 +17,7 @@ public class Session{
         if (!Session.sessions.containsKey(userId)) {
             return null;
         }
-        return sessions.get(userId).get();
+        return sessions.get(userId);
     }
 
     public Session() {
@@ -32,8 +32,7 @@ public class Session{
     }
 
     public void register() {
-        this.thisReference = new AtomicReference<Session>(this);
-        sessions.put(this.userId, this.thisReference);
+        sessions.put(this.userId, this);
     }
 
     public String getUserId() {
@@ -52,16 +51,16 @@ public class Session{
         return team;
     }
 
-    public void setUsername(String username) {
-        this.thisReference.get().username = username;
+    public synchronized void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setGameID(String gameID) {
-        this.thisReference.get().gameID = gameID;
+    public synchronized void setGameID(String gameID) {
+        this.gameID = gameID;
     }
 
-    public void setTeam(String team) {
-        this.thisReference.get().team = team;
+    public synchronized void setTeam(String team) {
+        this.team = team;
     }
 
 }
