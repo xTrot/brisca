@@ -49,12 +49,12 @@ public class MakeGameHandler implements HttpHandler {
             return;
         }
 
+        User user = new User(userSession);
+
         Game newGame = new Game(gc);
+        newGame.addPlayer(user);
         newGame.runGameThread();
         String gameId = newGame.getUUID();
-
-        User user = new User(userSession);
-        newGame.addPlayer(user);
 
         userSession.setGameID(gameId);
         HandlerHelper.sendStatus(exchange, Status.OK);

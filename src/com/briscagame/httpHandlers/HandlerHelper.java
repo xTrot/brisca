@@ -81,6 +81,22 @@ public class HandlerHelper {
         }
     }
 
+    static String get(HttpExchange exchange) throws IOException {
+        if (exchange.getRequestMethod().compareTo("GET") != 0){
+            // System.out.println("Warning: 404 on " + exchange.getRequestURI());
+            sendStatus(exchange, Status.NOT_FOUND);
+            return null;
+        }
+        Scanner s = new Scanner(exchange.getRequestBody());
+        String result = "";
+        while (s.hasNext()) {
+            result+= s.next();
+        }
+        s.close();
+
+        return result;
+    }
+
     static String post(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0){
             // System.out.println("Warning: 404 on " + exchange.getRequestURI());

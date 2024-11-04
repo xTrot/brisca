@@ -36,6 +36,7 @@ public class Game implements Runnable, EventListener {
 
     @Override
     public void run() {
+        Lobby.updateLobby();
         this.gameManager = new GameManager(this, this.gameConfiguration);
         if (gameConfiguration.gameType.equals("public")) {
             this.waitingRoom();
@@ -66,6 +67,7 @@ public class Game implements Runnable, EventListener {
 
     private void cleanUp() {
         Game.games.remove(this.uuid);
+        Lobby.updateLobby();
         for (Player player : this.players) {
             Session.getSession(((User)player).getUuid()).setGameID(null);;
         }
@@ -180,12 +182,52 @@ public class Game implements Runnable, EventListener {
         return Game.games.get(gameId);
     }
 
+    public static Hashtable<String, Game> getGames() {
+        return Game.games;
+    }
+
     public String getUUID() {
         return this.uuid;
     }
 
     public static void setTpe(ThreadPoolExecutor tpe) {
         Game.tpe = tpe;
+    }
+
+    public String getFillInfo() {
+        int[] fill = {0, 0, 0};
+        for (Player player : this.players) {
+            int team = player.getTeam();
+            switch (team) {
+                case 0:
+                    fill[0] += 1;
+                    break;
+                case 1:
+                    fill[0] += 1;
+                    break;
+            
+                case 2:
+                    fill[2] += 1;
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        fill[1] = this.gameConfiguration.maxPlayers;
+        String fillString;
+        StringBuilder sb = new StringBuilder();
+        sb.append(fill[0]);
+        sb.append("/");
+        sb.append(fill[1]);
+        sb.append("/");
+        sb.append(fill[2]);
+        fillString = sb.toString();
+        return fillString;
+    }
+
+    public boolean isPublic() {
+        return gameConfiguration.gameType.equals("public");
     }
 
 }
