@@ -7,6 +7,7 @@ import java.util.EventListener;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.briscagame.httpHandlers.Session;
@@ -137,6 +138,14 @@ public class Game implements Runnable, EventListener {
         }
         this.startGameLock = true;
         return true;
+    }
+
+    public String getActions(int from) {
+        JSONArray actionsJson = new JSONArray();
+        for (int i = from; i < this.actions.size(); i++) {
+            actionsJson.put(this.actions.get(i));
+        }
+        return actionsJson.toString();
     }
 
     public void runGameThread() {

@@ -2,6 +2,7 @@ package com.briscagame;
 
 // Java Program to Set up a Basic HTTP Server
 import com.sun.net.httpserver.HttpServer;
+import com.briscagame.httpHandlers.ActionsHandler;
 import com.briscagame.httpHandlers.ChangeTeamHandler;
 import com.briscagame.httpHandlers.JoinGameHandler;
 import com.briscagame.httpHandlers.LeaveGameHandler;
@@ -31,6 +32,7 @@ public class SimpleHttpServer
     private static StartGameHandler startGameHandler = new StartGameHandler();
     private static PlayCardHandler playCardHandler = new PlayCardHandler();
     private static LobbyHandler lobbyHandler = new LobbyHandler();
+    private static ActionsHandler actionsHandler = new ActionsHandler();
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException
     {
@@ -48,6 +50,7 @@ public class SimpleHttpServer
         server.createContext("/startgame", startGameHandler);
         server.createContext("/playcard", playCardHandler);
         server.createContext("/lobby", lobbyHandler);
+        server.createContext("/actions", actionsHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
