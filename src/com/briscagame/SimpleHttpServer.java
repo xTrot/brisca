@@ -4,6 +4,7 @@ package com.briscagame;
 import com.sun.net.httpserver.HttpServer;
 import com.briscagame.httpHandlers.ActionsHandler;
 import com.briscagame.httpHandlers.ChangeTeamHandler;
+import com.briscagame.httpHandlers.HandHandler;
 import com.briscagame.httpHandlers.JoinGameHandler;
 import com.briscagame.httpHandlers.LeaveGameHandler;
 import com.briscagame.httpHandlers.LobbyHandler;
@@ -33,6 +34,7 @@ public class SimpleHttpServer
     private static PlayCardHandler playCardHandler = new PlayCardHandler();
     private static LobbyHandler lobbyHandler = new LobbyHandler();
     private static ActionsHandler actionsHandler = new ActionsHandler();
+    private static HandHandler handHandler = new HandHandler();
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException
     {
@@ -51,6 +53,7 @@ public class SimpleHttpServer
         server.createContext("/playcard", playCardHandler);
         server.createContext("/lobby", lobbyHandler);
         server.createContext("/actions", actionsHandler);
+        server.createContext("/hand", handHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor

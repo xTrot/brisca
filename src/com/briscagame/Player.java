@@ -3,6 +3,7 @@ package com.briscagame;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Player {
@@ -92,6 +93,14 @@ public class Player {
 
     public int getTeam() {
         return team;
+    }
+
+    public String getHand() {
+        JSONArray jsonArray = new JSONArray();
+        for (Card card : this.hand) {
+            jsonArray.put(card);
+        }
+        return jsonArray.toString();
     }
 
     public void yourTurn() {
