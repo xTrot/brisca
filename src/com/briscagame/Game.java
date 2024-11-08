@@ -27,11 +27,13 @@ public class Game implements Runnable, EventListener {
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
     private String uuid = UUID.randomUUID().toString();
+    private WaitingRoom waitingRoom;
 
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
         Game.games.put(this.uuid,this);
         Game.registerConfigAction(this, this.gameConfiguration);
+        this.waitingRoom = new WaitingRoom(this);
         
     }
 
@@ -89,6 +91,8 @@ public class Game implements Runnable, EventListener {
             }
         }
         this.players.add(user);
+        Lobby.updateLobby();
+        this.waitingRoom.updateWaitingRoom();
         return true;
     }
 
@@ -97,6 +101,8 @@ public class Game implements Runnable, EventListener {
         for (Player player : players) {
             if(userId.equals(((User)player).getUuid())){
                 players.remove(player);
+                Lobby.updateLobby();
+                this.waitingRoom.updateWaitingRoom();
                 return true;
             }
         }
@@ -113,6 +119,7 @@ public class Game implements Runnable, EventListener {
             if (userId.equals(((User)player).getUuid())) {
                 System.out.println("Player found and readied.");
                 player.readyToggle();
+                this.waitingRoom.updateWaitingRoom();
                 return true;
             }
         }
@@ -123,7 +130,9 @@ public class Game implements Runnable, EventListener {
         if (this.startGameLock) return false;
         if (this.players.size() == 0) return false;
         for (Player player : this.players) {
-            return player.setTeam(team);
+            boolean rtn = player.setTeam(team);
+            this.waitingRoom.updateWaitingRoom();
+            return rtn;
         }
         return false;
     }
@@ -251,6 +260,10 @@ public class Game implements Runnable, EventListener {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public String getWaitingRoom() {
+        return waitingRoom.getWaitingRoom();
     }
 
 }

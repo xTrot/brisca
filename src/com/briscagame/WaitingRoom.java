@@ -1,0 +1,48 @@
+package com.briscagame;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class WaitingRoom {
+    private AtomicReference<String> cacheReference = new AtomicReference<String>(null);
+    private Game game;
+
+    public WaitingRoom(Game game) {
+        this.game = game;
+    }
+
+    public void updateWaitingRoom() {
+        ArrayList<Player> players = this.game.getPlayers();
+        JSONObject json = new JSONObject();
+        JSONArray playersJson = new JSONArray();
+        for (Player player : players) {
+            User user = (User)player;
+            
+            String name = user.getPlayerName();
+            String ready = String.valueOf(user.isReady());
+            String team = Player.TEAM_TYPES.get(user.getTeam());
+            
+            JSONObject playerJson = new JSONObject();
+            playerJson.put("name", name);
+            playerJson.put("ready", ready);
+            playerJson.put("team", team);
+
+            playersJson.put(playerJson);
+        }
+
+        String fill = this.game.getFillInfo();
+
+        json.put("players", playersJson);
+        json.put("fill", fill);
+
+        cacheReference.set(json.toString());
+    }
+
+    public String getWaitingRoom() {
+        return cacheReference.get();
+    }
+
+}

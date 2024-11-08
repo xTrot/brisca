@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Player {
-    public static final List<String> TEAM_TYPES = List.of("team1", "teamA", "spectator");
+    public static final List<String> TEAM_TYPES = List.of("A", "B", "S"); // S=Spectator
 
     private String playerName;
     private ArrayList<Card> hand;

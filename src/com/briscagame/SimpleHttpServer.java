@@ -14,6 +14,7 @@ import com.briscagame.httpHandlers.ReadyHandler;
 import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
 import com.briscagame.httpHandlers.StartGameHandler;
+import com.briscagame.httpHandlers.WaitingRoomHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -35,6 +36,7 @@ public class SimpleHttpServer
     private static LobbyHandler lobbyHandler = new LobbyHandler();
     private static ActionsHandler actionsHandler = new ActionsHandler();
     private static HandHandler handHandler = new HandHandler();
+    private static WaitingRoomHandler waitingRoomHandler = new WaitingRoomHandler();
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException
     {
@@ -54,6 +56,7 @@ public class SimpleHttpServer
         server.createContext("/lobby", lobbyHandler);
         server.createContext("/actions", actionsHandler);
         server.createContext("/hand", handHandler);
+        server.createContext("/waitingroom", waitingRoomHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor

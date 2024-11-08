@@ -16,8 +16,6 @@ public class LobbyHandler implements HttpHandler {
         
         HandlerHelper.sendResponse(exchange, Status.OK, Lobby.getLobby());
         
-        HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-        
     }
 
 }
