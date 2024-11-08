@@ -15,11 +15,10 @@ public class WaitingRoom {
     }
 
     public void updateWaitingRoom() {
-        ArrayList<Player> players = this.game.getPlayers();
+        ArrayList<User> users = this.game.getPlayers();
         JSONObject json = new JSONObject();
         JSONArray playersJson = new JSONArray();
-        for (Player player : players) {
-            User user = (User)player;
+        for (User user : users) {
             
             String name = user.getPlayerName();
             String ready = String.valueOf(user.isReady());

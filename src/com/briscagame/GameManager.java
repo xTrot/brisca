@@ -25,8 +25,8 @@ public class GameManager {
         this.table = new Table(this.game, this.deck);
     }
 
-    public void start(ArrayList<Player> players) {
-        this.playerSeats = players;
+    public void start(ArrayList<User> players) {
+        this.playerSeats = assignSeats(players);
         setTheTable();
         while (rounds()) {
             judgeRound();
@@ -34,6 +34,41 @@ public class GameManager {
             draw();
         }
         judgeGame();
+    }
+
+    private ArrayList<Player> assignSeats(ArrayList<User> players) {
+        ArrayList<Player> assignedSeats = new ArrayList<Player>();
+        ArrayList<Player> teamA = new ArrayList<Player>();
+        ArrayList<Player> teamB = new ArrayList<Player>();
+
+        if (gameConfiguration.maxPlayers == 4) {
+            for (Player player : players) {
+                int team = player.getTeam();
+                switch (team) {
+                    case 0:
+                        teamA.add(player);
+                        break;
+                    case 1:
+                        teamB.add(player);
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
+
+            while (teamA.size() > 0 && teamB.size() > 0) {
+                assignedSeats.add(teamA.remove(0));
+                assignedSeats.add(teamB.remove(0));
+            }
+
+        } else {
+            for (Player player : players) {
+                assignedSeats.add(player);
+            }
+        }
+
+        return assignedSeats;
     }
 
     public void startSim() {

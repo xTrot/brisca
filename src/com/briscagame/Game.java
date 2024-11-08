@@ -21,7 +21,7 @@ public class Game implements Runnable, EventListener {
     // Protect these with synchro
     private static Hashtable<String,Game> games = new Hashtable<String,Game>();
     private ArrayList<PlayAction> actions = new ArrayList<PlayAction>();
-    private ArrayList<Player> players = new ArrayList<Player>();
+    private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
 
     private GameManager gameManager;
@@ -71,8 +71,8 @@ public class Game implements Runnable, EventListener {
     private void cleanUp() {
         Game.games.remove(this.uuid);
         Lobby.updateLobby();
-        for (Player player : this.players) {
-            Session.getSession(((User)player).getUuid()).setGameID(null);;
+        for (User user : this.players) {
+            Session.getSession(user.getUuid()).setGameID(null);;
         }
     }
 
@@ -84,8 +84,8 @@ public class Game implements Runnable, EventListener {
             this.players.add(user);
             return true;
         }
-        for (Player player : this.players) {
-            if (userId.equals(((User)player).getUuid())) {
+        for (User existingUser : this.players) {
+            if (userId.equals((existingUser).getUuid())) {
                 System.out.println("Player already joined, not added.");
                 return false;
             }
@@ -98,9 +98,9 @@ public class Game implements Runnable, EventListener {
 
     public synchronized boolean removePlayer(String userId) {
         if (this.startGameLock) return false;
-        for (Player player : players) {
-            if(userId.equals(((User)player).getUuid())){
-                players.remove(player);
+        for (User user : players) {
+            if(userId.equals(user.getUuid())){
+                players.remove(user);
                 Lobby.updateLobby();
                 this.waitingRoom.updateWaitingRoom();
                 return true;
@@ -115,10 +115,10 @@ public class Game implements Runnable, EventListener {
         if (this.players.size() == 0){
             return false;
         }
-        for (Player player : this.players) {
-            if (userId.equals(((User)player).getUuid())) {
+        for (User user : this.players) {
+            if (userId.equals(user.getUuid())) {
                 System.out.println("Player found and readied.");
-                player.readyToggle();
+                user.readyToggle();
                 this.waitingRoom.updateWaitingRoom();
                 return true;
             }
@@ -139,10 +139,10 @@ public class Game implements Runnable, EventListener {
 
     public synchronized boolean startGame(String userId) {
         if (this.startGameLock) return false;
-        if (!((User)players.get(HOST)).getUuid().equals(userId)){
+        if (!(players.get(HOST)).getUuid().equals(userId)){
             return false;
         }
-        if (!this.ready(players)){
+        if (!this.ready()){
             return false;
         }
         this.startGameLock = true;
@@ -161,7 +161,7 @@ public class Game implements Runnable, EventListener {
         Game.tpe.execute(this);
     }
 
-    private boolean ready(ArrayList<Player> players) {
+    private boolean ready() {
         if (players.size() != gameConfiguration.maxPlayers) return false;
         for (Player player : players) {
             if (!player.isReady()) return false;
@@ -250,15 +250,15 @@ public class Game implements Runnable, EventListener {
 
     public User getUser(String userId) {
         User user = null;
-        for (Player player : this.players) {
-            if (userId.equals(((User)player).getUuid())) {
-                user = (User)player;
+        for (User existingUser : this.players) {
+            if (userId.equals((existingUser).getUuid())) {
+                user = existingUser;
             }
         }
         return user;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public ArrayList<User> getPlayers() {
         return players;
     }
 
