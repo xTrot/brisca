@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.Game;
+import com.briscagame.User;
 import com.sun.net.httpserver.HttpExchange;
 
 public class HandHandler implements HttpHandler {
@@ -32,7 +33,13 @@ public class HandHandler implements HttpHandler {
             return;
         }
 
-        String hand = game.getHand(userSession.getUserId());
+        User user = game.getUser(userSession.getUserId());
+        if (user == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        String hand = user.getHand();
         if (hand == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;

@@ -6,6 +6,7 @@ import java.util.EventListener;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.CardPlayedEvent;
+import com.briscagame.Game;
 import com.briscagame.User;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -32,9 +33,38 @@ public class PlayCardHandler implements HttpHandler {
             return;
         }
 
-        int index = parsedJson.optInt("index");
         Session userSession = HandlerHelper.getSession(exchange);
-        CardPlayedEvent event = new CardPlayedEvent(this, index, userSession.getUserId());
+        if (userSession == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        String gameId = userSession.getGameID();
+        if (gameId == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        Game game = Game.getGame(gameId);
+        if (game == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        String userId = userSession.getUserId();
+        User user = game.getUser(userId);
+        if (user == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        int index = parsedJson.optInt("index");
+        if (index < 0 || user.getHandSize() < index) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        CardPlayedEvent event = new CardPlayedEvent(this, index, userId);
         this.notifyEvent(event);
         HandlerHelper.sendStatus(exchange, Status.OK);
     }

@@ -239,17 +239,18 @@ public class Game implements Runnable, EventListener {
         return gameConfiguration.gameType.equals("public");
     }
 
-    public String getHand(String userId) {
+    public User getUser(String userId) {
         User user = null;
         for (Player player : this.players) {
             if (userId.equals(((User)player).getUuid())) {
                 user = (User)player;
             }
         }
-        if (user == null) {
-            return null;
-        }
-        return user.getHand();
+        return user;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
 }
