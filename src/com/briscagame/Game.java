@@ -82,6 +82,7 @@ public class Game implements Runnable, EventListener {
         System.out.println("Adding player " + user.getPlayerName() + ":" + userId);
         if (this.players.size() == 0){
             this.players.add(user);
+            this.waitingRoom.updateWaitingRoom();
             return true;
         }
         for (User existingUser : this.players) {
