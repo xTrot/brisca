@@ -21,7 +21,7 @@ public class WaitingRoom {
         for (User user : users) {
             
             String name = user.getPlayerName();
-            String ready = String.valueOf(user.isReady());
+            boolean ready = user.isReady();
             String team = Player.TEAM_TYPES.get(user.getTeam());
             
             JSONObject playerJson = new JSONObject();
