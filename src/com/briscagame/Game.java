@@ -147,6 +147,7 @@ public class Game implements Runnable, EventListener {
             return false;
         }
         this.startGameLock = true;
+        this.waitingRoom.updateWaitingRoom();
         return true;
     }
 
@@ -247,6 +248,10 @@ public class Game implements Runnable, EventListener {
 
     public boolean isPublic() {
         return gameConfiguration.gameType.equals("public");
+    }
+
+    public boolean hasStarted() {
+        return this.startGameLock;
     }
 
     public User getUser(String userId) {

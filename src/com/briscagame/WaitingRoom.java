@@ -36,6 +36,7 @@ public class WaitingRoom {
 
         json.put("players", playersJson);
         json.put("fill", fill);
+        json.put("started", game.hasStarted());
 
         cacheReference.set(json.toString());
     }

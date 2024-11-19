@@ -33,6 +33,7 @@ public class LeaveGameHandler implements HttpHandler {
         }
 
         if (game.removePlayer(userSession.getUserId())) {
+            userSession.setGameID(null);
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
