@@ -111,8 +111,7 @@ public class Player {
         payload.put("seat", this.seat);
         payload.put("index", index);
         payload.put("card", cardPlayed.toString());
-        PlayAction action = new PlayAction(PlayAction.ActionType.CARD_PLAYED, payload);
-        Game.registerAction(this.table.game, action);
+        new PlayAction(this.table.game, PlayAction.ActionType.CARD_PLAYED, payload);
     }
 
     public void sit(int seat) {

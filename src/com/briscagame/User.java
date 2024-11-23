@@ -2,7 +2,6 @@ package com.briscagame;
 
 import java.util.EventListener;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.briscagame.httpHandlers.Session;
 
@@ -11,13 +10,11 @@ public class User extends Player implements EventListener {
     private static final int WAIT_ONE_MIN_COUNT = 600; // 600 count * tenths
 
     private boolean thinking = false;
-    private AtomicInteger indexIdea;
+    private int indexIdea;
     private String userId;
 
     public User(Table table, String playerName) {
         super(table, playerName);
-        this.indexIdea = new AtomicInteger(-1);
-        SimpleHttpServer.getPlayCardHandler().addListener(this);
     }
 
     public User(Session userSession) {
@@ -39,12 +36,16 @@ public class User extends Player implements EventListener {
             }
             count--;
         }
-        return indexIdea.get();
+        return indexIdea;
     }
 
-    public void doneThinking(CardPlayedEvent event) {
-        this.indexIdea.set(event.getIndex());
+    public boolean doneThinking(int index) {
+        if (!this.thinking){
+            return false;
+        }
+        this.indexIdea = index;
         this.thinking = false;
+        return true;
     }
 
     @Override

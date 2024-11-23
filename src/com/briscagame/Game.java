@@ -32,7 +32,7 @@ public class Game implements Runnable, EventListener {
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
         Game.games.put(this.uuid,this);
-        Game.registerConfigAction(this, this.gameConfiguration);
+        new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration));
         this.waitingRoom = new WaitingRoom(this);
         
     }
@@ -187,11 +187,6 @@ public class Game implements Runnable, EventListener {
             return (team1==2 && teamA==2);
         }
         return true;
-    }
-
-    private static void registerConfigAction(Game game, GameConfiguration gameConfiguration) {
-        PlayAction action = new PlayAction(PlayAction.ActionType.GAME_SETUP_COMPLETED, new JSONObject(gameConfiguration));
-        game.actions.add(action);
     }
 
     public static void registerAction(Game game, PlayAction action) {

@@ -4,9 +4,11 @@ import org.json.JSONObject;
 
 public class PlayAction {
     public static enum ActionType {
-        GAME_SETUP_COMPLETED,
+        GAME_CONFIG,
+        GAME_STARTED,
         FIRST_PLAYER_SELECTED,
         BOTTOM_CARD_SELECTED,
+        GRACE_PERIOD_ENDED,
         CARD_DRAWN,
         CARD_PLAYED,
         TURN_WON,
@@ -16,14 +18,14 @@ public class PlayAction {
     private ActionType type;
     private JSONObject payload = null;
 
-    public PlayAction(ActionType type) {
-        this(type, null);
+    public PlayAction(Game game, ActionType type) {
+        this(game, type, null);
     }
 
-    public PlayAction(ActionType type, JSONObject payload) {
+    public PlayAction(Game game, ActionType type, JSONObject payload) {
         this.type = type;
         this.payload = payload;
-        // System.out.println("New Action of type " + this.type + " was taken.");
+        Game.registerAction(game, this);
         System.out.println(this);
     }
 

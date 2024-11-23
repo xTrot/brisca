@@ -1,11 +1,8 @@
 package com.briscagame.httpHandlers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EventListener;
 
 import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.CardPlayedEvent;
 import com.briscagame.Game;
 import com.briscagame.User;
 import com.sun.net.httpserver.HttpExchange;
@@ -13,8 +10,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.*;
 
 public class PlayCardHandler implements HttpHandler {
-    
-    private ArrayList<EventListener> listeners = new ArrayList<EventListener>();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException 
@@ -59,26 +54,16 @@ public class PlayCardHandler implements HttpHandler {
         }
 
         int index = parsedJson.optInt("index");
-        if (index < 0 || user.getHandSize() < index) {
+        if (index < 0 || user.getHandSize() <= index) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
-        CardPlayedEvent event = new CardPlayedEvent(this, index, userId);
-        this.notifyEvent(event);
-        HandlerHelper.sendStatus(exchange, Status.OK);
-    }
-
-    public void addListener(User user) {
-        listeners.add(user);
-    }
-
-    private void notifyEvent(CardPlayedEvent event) {
-        for(EventListener listener: listeners) {
-            User user = (User)listener;
-            if (event.getUuid().equals(user.getUuid())) {
-                user.doneThinking(event);
-            }
+        if (user.doneThinking(index)) {
+            HandlerHelper.sendStatus(exchange, Status.OK);
         }
+
+        HandlerHelper.sendStatus(exchange, Status.NOT_OK);
     }
+
 }
