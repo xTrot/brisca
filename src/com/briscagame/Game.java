@@ -20,7 +20,7 @@ public class Game implements Runnable, EventListener {
 
     // Protect these with synchro
     private static Hashtable<String,Game> games = new Hashtable<String,Game>();
-    private ArrayList<PlayAction> actions = new ArrayList<PlayAction>();
+    private ArrayList<String> actions = new ArrayList<String>();
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
 
@@ -190,7 +190,7 @@ public class Game implements Runnable, EventListener {
     }
 
     public static void registerAction(Game game, PlayAction action) {
-        game.actions.add(action);
+        game.actions.add(action.toString());
     }
 
     public static Game getGame(String gameId) {
