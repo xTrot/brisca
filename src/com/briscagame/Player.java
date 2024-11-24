@@ -53,6 +53,7 @@ public class Player {
                     && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP
                 ) {
                     Card bottomCard = table.deck.swapBottomCard(hand.remove(i));
+                    new PlayAction(this.table.game, PlayAction.ActionType.SWAP_BOTTOM_CARD);
                     hand.add(bottomCard);
                     System.out.println(this.playerName + " swapped " + currentCard + " for " + bottomCard);
                 }

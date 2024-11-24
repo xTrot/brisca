@@ -9,6 +9,7 @@ public class PlayAction {
         FIRST_PLAYER_SELECTED,
         BOTTOM_CARD_SELECTED,
         GRACE_PERIOD_ENDED,
+        SWAP_BOTTOM_CARD,
         CARD_DRAWN,
         CARD_PLAYED,
         TURN_WON,

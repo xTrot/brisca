@@ -79,7 +79,7 @@ public class Game implements Runnable, EventListener {
     public synchronized boolean addPlayer(User user) {
         if (this.startGameLock) return false;
         String userId = user.getUuid();
-        System.out.println("Adding player " + user.getPlayerName() + ":" + userId);
+        System.out.println("Adding player " + user.getPlayerName() + ": " + userId);
         if (this.players.size() == 0){
             this.players.add(user);
             this.waitingRoom.updateWaitingRoom();

@@ -2,11 +2,16 @@ package com.briscagame;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.briscagame.Card.SUIT;
 
 public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
+    private static final int TEN_SEC = 10000;
 
 
     private Deck deck;
@@ -140,15 +145,29 @@ public class GameManager {
 
     private void setTheTable() {
         if (gameConfiguration.swapBottomCard) table.swapBottomCard = true;
+        JSONArray seatsJson = new JSONArray();
+        JSONObject seatJson;
 
         for (int i=0; playerSeats.size() > i; i++) {
             Player player = playerSeats.get(i);
             player.setTable(this.table);
             player.sit(i);
+            seatJson = new JSONObject();
+            seatJson.put("seat", i);
+            seatJson.put("username", player.getPlayerName());
+            seatsJson.put(seatJson);
         }
+
+        JSONObject gameStartedJson = new JSONObject();
+        gameStartedJson.put("seats", seatsJson);
+
+        new PlayAction(game, PlayAction.ActionType.GAME_STARTED, gameStartedJson);
 
         System.out.println("\n\nStarting a new game!.");
         System.out.println("This bottom card was picked " + table.bottomCard);
+        JSONObject bottomCardJson = new JSONObject();
+        bottomCardJson.put("bottomCard", this.table.bottomCard);
+        new PlayAction(game, PlayAction.ActionType.BOTTOM_CARD_SELECTED, bottomCardJson);
         System.out.println("This is the suit for the game " + table.bottomCard.getSuit());
 
         for (int i = 0; i < STARTING_HAND_SIZE; i++) {
@@ -156,7 +175,14 @@ public class GameManager {
                 player.draw();
             }
         }
-        // System.out.println("Starting hands have been dealt to playerSeats.");
+        
+        try {
+            TimeUnit.MILLISECONDS.sleep(TEN_SEC);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new PlayAction(game, PlayAction.ActionType.GRACE_PERIOD_ENDED);
 
         turn = rand.nextInt(playerSeats.size());
         System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
@@ -191,6 +217,9 @@ public class GameManager {
         int winningCardIndex = this.judge();
         int winningPlayer = (this.turn + winningCardIndex) % playerSeats.size();
         this.turn = winningPlayer;
+        JSONObject turnWonJson = new JSONObject();
+        turnWonJson.put("seat", winningPlayer);
+        new PlayAction(game, PlayAction.ActionType.TURN_WON, turnWonJson);
         // System.out.println(playerSeats.get(winningPlayer).getPlayerName() + " won the round.\n");
     }
 
@@ -201,6 +230,9 @@ public class GameManager {
             currentPlayerIndex = i % playersPlaying; // Rotate around playerSeats.
             if (deck.getDeckSize() > 0){
                 playerSeats.get(currentPlayerIndex).draw();
+                JSONObject seatJson = new JSONObject();
+                seatJson.put("seat", currentPlayerIndex);
+                new PlayAction(game, PlayAction.ActionType.CARD_DRAWN, seatJson);
             } else {
                 break;
             }
@@ -219,18 +251,26 @@ public class GameManager {
         int team1Score = playerSeats.get(0).getScore() + playerSeats.get(2).getScore();
         int team2Score = playerSeats.get(1).getScore() + playerSeats.get(3).getScore();
 
+        String winningTeam;
         if (team1Score > team2Score) {
             System.out.println("Team 1 won.");
+            winningTeam = Player.TEAM_TYPES.get(playerSeats.get(0).getTeam());
         } else if (team2Score > team1Score) {
             System.out.println("Team 2 won.");
+            winningTeam = Player.TEAM_TYPES.get(playerSeats.get(0).getTeam());
         } else {
             System.out.println("Its a draw.");
+            winningTeam = "draw";
         }
 
         System.out.println("Scores:" + team1Score + ", " + team2Score);
         for (Player player : playerSeats) {
             System.out.println(player);
         }
+
+        JSONObject teamJson = new JSONObject();
+        teamJson.put("team", winningTeam);
+        new PlayAction(game, PlayAction.ActionType.GAME_WON, teamJson);
 
     }
 
@@ -261,6 +301,10 @@ public class GameManager {
                 return;
             }
         }
+
+        JSONObject seatJson = new JSONObject();
+        seatJson.put("seat", winner);
+        new PlayAction(game, PlayAction.ActionType.GAME_WON, seatJson);
 
         System.out.println("\nThe winner is " + playerSeats.get(winner).getPlayerName());
         for (Player player : playerSeats) {
