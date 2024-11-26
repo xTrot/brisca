@@ -6,8 +6,6 @@ import java.util.UUID;
 import java.util.EventListener;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.briscagame.httpHandlers.Session;
@@ -152,11 +150,13 @@ public class Game implements Runnable, EventListener {
     }
 
     public String getActions(int from) {
-        JSONArray actionsJson = new JSONArray();
+        if (actions.size() == 0) return "[]";
+        StringBuilder actionsJsonArray = new StringBuilder("[");
         for (int i = from; i < this.actions.size(); i++) {
-            actionsJson.put(this.actions.get(i));
+            actionsJsonArray.append(this.actions.get(i));
         }
-        return actionsJson.toString();
+        actionsJsonArray.replace(actionsJsonArray.length()-1, actionsJsonArray.length(), "]");
+        return actionsJsonArray.toString();
     }
 
     public void runGameThread() {
@@ -190,7 +190,7 @@ public class Game implements Runnable, EventListener {
     }
 
     public static void registerAction(Game game, PlayAction action) {
-        game.actions.add(action.toString());
+        game.actions.add(action.toString()+","); // Storing with comma, ready for array construction.
     }
 
     public static Game getGame(String gameId) {
