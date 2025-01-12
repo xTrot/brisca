@@ -186,6 +186,7 @@ public class GameManager {
 
         turn = rand.nextInt(playerSeats.size());
         System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
+        new PlayAction(game, PlayAction.ActionType.FIRST_PLAYER_SELECTED, new JSONObject().put("seat", turn));
 
     }
 
