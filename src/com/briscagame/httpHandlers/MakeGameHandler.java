@@ -57,6 +57,7 @@ public class MakeGameHandler implements HttpHandler {
         String gameId = newGame.getUUID();
 
         userSession.setGameID(gameId);
+        userSession.setActionsSent(0);
         JSONObject gameJson = new JSONObject("{\"gameId\":\""+gameId+"\"}");
         HandlerHelper.sendResponse(exchange, Status.OK, gameJson.toString());
     }

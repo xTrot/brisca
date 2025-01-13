@@ -149,13 +149,16 @@ public class Game implements Runnable, EventListener {
         return true;
     }
 
-    public String getActions(int from) {
-        if (actions.size() == 0) return "[]";
+    public String getActions(Session userSession) {
+        int actionsSize = actions.size();
+        int from = userSession.getActionsSent();
+        if (actionsSize == from) return "[]";
         StringBuilder actionsJsonArray = new StringBuilder("[");
-        for (int i = from; i < this.actions.size(); i++) {
+        for (int i = from; i < actionsSize; i++) {
             actionsJsonArray.append(this.actions.get(i));
         }
         actionsJsonArray.replace(actionsJsonArray.length()-1, actionsJsonArray.length(), "]");
+        userSession.setActionsSent(actionsSize);
         return actionsJsonArray.toString();
     }
 

@@ -12,6 +12,7 @@ public class Session{
     private String username;
     private String gameID;
     private String team;
+    private int actionsSent;
 
     public static Session getSession(String userId) {
         if (!Session.sessions.containsKey(userId)) {
@@ -51,6 +52,10 @@ public class Session{
         return team;
     }
 
+    public int getActionsSent() {
+        return actionsSent;
+    }
+
     public synchronized void setUsername(String username) {
         this.username = username;
     }
@@ -61,6 +66,10 @@ public class Session{
 
     public synchronized void setTeam(String team) {
         this.team = team;
+    }
+
+    public synchronized void setActionsSent(int actionsSent) {
+        this.actionsSent = actionsSent;
     }
 
 }
