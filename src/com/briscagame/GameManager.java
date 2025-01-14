@@ -158,8 +158,12 @@ public class GameManager {
             seatsJson.put(seatJson);
         }
 
+        turn = rand.nextInt(playerSeats.size());
+        System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
+
         JSONObject gameStartedJson = new JSONObject();
         gameStartedJson.put("seats", seatsJson);
+        gameStartedJson.put("startingSeat", turn);
 
         new PlayAction(game, PlayAction.ActionType.GAME_STARTED, gameStartedJson);
 
@@ -183,10 +187,6 @@ public class GameManager {
         }
 
         new PlayAction(game, PlayAction.ActionType.GRACE_PERIOD_ENDED);
-
-        turn = rand.nextInt(playerSeats.size());
-        System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
-        new PlayAction(game, PlayAction.ActionType.FIRST_PLAYER_SELECTED, new JSONObject().put("seat", turn));
 
     }
 

@@ -6,7 +6,6 @@ public class PlayAction {
     public static enum ActionType {
         GAME_CONFIG,
         GAME_STARTED,
-        FIRST_PLAYER_SELECTED,
         BOTTOM_CARD_SELECTED,
         GRACE_PERIOD_ENDED,
         SWAP_BOTTOM_CARD,
