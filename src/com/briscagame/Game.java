@@ -2,7 +2,6 @@ package com.briscagame;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.UUID;
 import java.util.EventListener;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -24,13 +23,14 @@ public class Game implements Runnable, EventListener {
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
     private WaitingRoom waitingRoom;
 
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
+        this.uuid = gameConfiguration.gameId;
         Game.games.put(this.uuid,this);
-        new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration));
+        new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration.toString()));
         this.waitingRoom = new WaitingRoom(this);
         
     }

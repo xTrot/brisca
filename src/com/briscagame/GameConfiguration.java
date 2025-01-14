@@ -1,6 +1,7 @@
 package com.briscagame;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ public class GameConfiguration {
     boolean swapBottomCard;
     int maxPlayers;
     String gameType;
+    String gameId = UUID.randomUUID().toString();
 
     public GameConfiguration(){
         this.swapBottomCard = false;
@@ -45,6 +47,10 @@ public class GameConfiguration {
         this.maxPlayers = maxPlayers;
     }
 
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
     public boolean getSwapBottomCard () {
         return this.swapBottomCard;
     }
@@ -55,6 +61,10 @@ public class GameConfiguration {
 
     public String getGameType() {
         return gameType;
+    }
+
+    public String getGameId() {
+        return gameId;
     }
 
     public void setGameType(String gameType) {
