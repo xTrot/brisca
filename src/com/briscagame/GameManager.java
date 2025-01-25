@@ -33,12 +33,14 @@ public class GameManager {
     public void start(ArrayList<User> players) {
         this.playerSeats = assignSeats(players);
         setTheTable();
+        gracePeriod();
         while (rounds()) {
             judgeRound();
             awardCards();
             draw();
         }
         judgeGame();
+        gracePeriod();
     }
 
     private ArrayList<Player> assignSeats(ArrayList<User> players) {
@@ -179,7 +181,9 @@ public class GameManager {
                 player.draw();
             }
         }
-        
+    }
+
+    private void gracePeriod() {
         try {
             TimeUnit.MILLISECONDS.sleep(TEN_SEC);
         } catch (InterruptedException e) {
