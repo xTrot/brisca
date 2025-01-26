@@ -15,7 +15,7 @@ public class Lobby {
         JSONArray gamesJson = new JSONArray();
         for (String key : games.keySet()) {
             Game game = games.get(key);
-            if (!game.isPublic()) {
+            if (!game.isPublic() || game.hasStarted()) {
                 continue;
             }
             String fill = game.getFillInfo();
