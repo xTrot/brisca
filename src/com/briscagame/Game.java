@@ -20,6 +20,7 @@ public class Game implements Runnable, EventListener {
     private ArrayList<String> actions = new ArrayList<String>();
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
+    private boolean gameStarted = false;
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
@@ -145,6 +146,17 @@ public class Game implements Runnable, EventListener {
             return false;
         }
         this.startGameLock = true;
+        try {
+            while (!this.gameStarted) {
+                TimeUnit.MILLISECONDS.sleep(10);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            this.cleanUp();
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.cleanUp();
+        }
         this.waitingRoom.updateWaitingRoom();
         return true;
     }
@@ -268,6 +280,10 @@ public class Game implements Runnable, EventListener {
 
     public String getWaitingRoom() {
         return waitingRoom.getWaitingRoom();
+    }
+
+    public void setGameStarted() {
+        this.gameStarted = true;
     }
 
 }

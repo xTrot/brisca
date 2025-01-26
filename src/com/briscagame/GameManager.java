@@ -168,6 +168,7 @@ public class GameManager {
         gameStartedJson.put("startingSeat", turn);
 
         new PlayAction(game, PlayAction.ActionType.GAME_STARTED, gameStartedJson);
+        game.setGameStarted();
 
         System.out.println("\n\nStarting a new game!.");
         System.out.println("This bottom card was picked " + table.bottomCard);
