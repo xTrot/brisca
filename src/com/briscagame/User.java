@@ -8,8 +8,10 @@ import com.briscagame.httpHandlers.Session;
 public class User extends Player implements EventListener {
     private static final long WAIT_TENTH_SEC = 100;
     private static final int WAIT_ONE_MIN_COUNT = 600; // 600 count * tenths
+    private static final int WAIT_FIVE_SEC_COUNT = 50; // 600 count * tenths
 
     private boolean thinking = false;
+    private boolean hasTimedOut = false;
     private int indexIdea;
     private String userId;
 
@@ -24,7 +26,7 @@ public class User extends Player implements EventListener {
 
     public int startThinking() {
         this.thinking = true;
-        int count = WAIT_ONE_MIN_COUNT;
+        int count = !this.hasTimedOut ? WAIT_ONE_MIN_COUNT : WAIT_FIVE_SEC_COUNT;
         while (thinking) {
             try {
                 TimeUnit.MILLISECONDS.sleep(WAIT_TENTH_SEC);
@@ -32,10 +34,12 @@ public class User extends Player implements EventListener {
                 e.printStackTrace();
             }
             if(count == 0) {
+                this.hasTimedOut = true;
                 return 0; //Timeout
             }
             count--;
         }
+        this.hasTimedOut = false;
         return indexIdea;
     }
 
