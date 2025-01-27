@@ -283,13 +283,13 @@ public class GameManager {
     private void judgeFreeForAllGame() {
         int[] scores = new int[playerSeats.size()];
         int winner = 0;
-        int maxScore = playerSeats.get(winner).getScore();
+        int maxScore = playerSeats.get(winner).getFinalScore();
         scores[0] = maxScore;
         
 
         int currentScore;
         for (int i = 1; i < playerSeats.size(); i++) {
-            currentScore = playerSeats.get(i).getScore();
+            currentScore = playerSeats.get(i).getFinalScore();
             scores[i] = currentScore;
             if (currentScore > maxScore) {
                 maxScore = currentScore;

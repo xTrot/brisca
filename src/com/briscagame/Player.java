@@ -78,6 +78,14 @@ public class Player {
 
     public int getScore() {
         int score = 0;
+        for (Card card : scorePile) {
+            score += card.getScore();
+        }
+        return score;
+    }
+
+    public int getFinalScore() {
+        int score = 0;
         for (int i = 0; i < hand.size(); i++) {
                 scorePile.add(hand.remove(i));
     
