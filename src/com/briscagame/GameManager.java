@@ -263,7 +263,7 @@ public class GameManager {
             winningTeam = Player.TEAM_TYPES.get(playerSeats.get(0).getTeam());
         } else if (team2Score > team1Score) {
             System.out.println("Team 2 won.");
-            winningTeam = Player.TEAM_TYPES.get(playerSeats.get(0).getTeam());
+            winningTeam = Player.TEAM_TYPES.get(playerSeats.get(1).getTeam());
         } else {
             System.out.println("Its a draw.");
             winningTeam = "draw";
