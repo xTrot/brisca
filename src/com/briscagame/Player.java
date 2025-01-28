@@ -142,11 +142,11 @@ public class Player {
     public boolean setTeam(String team) {
         if (team == null) {
             // set to the other team
-            if (this.team == TEAM_TYPES.indexOf("team1")){
-                this.team = TEAM_TYPES.indexOf("teamA");
+            if (this.team == TEAM_TYPES.indexOf("B")){
+                this.team = TEAM_TYPES.indexOf("A");
                 return true;
-            } else if (this.team == TEAM_TYPES.indexOf("teamA")) {
-                this.team = TEAM_TYPES.indexOf("team1");
+            } else if (this.team == TEAM_TYPES.indexOf("A")) {
+                this.team = TEAM_TYPES.indexOf("B");
                 return true;
             }
             throw new NullPointerException("This Null has to be handled.");

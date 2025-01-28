@@ -128,9 +128,9 @@ public class Game implements Runnable, EventListener {
 
     public synchronized boolean changeTeam(String userId, String team) {
         if (this.startGameLock) return false;
-        if (this.players.size() == 0) return false;
-        for (Player player : this.players) {
-            boolean rtn = player.setTeam(team);
+        User user = this.getUser(userId);
+        if (user != null) {
+            boolean rtn = user.setTeam(team);
             this.waitingRoom.updateWaitingRoom();
             return rtn;
         }
