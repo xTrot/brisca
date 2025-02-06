@@ -28,6 +28,10 @@ public class RegisterHandler implements HttpHandler {
 
         String username = parsedJson.getString("username");
         String userId = HandlerHelper.getCookie(exchange, "userId");
+        if (username.length() < 3) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
 
         Session userSession = null;
         if (userId == null) {
