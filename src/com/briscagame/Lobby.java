@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Lobby {
-    private static AtomicReference<String> cacheReference = new AtomicReference<String>(null);
+    private static AtomicReference<String> cacheReference = new AtomicReference<String>("[]");
 
     public static void updateLobby() {
         Hashtable<String, Game> games = Game.getGames();

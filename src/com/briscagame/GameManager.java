@@ -71,6 +71,8 @@ public class GameManager {
 
         } else {
             for (Player player : players) {
+                if (Player.TEAM_TYPES.get(player.getTeam()).equals("S")) 
+                    continue;
                 assignedSeats.add(player);
             }
         }

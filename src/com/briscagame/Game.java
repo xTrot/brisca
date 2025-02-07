@@ -79,7 +79,8 @@ public class Game implements Runnable, EventListener {
         if (this.startGameLock) return false;
         String userId = user.getUuid();
         System.out.println("Adding player " + user.getPlayerName() + ": " + userId);
-        if (this.players.size() == 0){
+        int playersSize = this.players.size();
+        if (playersSize == 0){
             this.players.add(user);
             this.waitingRoom.updateWaitingRoom();
             return true;
@@ -89,6 +90,9 @@ public class Game implements Runnable, EventListener {
                 System.out.println("Player already joined, not added.");
                 return false;
             }
+        }
+        if (playersSize >= this.gameConfiguration.maxPlayers){
+            user.setTeam("S");
         }
         this.players.add(user);
         Lobby.updateLobby();
@@ -179,18 +183,18 @@ public class Game implements Runnable, EventListener {
     }
 
     private boolean ready() {
-        if (players.size() != gameConfiguration.maxPlayers) return false;
         for (Player player : players) {
+            if (Player.TEAM_TYPES.get(player.getTeam()).equals("S")) continue;
             if (!player.isReady()) return false;
         }
         if (this.gameConfiguration.maxPlayers == 4) {
-            int team1 = 0;
+            int teamB = 0;
             int teamA = 0;
             for (Player player : players) {
                 int teamIndex = player.getTeam();
                 switch (teamIndex) {
                     case 0:
-                        team1 +=1;
+                        teamB +=1;
                         break;
                     case 1:
                         teamA +=1;
@@ -199,7 +203,7 @@ public class Game implements Runnable, EventListener {
                         break;
                 }
             }
-            return (team1==2 && teamA==2);
+            return (teamB==2 && teamA==2);
         }
         return true;
     }
@@ -258,6 +262,10 @@ public class Game implements Runnable, EventListener {
 
     public boolean isPublic() {
         return gameConfiguration.gameType.equals("public");
+    }
+
+    public boolean isJoinable() {
+        return !gameConfiguration.gameType.equals("solo");
     }
 
     public boolean hasStarted() {

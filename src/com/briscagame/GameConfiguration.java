@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class GameConfiguration {
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
-    public static final List<String> GAME_TYPES = List.of("solo", "public");
+    public static final List<String> GAME_TYPES = List.of("solo", "public", "private");
         
 
     boolean swapBottomCard;

@@ -42,6 +42,11 @@ public class JoinGameHandler implements HttpHandler {
             return;
         }
 
+        if (!game.isJoinable()){
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
         User user = new User(userSession);
         if (game.addPlayer(user)){
             userSession.setGameID(gameId);
