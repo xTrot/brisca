@@ -44,21 +44,7 @@ public class Player {
     }
 
     public int thinking() {
-        if (table.swapBottomCard && !table.deck.empty()) {
-            int size = hand.size();
-            for (int i = 0; i < size; i++) {
-                Card currentCard = hand.get(i);
-                if (
-                    currentCard.getSuit() == table.suitForThisGame 
-                    && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP
-                ) {
-                    Card bottomCard = table.deck.swapBottomCard(hand.remove(i));
-                    new PlayAction(this.table.game, PlayAction.ActionType.SWAP_BOTTOM_CARD);
-                    hand.add(bottomCard);
-                    System.out.println(this.playerName + " swapped " + currentCard + " for " + bottomCard);
-                }
-            }
-        }
+        this.swapBottomCard(); // Only happens if possible.
         return 0;
     }
 
@@ -156,6 +142,25 @@ public class Player {
         }
         this.team = TEAM_TYPES.indexOf(team);
         return true;
+    }
+
+    public boolean swapBottomCard() {
+        if (table.swapBottomCard && !table.deck.empty()) {
+            int size = hand.size();
+            for (int i = 0; i < size; i++) {
+                Card currentCard = hand.get(i);
+                if (
+                    currentCard.getSuit() == table.suitForThisGame 
+                    && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP
+                ) {
+                    Card bottomCard = table.deck.swapBottomCard(hand.remove(i));
+                    new PlayAction(this.table.game, PlayAction.ActionType.SWAP_BOTTOM_CARD);
+                    hand.add(bottomCard);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
