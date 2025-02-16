@@ -13,7 +13,6 @@ public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
     private static final int TEN_SEC = 10000;
 
-
     private Deck deck;
     private ArrayList<Player> playerSeats;
     private int turn;
@@ -27,7 +26,7 @@ public class GameManager {
         this.game = game;
         this.gameConfiguration = gameConfiguration;
         this.deck = new Deck(game);
-        this.table = new Table(this.game, this.deck);
+        this.table = new Table(this.game, this.deck, this.gameConfiguration);
     }
 
     public void start(ArrayList<User> players) {
@@ -58,7 +57,7 @@ public class GameManager {
                     case 1:
                         teamB.add(player);
                         break;
-                
+
                     default:
                         break;
                 }
@@ -71,7 +70,7 @@ public class GameManager {
 
         } else {
             for (Player player : players) {
-                if (Player.TEAM_TYPES.get(player.getTeam()).equals("S")) 
+                if (Player.TEAM_TYPES.get(player.getTeam()).equals("S"))
                     continue;
                 assignedSeats.add(player);
             }
@@ -143,16 +142,19 @@ public class GameManager {
             playerSeats.add(team2.remove(0));
         }
 
-        System.out.println("Team 1: " + playerSeats.get(0).getPlayerName() + " and " + playerSeats.get(2).getPlayerName());
-        System.out.println("Team 2: " + playerSeats.get(1).getPlayerName() + " and " + playerSeats.get(3).getPlayerName());
+        System.out.println(
+                "Team 1: " + playerSeats.get(0).getPlayerName() + " and " + playerSeats.get(2).getPlayerName());
+        System.out.println(
+                "Team 2: " + playerSeats.get(1).getPlayerName() + " and " + playerSeats.get(3).getPlayerName());
     }
 
     private void setTheTable() {
-        if (gameConfiguration.swapBottomCard) table.swapBottomCard = true;
+        if (gameConfiguration.swapBottomCard)
+            table.swapBottomCard = true;
         JSONArray seatsJson = new JSONArray();
         JSONObject seatJson;
 
-        for (int i=0; playerSeats.size() > i; i++) {
+        for (int i = 0; playerSeats.size() > i; i++) {
             Player player = playerSeats.get(i);
             player.setTable(this.table);
             player.sit(i);
@@ -207,8 +209,6 @@ public class GameManager {
             // plays his card.
         }
 
-        // System.out.println("New turn started.");
-
         int playersPlaying = playerSeats.size();
         int currentPlayerIndex;
         Player currentPlayer;
@@ -228,7 +228,6 @@ public class GameManager {
         JSONObject turnWonJson = new JSONObject();
         turnWonJson.put("seat", winningPlayer);
         new PlayAction(game, PlayAction.ActionType.TURN_WON, turnWonJson);
-        // System.out.println(playerSeats.get(winningPlayer).getPlayerName() + " won the round.\n");
     }
 
     private void draw() {
@@ -236,7 +235,7 @@ public class GameManager {
         int currentPlayerIndex;
         for (int i = this.turn; i < this.turn + playersPlaying; i++) {
             currentPlayerIndex = i % playersPlaying; // Rotate around playerSeats.
-            if (deck.getDeckSize() > 0){
+            if (deck.getDeckSize() > 0) {
                 playerSeats.get(currentPlayerIndex).draw();
                 JSONObject seatJson = new JSONObject();
                 seatJson.put("seat", currentPlayerIndex);
@@ -287,7 +286,6 @@ public class GameManager {
         int winner = 0;
         int maxScore = playerSeats.get(winner).getFinalScore();
         scores[0] = maxScore;
-        
 
         int currentScore;
         for (int i = 1; i < playerSeats.size(); i++) {
@@ -302,7 +300,7 @@ public class GameManager {
         for (int i = 0; i < scores.length; i++) {
             if (scores[i] == maxScore && i != winner) {
                 System.out.println("Draw between " + playerSeats.get(i).getPlayerName() + " and "
-                    + playerSeats.get(winner).getPlayerName());
+                        + playerSeats.get(winner).getPlayerName());
                 for (Player player : playerSeats) {
                     System.out.println(player);
                 }
@@ -322,7 +320,7 @@ public class GameManager {
     }
 
     public int judge() {
-        
+
         int bestCardIndex = 0;
         Card bestCard = table.cardsInPlay.get(0);
         SUIT suitForThisPlay = bestCard.getSuit();
@@ -336,18 +334,16 @@ public class GameManager {
             currentCardValue = currentCard.getValue();
             currentCardSuit = currentCard.getSuit();
 
-            if (currentCardSuit == table.suitForThisGame && suitForThisPlay != table.suitForThisGame){
-                // System.out.println("Card was bested by suit, " + bestCard + " beaten by " + currentCard);
-                    bestCardIndex = i;
-                    bestCard = currentCard;
-                    suitForThisPlay = currentCardSuit;
-                    bestCardValue = currentCardValue;
+            if (currentCardSuit == table.suitForThisGame && suitForThisPlay != table.suitForThisGame) {
+                bestCardIndex = i;
+                bestCard = currentCard;
+                suitForThisPlay = currentCardSuit;
+                bestCardValue = currentCardValue;
             }
-            if (currentCardSuit == suitForThisPlay && currentCardValue > bestCardValue){
-                // System.out.println("Card was bested by value, " + bestCard + " beaten by " + currentCard);
-                    bestCardIndex = i;
-                    bestCard = currentCard;
-                    bestCardValue = currentCardValue;
+            if (currentCardSuit == suitForThisPlay && currentCardValue > bestCardValue) {
+                bestCardIndex = i;
+                bestCard = currentCard;
+                bestCardValue = currentCardValue;
             }
 
         }

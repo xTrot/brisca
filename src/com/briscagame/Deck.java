@@ -20,7 +20,7 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
-    public Card draw(){
+    public Card draw() {
         return deck.pop();
     }
 
@@ -29,10 +29,8 @@ public class Deck {
     }
 
     public Card swapBottomCard(Card card) {
-        if(
-            this.deck.elementAt(0).getSuit() != card.getSuit() ||
-            THIS_CARD_NUMBER_CAN_SWAP != card.getNumber()
-        ){
+        if (this.deck.elementAt(0).getSuit() != card.getSuit() ||
+                THIS_CARD_NUMBER_CAN_SWAP != card.getNumber()) {
             return card;
         }
         Card bottomCard = deck.remove(0);
@@ -51,6 +49,32 @@ public class Deck {
     @Override
     public String toString() {
         return "Deck: " + this.deck;
+    }
+
+    public Card getBottomCard3Player() {
+        Card bottomCard;
+        bottomCard = this.draw();
+        if (bottomCard.getNumber() == THIS_CARD_NUMBER_CAN_SWAP) {
+            int index = 0;
+            for (int i = 0; i < this.deck.size(); i++) {
+                if (this.deck.get(i).getSuit() == bottomCard.getSuit()) {
+                    index = i;
+                    break;
+                }
+            }
+            bottomCard = this.deck.remove(index);
+        } else {
+            int index = 0;
+            for (int i = 0; i < this.deck.size(); i++) {
+                if (this.deck.get(i).getSuit() == bottomCard.getSuit() &&
+                        this.deck.get(i).getNumber() == THIS_CARD_NUMBER_CAN_SWAP) {
+                    index = i;
+                    break;
+                }
+            }
+            this.deck.remove(index);
+        }
+        return bottomCard;
     }
 
 }

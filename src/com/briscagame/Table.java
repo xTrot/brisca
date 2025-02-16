@@ -14,14 +14,18 @@ public class Table {
     ArrayList<Card> cardsInPlay;
     boolean swapBottomCard;
 
-    public Table(Game game, Deck deck) {
+    public Table(Game game, Deck deck, GameConfiguration gameConfiguration) {
         this.game = game;
         this.deck = deck;
-        this.bottomCard = deck.draw();
+        this.swapBottomCard = gameConfiguration.swapBottomCard;
+        if (gameConfiguration.maxPlayers == 3) {
+            this.bottomCard = deck.getBottomCard3Player();
+        } else {
+            this.bottomCard = deck.draw();
+        }
         this.suitForThisGame = this.bottomCard.getSuit();
         deck.putBottomCardBack(bottomCard);
         this.cardsInPlay = new ArrayList<Card>();
-        this.swapBottomCard = false;
     }
 
     public Game getGame() {
