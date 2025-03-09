@@ -65,7 +65,7 @@ public class SimpleHttpServer
         server.createContext("/waitingroom", waitingRoomHandler);
         server.createContext("/status", statusHandler);
         server.createContext("/seat", seatHandler);
-        server.createContext("/swap", swapHandler);
+        server.createContext("/swapBottomCard", swapHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
