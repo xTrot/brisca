@@ -87,9 +87,12 @@ public class GameManager {
 
     private ArrayList<Player> assignSeatsSolo(User host) {
         ArrayList<Player> players = new ArrayList<Player>();
+        host.setTeam(Player.TEAM_TYPES.get(0));
         players.add(host);
         for (int i = 1; i < this.gameConfiguration.maxPlayers; i++) {
-            players.add(new Player());
+            Player bot = new Player();
+            bot.setTeam(Player.TEAM_TYPES.get(i % 2));
+            players.add(bot);
         }
         ArrayList<Player> assignedSeats = new ArrayList<Player>();
         ArrayList<Player> teamA = new ArrayList<Player>();
