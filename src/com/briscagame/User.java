@@ -33,9 +33,9 @@ public class User extends Player implements EventListener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(count == 0) {
+            if (count == 0) {
                 this.hasTimedOut = true;
-                return 0; //Timeout
+                return 0; // Timeout
             }
             count--;
         }
@@ -44,7 +44,7 @@ public class User extends Player implements EventListener {
     }
 
     public boolean doneThinking(int index) {
-        if (!this.thinking){
+        if (!this.thinking) {
             return false;
         }
         this.indexIdea = index;
@@ -53,7 +53,7 @@ public class User extends Player implements EventListener {
     }
 
     @Override
-    public int thinking(){
+    public int thinking() {
         // System.out.println(this);
         return this.startThinking();
     }
@@ -61,5 +61,5 @@ public class User extends Player implements EventListener {
     public String getUuid() {
         return userId;
     }
-    
+
 }

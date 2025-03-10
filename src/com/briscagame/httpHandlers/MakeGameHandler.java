@@ -13,29 +13,25 @@ import org.json.*;
 public class MakeGameHandler implements HttpHandler {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException 
-    {
+    public void handle(HttpExchange exchange) throws IOException {
         // handle the request
         String json = HandlerHelper.post(exchange);
 
-        if (json == null){
+        if (json == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         JSONObject parsedJson = new JSONObject(json);
-        if (
-            parsedJson.isNull("maxPlayers")
-            || parsedJson.isNull("swapBottomCard")
-            || parsedJson.isNull("gameType")
-        ) {
+        if (parsedJson.isNull("maxPlayers")
+                || parsedJson.isNull("swapBottomCard")
+                || parsedJson.isNull("gameType")) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
-        
 
         Session userSession = HandlerHelper.getSession(exchange);
-        if (userSession ==  null){
+        if (userSession == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
@@ -43,14 +39,13 @@ public class MakeGameHandler implements HttpHandler {
         GameConfiguration gc;
         try {
             gc = new GameConfiguration(parsedJson);
-        } catch (JSONException je){
+        } catch (JSONException je) {
             System.err.println(je.getMessage());
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         User user = new User(userSession);
-
         Game newGame = new Game(gc);
         newGame.addPlayer(user);
         newGame.runGameThread();
@@ -58,7 +53,7 @@ public class MakeGameHandler implements HttpHandler {
 
         userSession.setGameID(gameId);
         userSession.setActionsSent(0);
-        JSONObject gameJson = new JSONObject("{\"gameId\":\""+gameId+"\"}");
+        JSONObject gameJson = new JSONObject("{\"gameId\":\"" + gameId + "\"}");
         HandlerHelper.sendResponse(exchange, Status.OK, gameJson.toString());
     }
 

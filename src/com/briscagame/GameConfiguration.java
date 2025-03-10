@@ -9,37 +9,39 @@ import org.json.JSONObject;
 public class GameConfiguration {
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
-    public static final List<String> GAME_TYPES = List.of("solo", "public", "private");
-        
+    public static final List<String> GAME_TYPE_STRINGS = List.of("solo", "public", "private");
+    public static final int SOLO = 0;
+    public static final int PUBLIC = 1;
+    public static final int PRIVATE = 2;
 
     boolean swapBottomCard;
     int maxPlayers;
     String gameType;
     String gameId = UUID.randomUUID().toString();
 
-    public GameConfiguration(){
+    public GameConfiguration() {
         this.swapBottomCard = false;
         this.maxPlayers = 4;
-        this.gameType = "solo";
+        this.gameType = GAME_TYPE_STRINGS.get(SOLO);
     }
 
-    public GameConfiguration(JSONObject json){
+    public GameConfiguration(JSONObject json) {
         this.swapBottomCard = json.getBoolean("swapBottomCard");
         this.maxPlayers = json.getInt("maxPlayers");
         this.gameType = json.getString("gameType");
         if (this.maxPlayers > MAX_PLAYERS || this.maxPlayers < MIN_PLAYERS) {
             throw new JSONException("maxPlayers out of bounds.");
         }
-        if (!GAME_TYPES.contains(this.gameType)) {
+        if (!GAME_TYPE_STRINGS.contains(this.gameType)) {
             throw new JSONException("gameType not valid.");
         }
     }
 
-    public String toString(){
+    public String toString() {
         return (new JSONObject(this)).toString();
     }
 
-    public int getMaxPlayers () {
+    public int getMaxPlayers() {
         return this.maxPlayers;
     }
 
@@ -51,7 +53,7 @@ public class GameConfiguration {
         this.gameId = gameId;
     }
 
-    public boolean getSwapBottomCard () {
+    public boolean getSwapBottomCard() {
         return this.swapBottomCard;
     }
 
@@ -69,6 +71,10 @@ public class GameConfiguration {
 
     public void setGameType(String gameType) {
         this.gameType = gameType;
+    }
+
+    public boolean isSoloGame() {
+        return this.gameType.equals(GAME_TYPE_STRINGS.get(SOLO));
     }
 
 }

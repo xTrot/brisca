@@ -30,7 +30,13 @@ public class GameManager {
     }
 
     public void start(ArrayList<User> players) {
-        this.playerSeats = assignSeats(players);
+        if (this.gameConfiguration.gameType.equals(
+                GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO))) {
+            int HOST = 0;
+            this.playerSeats = assignSeatsSolo(players.get(HOST));
+        } else {
+            this.playerSeats = assignSeats(players);
+        }
         setTheTable();
         gracePeriod();
         while (rounds()) {
@@ -79,6 +85,48 @@ public class GameManager {
         return assignedSeats;
     }
 
+    private ArrayList<Player> assignSeatsSolo(User host) {
+        ArrayList<Player> players = new ArrayList<Player>();
+        players.add(host);
+        for (int i = 1; i < this.gameConfiguration.maxPlayers; i++) {
+            players.add(new Player());
+        }
+        ArrayList<Player> assignedSeats = new ArrayList<Player>();
+        ArrayList<Player> teamA = new ArrayList<Player>();
+        ArrayList<Player> teamB = new ArrayList<Player>();
+
+        if (gameConfiguration.maxPlayers == 4) {
+            for (Player player : players) {
+                int team = player.getTeam();
+                switch (team) {
+                    case 0:
+                        teamA.add(player);
+                        break;
+                    case 1:
+                        teamB.add(player);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            while (teamA.size() > 0 && teamB.size() > 0) {
+                assignedSeats.add(teamA.remove(0));
+                assignedSeats.add(teamB.remove(0));
+            }
+
+        } else {
+            for (Player player : players) {
+                if (Player.TEAM_TYPES.get(player.getTeam()).equals("S"))
+                    continue;
+                assignedSeats.add(player);
+            }
+        }
+
+        return assignedSeats;
+    }
+
     public void startSim() {
         setSimPlayers();
         if (playerSeats.size() == 4) {
@@ -91,28 +139,6 @@ public class GameManager {
             draw();
         }
         judgeGame();
-    }
-
-    public void startOnePlayer() {
-        setSimPlayers();
-        setOneUser();
-        if (playerSeats.size() == 4) {
-            setTeamsRandomly();
-        }
-        setTheTable();
-        while (rounds()) {
-            judgeRound();
-            awardCards();
-            draw();
-        }
-        judgeGame();
-    }
-
-    private void setOneUser() {
-        int swapPlayer = rand.nextInt(playerSeats.size());
-        User user = new User(this.table, "Net Player");
-        user.sit(swapPlayer);
-        playerSeats.set(swapPlayer, user);
     }
 
     private void setSimPlayers() {

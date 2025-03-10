@@ -10,13 +10,13 @@ import org.json.JSONObject;
 import com.briscagame.httpHandlers.Session;
 
 public class Game implements Runnable, EventListener {
-    
+
     private static final int HOST = 0;
 
     private static ThreadPoolExecutor tpe;
 
     // Protect these with synchro
-    private static Hashtable<String,Game> games = new Hashtable<String,Game>();
+    private static Hashtable<String, Game> games = new Hashtable<String, Game>();
     private ArrayList<String> actions = new ArrayList<String>();
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
@@ -30,24 +30,20 @@ public class Game implements Runnable, EventListener {
     public Game(GameConfiguration gameConfiguration) {
         this.gameConfiguration = gameConfiguration;
         this.uuid = gameConfiguration.gameId;
-        Game.games.put(this.uuid,this);
+        Game.games.put(this.uuid, this);
         new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration.toString()));
         this.waitingRoom = new WaitingRoom(this);
-        
+
     }
 
     @Override
     public void run() {
         Lobby.updateLobby();
         this.gameManager = new GameManager(this, this.gameConfiguration);
-        if (gameConfiguration.gameType.equals("public")) {
-            this.waitingRoom();
-        } else {
-            gameManager.startOnePlayer();
-        }
+        this.waitingRoom();
         this.cleanUp();
     }
-    
+
     private void waitingRoom() {
         // Players should be able to join, leave an change teams. Done
         // While players not ready or 2 minutes veryone gets kicked.
@@ -71,16 +67,18 @@ public class Game implements Runnable, EventListener {
         Game.games.remove(this.uuid);
         Lobby.updateLobby();
         for (User user : this.players) {
-            Session.getSession(user.getUuid()).setGameID(null);;
+            Session.getSession(user.getUuid()).setGameID(null);
+            ;
         }
     }
 
     public synchronized boolean addPlayer(User user) {
-        if (this.startGameLock) return false;
+        if (this.startGameLock)
+            return false;
         String userId = user.getUuid();
         System.out.println("Adding player " + user.getPlayerName() + ": " + userId);
         int playersSize = this.players.size();
-        if (playersSize == 0){
+        if (playersSize == 0) {
             this.players.add(user);
             this.waitingRoom.updateWaitingRoom();
             return true;
@@ -91,7 +89,7 @@ public class Game implements Runnable, EventListener {
                 return false;
             }
         }
-        if (playersSize >= this.gameConfiguration.maxPlayers){
+        if (playersSize >= this.gameConfiguration.maxPlayers) {
             user.setTeam("S");
         }
         this.players.add(user);
@@ -101,9 +99,10 @@ public class Game implements Runnable, EventListener {
     }
 
     public synchronized boolean removePlayer(String userId) {
-        if (this.startGameLock) return false;
+        if (this.startGameLock)
+            return false;
         for (User user : players) {
-            if(userId.equals(user.getUuid())){
+            if (userId.equals(user.getUuid())) {
                 players.remove(user);
                 Lobby.updateLobby();
                 this.waitingRoom.updateWaitingRoom();
@@ -115,8 +114,9 @@ public class Game implements Runnable, EventListener {
 
     public synchronized boolean readyPlayer(String userId) {
         System.out.println("Wants to ready player " + userId);
-        if (this.startGameLock) return false;
-        if (this.players.size() == 0){
+        if (this.startGameLock)
+            return false;
+        if (this.players.size() == 0) {
             return false;
         }
         for (User user : this.players) {
@@ -131,7 +131,8 @@ public class Game implements Runnable, EventListener {
     }
 
     public synchronized boolean changeTeam(String userId, String team) {
-        if (this.startGameLock) return false;
+        if (this.startGameLock)
+            return false;
         User user = this.getUser(userId);
         if (user != null) {
             boolean rtn = user.setTeam(team);
@@ -142,11 +143,12 @@ public class Game implements Runnable, EventListener {
     }
 
     public synchronized boolean startGame(String userId) {
-        if (this.startGameLock) return false;
-        if (!(players.get(HOST)).getUuid().equals(userId)){
+        if (this.startGameLock)
+            return false;
+        if (!(players.get(HOST)).getUuid().equals(userId)) {
             return false;
         }
-        if (!this.ready()){
+        if (!this.ready()) {
             return false;
         }
         this.startGameLock = true;
@@ -168,12 +170,13 @@ public class Game implements Runnable, EventListener {
     public String getActions(Session userSession) {
         int actionsSize = actions.size();
         int from = userSession.getActionsSent();
-        if (actionsSize == from) return "[]";
+        if (actionsSize == from)
+            return "[]";
         StringBuilder actionsJsonArray = new StringBuilder("[");
         for (int i = from; i < actionsSize; i++) {
             actionsJsonArray.append(this.actions.get(i));
         }
-        actionsJsonArray.replace(actionsJsonArray.length()-1, actionsJsonArray.length(), "]");
+        actionsJsonArray.replace(actionsJsonArray.length() - 1, actionsJsonArray.length(), "]");
         userSession.setActionsSent(actionsSize);
         return actionsJsonArray.toString();
     }
@@ -183,9 +186,15 @@ public class Game implements Runnable, EventListener {
     }
 
     private boolean ready() {
+        if (this.gameConfiguration.gameType.equals(
+                GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO))) {
+            return this.players.get(HOST).isReady();
+        }
         for (Player player : players) {
-            if (Player.TEAM_TYPES.get(player.getTeam()).equals("S")) continue;
-            if (!player.isReady()) return false;
+            if (Player.TEAM_TYPES.get(player.getTeam()).equals("S"))
+                continue;
+            if (!player.isReady())
+                return false;
         }
         if (this.gameConfiguration.maxPlayers == 4) {
             int teamB = 0;
@@ -194,22 +203,22 @@ public class Game implements Runnable, EventListener {
                 int teamIndex = player.getTeam();
                 switch (teamIndex) {
                     case 0:
-                        teamB +=1;
+                        teamB += 1;
                         break;
                     case 1:
-                        teamA +=1;
+                        teamA += 1;
                         break;
                     default:
                         break;
                 }
             }
-            return (teamB==2 && teamA==2);
+            return (teamB == 2 && teamA == 2);
         }
         return true;
     }
 
     public static void registerAction(Game game, PlayAction action) {
-        game.actions.add(action.toString()+","); // Storing with comma, ready for array construction.
+        game.actions.add(action.toString() + ","); // Storing with comma, ready for array construction.
     }
 
     public static Game getGame(String gameId) {
@@ -229,7 +238,7 @@ public class Game implements Runnable, EventListener {
     }
 
     public String getFillInfo() {
-        int[] fill = {0, 0, 0};
+        int[] fill = { 0, 0, 0 };
         for (Player player : this.players) {
             int team = player.getTeam();
             switch (team) {
@@ -239,11 +248,11 @@ public class Game implements Runnable, EventListener {
                 case 1:
                     fill[0] += 1;
                     break;
-            
+
                 case 2:
                     fill[2] += 1;
                     break;
-            
+
                 default:
                     break;
             }
@@ -261,11 +270,13 @@ public class Game implements Runnable, EventListener {
     }
 
     public boolean isPublic() {
-        return gameConfiguration.gameType.equals("public");
+        return gameConfiguration.gameType.equals(
+                GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.PUBLIC));
     }
 
     public boolean isJoinable() {
-        return !gameConfiguration.gameType.equals("solo");
+        return !gameConfiguration.gameType.equals(
+                GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO));
     }
 
     public boolean hasStarted() {

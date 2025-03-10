@@ -2,12 +2,23 @@ package com.briscagame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Player {
     public static final List<String> TEAM_TYPES = List.of("A", "B", "S"); // S=Spectator
+    public static final List<String> BOTS = List.of(
+            "BusyBeaver", "Anton", "lulzMaster",
+            "baconLover", "bruv", "livingBlunder",
+            "password1", "xCozy", "snitch",
+            "qhaoz", "hunter2", "JaSON",
+            "noobSlayer", "barry", "pancho",
+            "yaMom", "Carloz", "klout");
+    public static final int BOTS_SIZE = BOTS.size();
+
+    private static Random rand = new Random();
 
     private String playerName;
     private ArrayList<Card> hand;
@@ -23,6 +34,13 @@ public class Player {
         this.hand = new ArrayList<Card>();
         this.scorePile = new ArrayList<Card>();
         this.ready = false;
+    }
+
+    public Player() {
+        this(null, "");
+        String name = BOTS.get(rand.nextInt(BOTS_SIZE));
+        this.playerName = name;
+        this.ready = true;
     }
 
     public String getPlayerName() {
@@ -73,8 +91,8 @@ public class Player {
     public int getFinalScore() {
         int score = 0;
         for (int i = 0; i < hand.size(); i++) {
-                scorePile.add(hand.remove(i));
-    
+            scorePile.add(hand.remove(i));
+
         }
         for (Card card : scorePile) {
             score += card.getScore();
@@ -128,7 +146,7 @@ public class Player {
     public boolean setTeam(String team) {
         if (team == null) {
             // set to the other team
-            if (this.team == TEAM_TYPES.indexOf("B")){
+            if (this.team == TEAM_TYPES.indexOf("B")) {
                 this.team = TEAM_TYPES.indexOf("A");
                 return true;
             } else if (this.team == TEAM_TYPES.indexOf("A")) {
@@ -149,10 +167,8 @@ public class Player {
             int size = hand.size();
             for (int i = 0; i < size; i++) {
                 Card currentCard = hand.get(i);
-                if (
-                    currentCard.getSuit() == table.suitForThisGame 
-                    && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP
-                ) {
+                if (currentCard.getSuit() == table.suitForThisGame
+                        && currentCard.getNumber() == Deck.THIS_CARD_NUMBER_CAN_SWAP) {
                     Card bottomCard = table.deck.swapBottomCard(hand.remove(i));
                     new PlayAction(this.table.game, PlayAction.ActionType.SWAP_BOTTOM_CARD);
                     hand.add(bottomCard);
