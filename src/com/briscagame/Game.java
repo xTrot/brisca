@@ -1,10 +1,17 @@
 package com.briscagame;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.EventListener;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.briscagame.httpHandlers.Session;
@@ -12,6 +19,10 @@ import com.briscagame.httpHandlers.Session;
 public class Game implements Runnable, EventListener {
 
     private static final int HOST = 0;
+    // private static final String RECORDING_DIR = "recordings" + File.separator;
+    private static final String RECORDING_EXTENSION = ".js";
+    private static final String CURRENT_DIR = System.getProperty("user.dir");
+    private static final Path RECORDING_DIR = Path.of(CURRENT_DIR, "recordings");
 
     private static ThreadPoolExecutor tpe;
 
@@ -21,6 +32,7 @@ public class Game implements Runnable, EventListener {
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
     private boolean gameStarted = false;
+    private boolean gameCompleted = false;
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
@@ -61,6 +73,7 @@ public class Game implements Runnable, EventListener {
         }
 
         gameManager.start(this.players);
+        this.gameCompleted = true;
     }
 
     private void cleanUp() {
@@ -68,7 +81,22 @@ public class Game implements Runnable, EventListener {
         Lobby.updateLobby();
         for (User user : this.players) {
             Session.getSession(user.getUuid()).setGameID(null);
-            ;
+        }
+        if (this.gameCompleted) {
+            JSONArray gameRecording = new JSONArray(this.actions);
+            Path filename = Path.of(RECORDING_DIR.toString(), this.uuid + RECORDING_EXTENSION);
+            System.out.println(filename);
+            try {
+                Files.createDirectories(RECORDING_DIR);
+            } catch (IOException e) {
+                System.err.println("An error occurred creating directory: " + e.getMessage());
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename.toString()))) {
+                writer.write(gameRecording.toString());
+                System.out.println("Game recorded: " + filename);
+            } catch (IOException e) {
+                System.err.println("An error occurred writing to the file: " + e.getMessage());
+            }
         }
     }
 
