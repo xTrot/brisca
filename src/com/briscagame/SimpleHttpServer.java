@@ -12,6 +12,7 @@ import com.briscagame.httpHandlers.MakeGameHandler;
 import com.briscagame.httpHandlers.PlayCardHandler;
 import com.briscagame.httpHandlers.ReadyHandler;
 import com.briscagame.httpHandlers.RegisterHandler;
+import com.briscagame.httpHandlers.ReplayHandler;
 import com.briscagame.httpHandlers.RootHandler;
 import com.briscagame.httpHandlers.SeatHandler;
 import com.briscagame.httpHandlers.StartGameHandler;
@@ -43,6 +44,7 @@ public class SimpleHttpServer
     private static StatusHandler statusHandler = new StatusHandler();
     private static SeatHandler seatHandler = new SeatHandler();
     private static SwapBottomCardHandler swapHandler = new SwapBottomCardHandler();
+    private static ReplayHandler replayHandler = new ReplayHandler();
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException
     {
@@ -66,6 +68,7 @@ public class SimpleHttpServer
         server.createContext("/status", statusHandler);
         server.createContext("/seat", seatHandler);
         server.createContext("/swapBottomCard", swapHandler);
+        server.createContext("/replay", replayHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor

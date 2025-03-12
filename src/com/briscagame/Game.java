@@ -19,10 +19,9 @@ import com.briscagame.httpHandlers.Session;
 public class Game implements Runnable, EventListener {
 
     private static final int HOST = 0;
-    // private static final String RECORDING_DIR = "recordings" + File.separator;
-    private static final String RECORDING_EXTENSION = ".js";
-    private static final String CURRENT_DIR = System.getProperty("user.dir");
-    private static final Path RECORDING_DIR = Path.of(CURRENT_DIR, "recordings");
+    public static final String RECORDING_EXTENSION = ".js";
+    public static final String CURRENT_DIR = System.getProperty("user.dir");
+    public static final Path RECORDING_DIR = Path.of(CURRENT_DIR, "recordings");
 
     private static ThreadPoolExecutor tpe;
 
@@ -83,7 +82,9 @@ public class Game implements Runnable, EventListener {
             Session.getSession(user.getUuid()).setGameID(null);
         }
         if (this.gameCompleted) {
-            JSONArray gameRecording = new JSONArray(this.actions);
+            int THE_START = 0;
+            String actions = this.getActions(THE_START);
+            JSONArray gameRecording = new JSONArray(actions);
             Path filename = Path.of(RECORDING_DIR.toString(), this.uuid + RECORDING_EXTENSION);
             System.out.println(filename);
             try {
@@ -206,6 +207,18 @@ public class Game implements Runnable, EventListener {
         }
         actionsJsonArray.replace(actionsJsonArray.length() - 1, actionsJsonArray.length(), "]");
         userSession.setActionsSent(actionsSize);
+        return actionsJsonArray.toString();
+    }
+
+    public String getActions(int from) {
+        int actionsSize = actions.size();
+        if (actionsSize == from)
+            return "[]";
+        StringBuilder actionsJsonArray = new StringBuilder("[");
+        for (int i = from; i < actionsSize; i++) {
+            actionsJsonArray.append(this.actions.get(i));
+        }
+        actionsJsonArray.replace(actionsJsonArray.length() - 1, actionsJsonArray.length(), "]");
         return actionsJsonArray.toString();
     }
 
