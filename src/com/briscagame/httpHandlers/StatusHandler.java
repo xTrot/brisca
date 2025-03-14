@@ -11,7 +11,7 @@ public class StatusHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException 
     {
         // handle the request
-        HandlerHelper.get(exchange);
+        HandlerHelper.getMethod(exchange);
         
         HandlerHelper.sendStatus(exchange, Status.OK);
         

@@ -12,7 +12,7 @@ public class LobbyHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException 
     {
         // handle the request
-        HandlerHelper.get(exchange);
+        HandlerHelper.getMethod(exchange);
         
         HandlerHelper.sendResponse(exchange, Status.OK, Lobby.getLobby());
         

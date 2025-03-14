@@ -17,7 +17,7 @@ public class ChangeTeamHandler implements HttpHandler {
     {
         // handle the request
         String newTeam = null;
-        String json = HandlerHelper.post(exchange);
+        String json = HandlerHelper.postMethod(exchange);
 
         JSONObject parsedJson = null;
         try {

@@ -5,32 +5,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.Game;
 import com.sun.net.httpserver.HttpExchange;
-
-import org.json.*;
 
 public class ReplayHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // handle the request
-        String json = HandlerHelper.get(exchange);
+        HandlerHelper.getMethod(exchange);
+        HashMap<String, String> params = HandlerHelper.getParams(exchange);
 
-        if (json == null) {
+        if (!params.containsKey("gameId")) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
-        JSONObject parsedJson = new JSONObject(json);
-        if (parsedJson.isNull("gameId")) {
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
-        }
-
-        String gameId = parsedJson.getString("gameId");
+        String gameId = params.get("gameId");
 
         File filename = new File(Path.of(Game.RECORDING_DIR.toString(),
                 gameId + Game.RECORDING_EXTENSION).toString());

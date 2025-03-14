@@ -15,7 +15,7 @@ public class SeatHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException 
     {
         // handle the request
-        HandlerHelper.get(exchange);
+        HandlerHelper.getMethod(exchange);
 
         Session userSession = HandlerHelper.getSession(exchange);
         if (userSession ==  null){

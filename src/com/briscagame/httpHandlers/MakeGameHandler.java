@@ -15,7 +15,7 @@ public class MakeGameHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // handle the request
-        String json = HandlerHelper.post(exchange);
+        String json = HandlerHelper.postMethod(exchange);
 
         if (json == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);

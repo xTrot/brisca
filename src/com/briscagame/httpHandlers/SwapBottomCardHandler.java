@@ -13,7 +13,7 @@ public class SwapBottomCardHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException 
     {
 
-        HandlerHelper.post(exchange);
+        HandlerHelper.postMethod(exchange);
 
         Session userSession = HandlerHelper.getSession(exchange);
         if (userSession == null) {

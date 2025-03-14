@@ -2,6 +2,7 @@ package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -81,23 +82,27 @@ public class HandlerHelper {
         }
     }
 
-    static String get(HttpExchange exchange) throws IOException {
+    static void getMethod(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("GET") != 0){
             // System.out.println("Warning: 404 on " + exchange.getRequestURI());
             sendStatus(exchange, Status.NOT_FOUND);
-            return null;
+            return;
         }
-        Scanner s = new Scanner(exchange.getRequestBody());
-        String result = "";
-        while (s.hasNext()) {
-            result+= s.next();
-        }
-        s.close();
+   }
 
-        return result;
+    static HashMap<String,String> getParams(HttpExchange exchange) throws IOException {
+        HashMap<String,String> params = new HashMap<String,String>();
+        String allParams = exchange.getRequestURI().toString().split("\\?")[1];
+        String[] allParamsArray = allParams.split("&");
+        for (String string : allParamsArray) {
+            String[] kvPair = string.split("=");
+            params.put(kvPair[0], kvPair[1]);
+        }
+
+        return params;
     }
 
-    static String post(HttpExchange exchange) throws IOException {
+    static String postMethod(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0){
             // System.out.println("Warning: 404 on " + exchange.getRequestURI());
             sendStatus(exchange, Status.NOT_FOUND);
