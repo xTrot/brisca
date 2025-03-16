@@ -196,6 +196,11 @@ public class GameManager {
         turn = rand.nextInt(playerSeats.size());
         System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
 
+        if (gameConfiguration.maxPlayers != playerSeats.size()) {
+            playerSeats.get(gameConfiguration.maxPlayers-1);
+            // Fail if player counts are invalid.
+        }
+
         JSONObject gameStartedJson = new JSONObject();
         gameStartedJson.put("seats", seatsJson);
         gameStartedJson.put("startingSeat", turn);

@@ -231,11 +231,13 @@ public class Game implements Runnable, EventListener {
                 GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO))) {
             return this.players.get(HOST).isReady();
         }
+        int playingCount = 0;
         for (Player player : players) {
             if (Player.TEAM_TYPES.get(player.getTeam()).equals("S"))
                 continue;
             if (!player.isReady())
                 return false;
+            playingCount++;
         }
         if (this.gameConfiguration.maxPlayers == 4) {
             int teamB = 0;
@@ -255,7 +257,7 @@ public class Game implements Runnable, EventListener {
             }
             return (teamB == 2 && teamA == 2);
         }
-        return true;
+        return gameConfiguration.maxPlayers == playingCount;
     }
 
     public static void registerAction(Game game, PlayAction action) {
