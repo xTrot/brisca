@@ -17,6 +17,7 @@ public class Player {
             "noobSlayer", "barry", "pancho",
             "yaMom", "Carloz", "klout");
     public static final int BOTS_SIZE = BOTS.size();
+    public static final int FIVE_SEC = 5000; // Side-effect: Allows client animation time.
 
     private static Random rand = new Random();
 
@@ -24,9 +25,10 @@ public class Player {
     private ArrayList<Card> hand;
     private ArrayList<Card> scorePile;
     private int seat;
-    private Table table;
+    protected Table table;
     private boolean ready;
     private int team = 0;
+    private boolean imABot;
 
     public Player(Table table, String playerName) {
         this.table = table;
@@ -41,6 +43,7 @@ public class Player {
         String name = BOTS.get(rand.nextInt(BOTS_SIZE));
         this.playerName = name;
         this.ready = true;
+        this.imABot = true;
     }
 
     public String getPlayerName() {
@@ -62,6 +65,14 @@ public class Player {
     }
 
     public int thinking() {
+        if (imABot) {
+            try {
+                Thread.sleep(FIVE_SEC);
+            } catch (InterruptedException e) {
+                System.err.println("Unexpected Interrupt while bot was thinking:");
+                System.err.println(e.getMessage());
+            }
+        }
         this.swapBottomCard(); // Only happens if possible.
         return 0;
     }

@@ -12,7 +12,9 @@ public class PlayAction {
         CARD_DRAWN,
         CARD_PLAYED,
         TURN_WON,
-        GAME_WON
+        GAME_WON,
+        SEAT_AFK,
+        SEAT_NOT_AFK,
     }
 
     private ActionType type;
