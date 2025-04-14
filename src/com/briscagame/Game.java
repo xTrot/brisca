@@ -348,4 +348,7 @@ public class Game implements Runnable, EventListener {
         this.gameStarted = true;
     }
 
+    public String getGameType() {
+        return gameConfiguration.gameType;
+    }
 }
