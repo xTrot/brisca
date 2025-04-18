@@ -31,3 +31,6 @@ replay_pid*
 
 # game recordings
 recordings/
+
+# generated poms
+dependency-reduced-pom.xml

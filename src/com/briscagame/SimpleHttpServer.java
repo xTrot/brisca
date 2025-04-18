@@ -22,12 +22,13 @@ import com.briscagame.httpHandlers.WaitingRoomHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 // Driver Class
-public class SimpleHttpServer 
-{
-    private static int port = 8000;
+public class SimpleHttpServer {
+    private static int port;
+
     private static RootHandler rootHandler = new RootHandler();
     private static MakeGameHandler makeGameHandler = new MakeGameHandler();
     private static RegisterHandler registerHandler = new RegisterHandler();
@@ -45,9 +46,20 @@ public class SimpleHttpServer
     private static SeatHandler seatHandler = new SeatHandler();
     private static SwapBottomCardHandler swapHandler = new SwapBottomCardHandler();
     private static ReplayHandler replayHandler = new ReplayHandler();
+
     // Main Method
-    public static void start(Executor threadPoolExecutor) throws IOException
-    {
+    public static void start(Executor threadPoolExecutor) throws IOException {
+        String portString = Optional.ofNullable(System.getenv("HTTP_PORT")).orElse("8000");
+        System.out.println("Using port: " + portString);
+        try {
+            port = Integer.parseInt(portString);
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing HTTP_PORT env variable to int:");
+            System.err.println("HTTP_PORT=" + portString);
+            System.err.println(e);
+            throw new IllegalStateException("Env variable HTTP_ENV must be an int.");
+        }
+
         // Create an HttpServer instance
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
