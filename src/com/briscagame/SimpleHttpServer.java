@@ -28,6 +28,7 @@ import java.util.concurrent.Executor;
 // Driver Class
 public class SimpleHttpServer {
     private static int port;
+    private static String hostname;
 
     private static RootHandler rootHandler = new RootHandler();
     private static MakeGameHandler makeGameHandler = new MakeGameHandler();
@@ -57,11 +58,22 @@ public class SimpleHttpServer {
             System.err.println("Error parsing HTTP_PORT env variable to int:");
             System.err.println("HTTP_PORT=" + portString);
             System.err.println(e);
-            throw new IllegalStateException("Env variable HTTP_ENV must be an int.");
+            throw new IllegalStateException("Env variable HTTP_PORT must be an int.");
         }
 
-        // Create an HttpServer instance
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        HttpServer server;
+        hostname = Optional.ofNullable(System.getenv("HTTP_HOSTNAME")).orElse("0.0.0.0");
+        System.out.println("Using hostname: " + hostname);
+        try {
+            // Create an HttpServer instance
+            server = HttpServer.create(new InetSocketAddress(hostname, port), 0);
+        } catch (Exception e) {
+            System.err.println("Error initializing socket address:");
+            System.err.println("HTTP_HOSTNAME=" + hostname);
+            System.err.println("HTTP_PORT=" + port);
+            System.err.println(e);
+            throw new IllegalStateException("Env variables HTTP_HOSTNAME, HTTP_PORT must be able start the http server.");
+        }
 
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);
