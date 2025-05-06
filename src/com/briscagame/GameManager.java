@@ -12,6 +12,7 @@ import com.briscagame.Card.SUIT;
 public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
     private static final int TEN_SEC = 10000;
+    private static final int TIE = -1;
 
     private Deck deck;
     private ArrayList<Player> playerSeats;
@@ -338,6 +339,11 @@ public class GameManager {
                 for (Player player : playerSeats) {
                     System.out.println(player);
                 }
+                
+                JSONObject seatJson = new JSONObject();
+                seatJson.put("seat", TIE);
+                new PlayAction(game, PlayAction.ActionType.GAME_WON, seatJson);
+                
                 return;
             }
         }
