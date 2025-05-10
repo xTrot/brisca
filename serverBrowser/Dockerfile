@@ -1,7 +1,8 @@
 FROM openjdk:25-jdk-slim
 WORKDIR /app
 # Copy the "shaded JAR"(JAR that contains all dependencies) file into the container
-ADD target/brisca-*-shaded.jar /app/brisca.jar
+ADD target/ServerBrowser-*-shaded.jar /app/ServerBrowser.jar
+ADD ../target/GameServer-*-shaded.jar /app/GameServer.jar
 EXPOSE 80
 
 # Configurable env variables
@@ -21,4 +22,4 @@ EXPOSE 80
 # =============================================================================
 
 # Command to run the application
-CMD ["java", "-jar", "/app/brisca.jar"]
+CMD ["java", "-jar", "/app/ServerBrowser.jar"]

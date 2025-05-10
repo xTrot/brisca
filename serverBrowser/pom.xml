@@ -70,7 +70,7 @@
                             <arguments>
                                 <argument>build</argument>
                                 <argument>-t</argument>
-                                <argument>brisca</argument>
+                                <argument>server-browser</argument>
                                 <argument>.</argument>
                             </arguments>
                         </configuration>
