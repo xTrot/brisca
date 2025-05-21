@@ -1,9 +1,9 @@
-package com.briscagame.gameServer.handlers;
+package com.briscagame.httpHandlers;
 
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-public class Session{
+public class Session {
     private static LinkedHashMap<String, Session> sessions = new LinkedHashMap<String, Session>();
 
     private final String userId;

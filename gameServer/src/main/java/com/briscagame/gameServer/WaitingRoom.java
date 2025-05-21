@@ -19,11 +19,11 @@ public class WaitingRoom {
         JSONObject json = new JSONObject();
         JSONArray playersJson = new JSONArray();
         for (User user : users) {
-            
+
             String name = user.getPlayerName();
             boolean ready = user.isReady();
             String team = Player.TEAM_TYPES.get(user.getTeam());
-            
+
             JSONObject playerJson = new JSONObject();
             playerJson.put("name", name);
             playerJson.put("ready", ready);
@@ -33,6 +33,7 @@ public class WaitingRoom {
         }
 
         String fill = this.game.getFillInfo();
+        this.game.updateFill(fill);
 
         json.put("players", playersJson);
         json.put("fill", fill);

@@ -1,6 +1,10 @@
 package com.briscagame.serverBrowser;
 
+import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
+import com.briscagame.serverBrowser.handlers.LeaseHandler;
+import com.briscagame.serverBrowser.handlers.LobbyHandler;
+import com.briscagame.serverBrowser.handlers.ReplayHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,6 +13,10 @@ import java.util.concurrent.Executor;
 public class BrowserHttpServer {
 
     private static RootHandler rootHandler = new RootHandler("Server Browser");
+    private static RegisterHandler registerHandler = new RegisterHandler();
+    private static ReplayHandler replayHandler = new ReplayHandler();
+    private static LobbyHandler lobbyHandler = new LobbyHandler();
+    private static LeaseHandler leaseHandler = new LeaseHandler();
 
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException {
@@ -33,6 +41,15 @@ public class BrowserHttpServer {
 
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);
+        server.createContext("/register", registerHandler);
+        server.createContext("/replay", replayHandler);
+        server.createContext("/lobby", lobbyHandler);
+        server.createContext("/lease", leaseHandler);
+
+        // Start the server
+        server.setExecutor(threadPoolExecutor); // Use the default executor
+        server.start();
+
     }
 
 }

@@ -16,7 +16,7 @@ public class RootHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // handle the request
-        String response = "Hello, I am a" + this.serverType + "!";
+        String response = "Hello, I am a " + this.serverType + "!";
         HandlerHelper.sendResponse(exchange, Status.OK, response);
     }
 }

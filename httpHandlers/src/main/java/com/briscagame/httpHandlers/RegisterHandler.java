@@ -1,10 +1,8 @@
-package com.briscagame.gameServer.handlers;
+package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 
 import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.httpHandlers.HandlerHelper;
-import com.briscagame.httpHandlers.Status;
 import com.sun.net.httpserver.HttpExchange;
 
 import org.json.*;
@@ -12,12 +10,11 @@ import org.json.*;
 public class RegisterHandler implements HttpHandler {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException 
-    {
+    public void handle(HttpExchange exchange) throws IOException {
         // handle the request
         String json = HandlerHelper.postMethod(exchange);
 
-        if (json == null){
+        if (json == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
@@ -54,7 +51,7 @@ public class RegisterHandler implements HttpHandler {
 
         userSession.setUsername(username);
         HandlerHelper.sendStatus(exchange, Status.OK);
-        
+
     }
 
 }

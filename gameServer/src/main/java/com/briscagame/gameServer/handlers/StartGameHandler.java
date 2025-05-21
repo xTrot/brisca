@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.Game;
 import com.briscagame.httpHandlers.HandlerHelper;
+import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Status;
 import com.sun.net.httpserver.HttpExchange;
 

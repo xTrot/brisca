@@ -1,16 +1,18 @@
-package com.briscagame.gameServer.handlers;
+package com.briscagame.serverBrowser.handlers;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.gameServer.GameServer;
-import com.briscagame.gameServer.Game;
+import org.json.JSONObject;
+
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Status;
+import com.briscagame.serverBrowser.MakeGameLease;
+import com.briscagame.serverBrowser.ServerBrowser;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
-public class ReadyHandler implements HttpHandler {
+public class LeaseHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -29,14 +31,13 @@ public class ReadyHandler implements HttpHandler {
             return;
         }
 
-        Game game = GameServer.getGame();
-        if (game.readyPlayer(userId)) {
-            HandlerHelper.sendStatus(exchange, Status.OK);
+        MakeGameLease lease = ServerBrowser.leasingOffice.getLease(userId);
+        if (lease == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
-        HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-
+        HandlerHelper.sendResponse(exchange, Status.OK, (new JSONObject(lease)).toString());
     }
 
 }

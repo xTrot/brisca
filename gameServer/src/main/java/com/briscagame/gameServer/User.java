@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
 
-import com.briscagame.gameServer.handlers.Session;
+import com.briscagame.httpHandlers.Session;
 
 public class User extends Player implements EventListener {
     private static final long WAIT_TENTH_SEC = 100;
@@ -68,8 +68,7 @@ public class User extends Player implements EventListener {
         if (!this.hasTimedOut) {
             this.hasTimedOut = true;
             new PlayAction(((Player) this).table.game, PlayAction.ActionType.SEAT_AFK,
-                new JSONObject().put("seat", this.getSeat())
-            );
+                    new JSONObject().put("seat", this.getSeat()));
         }
     }
 
@@ -77,10 +76,8 @@ public class User extends Player implements EventListener {
         if (this.hasTimedOut) {
             this.hasTimedOut = false;
             new PlayAction(((Player) this).table.game, PlayAction.ActionType.SEAT_NOT_AFK,
-                new JSONObject().put("seat", this.getSeat())
-            );
+                    new JSONObject().put("seat", this.getSeat()));
         }
     }
-
 
 }

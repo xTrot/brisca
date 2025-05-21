@@ -7,15 +7,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.briscagame.gameServer.handlers.Session;
+import com.briscagame.httpHandlers.GameConfiguration;
+import com.briscagame.httpHandlers.GameServerState;
+import com.briscagame.httpHandlers.GameState;
+import com.briscagame.httpHandlers.Session;
+import com.briscagame.httpHandlers.Stateful;
 
-public class Game implements Runnable, EventListener {
+public class Game implements Runnable, EventListener, Stateful {
 
     private static final int HOST = 0;
     public static final String RECORDING_EXTENSION = ".js";
@@ -34,22 +39,30 @@ public class Game implements Runnable, EventListener {
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
-    private String uuid;
+    private String uuid = UUID.randomUUID().toString();
     private WaitingRoom waitingRoom;
-    private GameState state = new GameState();
+    private GameServerState state = new GameServerState();
 
-    public Game(GameConfiguration gameConfiguration) {
-        this.gameConfiguration = gameConfiguration;
-        this.uuid = gameConfiguration.gameId;
-        // Game.games.put(this.uuid, this);
-        new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration.toString()));
+    public Game(String port) {
+        // Waiting room must be initialized before User joins.
         this.waitingRoom = new WaitingRoom(this);
-
     }
 
     @Override
     public void run() {
-        state.setState(GameState.STATE.WAITING_ROOM);
+        class ProgrammerIsStupidException extends Exception {
+        }
+        try {
+            try {
+                this.gameConfiguration.getGameId();
+            } catch (NullPointerException e) {
+                throw new ProgrammerIsStupidException();
+            }
+        } catch (ProgrammerIsStupidException e) {
+            // You don't deserve handling.
+        }
+        state.setState(GameState.WAITING_ROOM);
+        new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration.toString()));
         this.gameManager = new GameManager(this, this.gameConfiguration);
         this.waitingRoom();
         this.cleanUp();
@@ -71,14 +84,14 @@ public class Game implements Runnable, EventListener {
             this.cleanUp();
         }
 
-        state.setState(GameState.STATE.IN_PROGRESS);
+        state.setState(GameState.IN_PROGRESS);
         gameManager.start(this.players);
         this.gameCompleted = true;
     }
 
     private void cleanUp() {
         // Game.games.remove(this.uuid);
-        state.setState(GameState.STATE.COMPLETED);
+        state.setState(GameState.COMPLETED);
         for (User user : this.players) {
             Session.getSession(user.getUuid()).setGameID(null);
         }
@@ -99,6 +112,7 @@ public class Game implements Runnable, EventListener {
             } catch (IOException e) {
                 System.err.println("An error occurred writing to the file: " + e.getMessage());
             }
+            SimpleHttpServer.stop();
         }
     }
 
@@ -349,5 +363,20 @@ public class Game implements Runnable, EventListener {
 
     public String getGameType() {
         return gameConfiguration.gameType;
+    }
+
+    @Override
+    public GameServerState getState() {
+        return this.state;
+    }
+
+    public void updateFill(String fill) {
+        this.state.setFill(fill);
+    }
+
+    public void setGameConfiguration(GameConfiguration gameConfiguration) {
+        gameConfiguration.gameId = this.uuid;
+        this.gameConfiguration = gameConfiguration;
+        state.setGameConfiguration(gameConfiguration);
     }
 }

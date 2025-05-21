@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function printUsage {
+    echo "Usage: " >&2
+    echo "    $0 10000" >&2
+    exit 1
+}
+
+if [[ -z $1 ]]; then
+    echo "Must pass a port as an argument." >&2
+    printUsage
+fi
+
+export GAME_HOSTNAME=0.0.0.0
+export GAME_PORT=$1
+
+echo "127.0.0.1:$GAME_PORT"
+
+(java -cp "/app/GameServer.jar:libs/*" "com.briscagame.gameServer.GameServer" > /dev/null 2>&1)&

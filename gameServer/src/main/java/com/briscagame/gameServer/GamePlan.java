@@ -3,6 +3,8 @@ package com.briscagame.gameServer;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.briscagame.httpHandlers.GameConfiguration;
+
 public class GamePlan {
 
     private GameConfiguration gameConfiguration;
@@ -10,7 +12,8 @@ public class GamePlan {
 
     public GamePlan() {
         int maxPlayers = askPositiveInt("How many players will join this game?", 2, 4);
-        boolean swapBottomCard = askBoolean("Will players be able to Swap the Bottom card with the 2 of the same suit?");
+        boolean swapBottomCard = askBoolean(
+                "Will players be able to Swap the Bottom card with the 2 of the same suit?");
         ArrayList<String> options = new ArrayList<String>();
         options.add("solo");
         options.add("public");
@@ -24,7 +27,7 @@ public class GamePlan {
 
     private String askOptions(String question, ArrayList<String> options) {
         String response = "";
-        while ( !options.contains(response) ) {
+        while (!options.contains(response)) {
             System.out.println(question + options);
             response = scan.nextLine();
         }
@@ -49,14 +52,14 @@ public class GamePlan {
             }
             System.out.println(question + range);
         }
-        
+
         scan.nextLine();
         return response;
     }
 
     private boolean askBoolean(String question) {
         String response = "";
-        while ( !(response.equals("y") || response.equals("n")) ) {
+        while (!(response.equals("y") || response.equals("n"))) {
             System.out.println(question + "(y/n)");
             response = scan.nextLine();
         }

@@ -2,18 +2,21 @@ package com.briscagame.gameServer.handlers;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.gameServer.GameServer;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.briscagame.gameServer.Game;
+import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.User;
+import com.briscagame.httpHandlers.GameConfiguration;
+import com.briscagame.httpHandlers.GameState;
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Status;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
-import org.json.*;
-
-public class PlayCardHandler implements HttpHandler {
+public class ConfigGameHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -26,7 +29,9 @@ public class PlayCardHandler implements HttpHandler {
         }
 
         JSONObject parsedJson = new JSONObject(json);
-        if (parsedJson.isNull("index")) {
+        if (parsedJson.isNull("maxPlayers")
+                || parsedJson.isNull("swapBottomCard")
+                || parsedJson.isNull("gameType")) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
@@ -34,7 +39,6 @@ public class PlayCardHandler implements HttpHandler {
         String userId = HandlerHelper.getCookie(exchange, "userId");
         if (userId == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
         }
 
         Session userSession = Session.getSession(userId);
@@ -43,32 +47,35 @@ public class PlayCardHandler implements HttpHandler {
             return;
         }
 
-        String gameId = userSession.getGameID();
-        if (gameId == null) {
+        GameConfiguration gc;
+        try {
+            gc = new GameConfiguration(parsedJson);
+        } catch (JSONException je) {
+            System.err.println(je.getMessage());
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
 
         Game game = GameServer.getGame();
-        if (game == null) {
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
-        }
 
-        User user = game.getUser(userId);
-        if (user == null) {
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
-        }
+        if (game.getState().getState() == GameState.SPAWNED) {
 
-        int index = parsedJson.optInt("index");
-        if (index < 0 || user.getHandSize() <= index) {
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
-        }
+            User user = new User(userSession);
+            game.setGameConfiguration(gc);
+            game.addPlayer(user);
+            game.runGameThread();
+            String gameId = game.getUUID();
 
-        if (user.doneThinking(index)) {
+            userSession.setGameID(gameId);
+            userSession.setActionsSent(0);
+            JSONObject gameJson = new JSONObject();
+            gameJson.put("gameId", gameId);
+            HandlerHelper.sendResponse(exchange, Status.OK, gameJson.toString());
+            return;
+        } else if (game.getState().getState() == GameState.WAITING_ROOM) {
+            game.setGameConfiguration(gc);
             HandlerHelper.sendStatus(exchange, Status.OK);
+            return;
         }
 
         HandlerHelper.sendStatus(exchange, Status.NOT_OK);

@@ -4,6 +4,7 @@ package com.briscagame.gameServer;
 import com.sun.net.httpserver.HttpServer;
 import com.briscagame.gameServer.handlers.ActionsHandler;
 import com.briscagame.gameServer.handlers.ChangeTeamHandler;
+import com.briscagame.gameServer.handlers.ConfigGameHandler;
 import com.briscagame.gameServer.handlers.HandHandler;
 import com.briscagame.gameServer.handlers.JoinGameHandler;
 import com.briscagame.gameServer.handlers.LeaveGameHandler;
@@ -13,6 +14,8 @@ import com.briscagame.gameServer.handlers.SeatHandler;
 import com.briscagame.gameServer.handlers.StartGameHandler;
 import com.briscagame.gameServer.handlers.SwapBottomCardHandler;
 import com.briscagame.gameServer.handlers.WaitingRoomHandler;
+import com.briscagame.httpHandlers.GameServerStateHandler;
+import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
 import com.briscagame.httpHandlers.StatusHandler;
 
@@ -23,10 +26,12 @@ import java.util.concurrent.Executor;
 
 // Driver Class
 public class SimpleHttpServer {
+    private static HttpServer server;
     private static int port;
     private static String hostname;
 
     private static RootHandler rootHandler = new RootHandler("Game Server");
+    private static RegisterHandler registerHandler = new RegisterHandler();
     private static JoinGameHandler joinGameHandler = new JoinGameHandler();
     private static ChangeTeamHandler changeTeamHandler = new ChangeTeamHandler();
     private static ReadyHandler readyHandler = new ReadyHandler();
@@ -39,6 +44,8 @@ public class SimpleHttpServer {
     private static StatusHandler statusHandler = new StatusHandler();
     private static SeatHandler seatHandler = new SeatHandler();
     private static SwapBottomCardHandler swapHandler = new SwapBottomCardHandler();
+    private static GameServerStateHandler stateHandler;
+    private static ConfigGameHandler configHandler = new ConfigGameHandler();
 
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException {
@@ -53,7 +60,6 @@ public class SimpleHttpServer {
             throw new IllegalStateException("Env variable GAME_PORT must be an int.");
         }
 
-        HttpServer server;
         hostname = Optional.ofNullable(System.getenv("GAME_HOSTNAME")).orElse("0.0.0.0");
         System.out.println("Using hostname: " + hostname);
         try {
@@ -68,8 +74,12 @@ public class SimpleHttpServer {
                     "Env variables GAME_HOSTNAME, GAME_PORT must be able start the http server.");
         }
 
+        GameServer.game = new Game(portString);
+        stateHandler = new GameServerStateHandler(GameServer.getGame());
+
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);
+        server.createContext("/register", registerHandler);
         server.createContext("/joingame", joinGameHandler);
         server.createContext("/changeteam", changeTeamHandler);
         server.createContext("/ready", readyHandler);
@@ -82,6 +92,8 @@ public class SimpleHttpServer {
         server.createContext("/status", statusHandler);
         server.createContext("/seat", seatHandler);
         server.createContext("/swapBottomCard", swapHandler);
+        server.createContext("/state", stateHandler);
+        server.createContext("/config", configHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
@@ -100,5 +112,9 @@ public class SimpleHttpServer {
 
     public static ReadyHandler getReadyHandler() {
         return readyHandler;
+    }
+
+    public static void stop() {
+        server.stop(5);
     }
 }

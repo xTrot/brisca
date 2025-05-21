@@ -3,6 +3,7 @@ package com.briscagame.gameServer;
 import java.util.ArrayList;
 
 import com.briscagame.gameServer.Card.SUIT;
+import com.briscagame.httpHandlers.GameConfiguration;
 
 public class Table {
 

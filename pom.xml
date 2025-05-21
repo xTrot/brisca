@@ -10,6 +10,7 @@
         <module>gameServer</module>
         <module>httpHandlers</module>
         <module>serverBrowser</module>
+        <module>images</module>
     </modules>
 
     <properties>

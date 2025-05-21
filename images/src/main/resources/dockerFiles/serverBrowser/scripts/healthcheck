@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function printUsage {
+    echo "Usage: " >&2
+    echo "    $0 hostname:port retries sleep timeout" >&2
+    exit 1
+}
+
+if [[ -z $1 ]]; then
+    echo "Must pass a server as an argument." >&2
+    printUsage
+fi
+
+if [[ -z $2 ]]; then
+    echo "Must pass a retries as an argument." >&2
+    printUsage
+fi
+
+if [[ -z $3 ]]; then
+    echo "Must pass a sleep as an argument." >&2
+    printUsage
+fi
+
+if [[ -z $4 ]]; then
+    echo "Must pass a timeout as an argument." >&2
+    printUsage
+fi
+
+server=$1
+retries=$2
+sleep=$3
+timeout=$4
+host=$(echo "$server" | cut -d':' -f1)
+port=$(echo "$server" | cut -d':' -f2)
+
+for retry in $(seq 0 $retries); do
+    sleep $sleep
+    timeout $timeout bash -c "printf \"GET / HTTP/1.1\n\n\" > /dev/tcp/$host/$port" && exit # Success
+done
+
+exit 1 # Fail

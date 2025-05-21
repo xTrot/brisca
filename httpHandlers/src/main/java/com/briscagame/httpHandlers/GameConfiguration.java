@@ -1,4 +1,4 @@
-package com.briscagame.gameServer;
+package com.briscagame.httpHandlers;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +14,10 @@ public class GameConfiguration {
     public static final int PUBLIC = 1;
     public static final int PRIVATE = 2;
 
-    boolean swapBottomCard;
-    int maxPlayers;
-    String gameType;
-    String gameId = UUID.randomUUID().toString();
+    public boolean swapBottomCard;
+    public int maxPlayers;
+    public String gameType;
+    public String gameId = UUID.randomUUID().toString();
 
     public GameConfiguration() {
         this.swapBottomCard = false;

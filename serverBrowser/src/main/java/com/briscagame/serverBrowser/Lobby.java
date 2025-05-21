@@ -1,27 +1,25 @@
 package com.briscagame.serverBrowser;
 
-import java.util.Hashtable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.briscagame.httpHandlers.GameServerState;
+
 public class Lobby {
     private static AtomicReference<String> cacheReference = new AtomicReference<String>("[]");
-
-    private static Hashtable<String, GameServerInfo> games = new Hashtable<String, GameServerInfo>();
 
     public static void updateLobby() {
         JSONObject json = new JSONObject();
         JSONArray gamesJson = new JSONArray();
-        for (String key : games.keySet()) {
-            GameServerInfo game = games.get(key);
-            if (!game.isPublic() || game.hasStarted()) {
+        for (GameServerState state : GameServerPool.gameServers) {
+            if (state == null || !state.isPublic() || state.hasStarted()) {
                 continue;
             }
-            String fill = game.getFillInfo();
+            String fill = state.getFill();
             JSONObject gameJSON = new JSONObject();
-            gameJSON.put("gameId", key);
+            gameJSON.put("gameId", state.getGameConfiguration().gameId);
             gameJSON.put("fill", fill);
             gamesJson.put(gameJSON);
         }

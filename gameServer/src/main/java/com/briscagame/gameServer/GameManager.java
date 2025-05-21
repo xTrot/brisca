@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.briscagame.gameServer.Card.SUIT;
+import com.briscagame.httpHandlers.GameConfiguration;
 
 public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
@@ -198,7 +199,7 @@ public class GameManager {
         System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
 
         if (gameConfiguration.maxPlayers != playerSeats.size()) {
-            playerSeats.get(gameConfiguration.maxPlayers-1);
+            playerSeats.get(gameConfiguration.maxPlayers - 1);
             // Fail if player counts are invalid.
         }
 
@@ -339,11 +340,11 @@ public class GameManager {
                 for (Player player : playerSeats) {
                     System.out.println(player);
                 }
-                
+
                 JSONObject seatJson = new JSONObject();
                 seatJson.put("seat", TIE);
                 new PlayAction(game, PlayAction.ActionType.GAME_WON, seatJson);
-                
+
                 return;
             }
         }
