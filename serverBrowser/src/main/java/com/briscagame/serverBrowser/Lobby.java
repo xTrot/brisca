@@ -21,6 +21,7 @@ public class Lobby {
             JSONObject gameJSON = new JSONObject();
             gameJSON.put("gameId", state.getGameConfiguration().gameId);
             gameJSON.put("fill", fill);
+            gameJSON.put("server", state.getServer());
             gamesJson.put(gameJSON);
         }
         json.put("games", gamesJson);

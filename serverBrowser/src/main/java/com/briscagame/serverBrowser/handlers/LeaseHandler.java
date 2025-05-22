@@ -17,7 +17,7 @@ public class LeaseHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // handle the request
-        HandlerHelper.postMethod(exchange);
+        HandlerHelper.getMethod(exchange);
 
         String userId = HandlerHelper.getCookie(exchange, "userId");
         if (userId == null) {

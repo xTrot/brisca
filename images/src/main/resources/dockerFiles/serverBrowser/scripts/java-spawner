@@ -16,4 +16,4 @@ export GAME_PORT=$1
 
 echo "127.0.0.1:$GAME_PORT"
 
-(java -cp "/app/GameServer.jar:libs/*" "com.briscagame.gameServer.GameServer" > /dev/null 2>&1)&
+(java -cp "/app/GameServer.jar:libs/*" "com.briscagame.gameServer.GameServer" > /app/gameServer_$GAME_PORT.log 2>&1)&

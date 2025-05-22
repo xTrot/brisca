@@ -8,6 +8,7 @@ public class GameServerState {
     public GameState state = GameState.SPAWNED;
     public GameConfiguration gameConfiguration = null;
     public String fill = null;
+    public String server = null;
 
     public GameServerState() {
     }
@@ -20,9 +21,11 @@ public class GameServerState {
             gc = new GameConfiguration(gcJson);
         }
         String fill = json.optString("fill");
+        String server = json.optString("server");
         this.state = state;
         this.gameConfiguration = gc;
         this.fill = fill;
+        this.server = server;
     }
 
     public void setState(GameState state) {
@@ -47,6 +50,14 @@ public class GameServerState {
 
     public String getFill() {
         return fill;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 
     @JSONPropertyIgnore

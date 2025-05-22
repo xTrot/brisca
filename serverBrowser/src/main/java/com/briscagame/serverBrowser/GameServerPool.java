@@ -101,6 +101,7 @@ public class GameServerPool implements Runnable {
             diffStrings[i] = json;
             JSONObject parsedJson = new JSONObject(json);
             GameServerState state = new GameServerState(parsedJson);
+            state.setServer(EnvironmentVariable.HOSTNAME + ":" + port);
             gameServers[i] = state;
 
             switch (state.getState()) {
