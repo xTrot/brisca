@@ -1,7 +1,7 @@
 package com.briscagame.serverBrowser;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+// import java.net.InetAddress;
+// import java.net.UnknownHostException;
 import java.util.Optional;
 
 public class EnvironmentVariable {
@@ -73,11 +73,12 @@ public class EnvironmentVariable {
 				.orElse("/app/recordings");
 		// TODO: Write a validator
 
-		try {
-			HOSTNAME = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		HOSTNAME = "browser";
+		// try {
+		// HOSTNAME = InetAddress.getLocalHost().getHostName();
+		// } catch (UnknownHostException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 }

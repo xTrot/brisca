@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.briscagame.gameServer.Game;
+import com.briscagame.gameServer.GamePostgresConnectionPool;
 import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.User;
 import com.briscagame.httpHandlers.GameConfiguration;
@@ -43,6 +44,11 @@ public class ConfigGameHandler implements HttpHandler {
 
         Session userSession = Session.getSession(userId);
         if (userSession == null) {
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
+        }
+
+        if (!GamePostgresConnectionPool.sessionHasMylease(userId)) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }

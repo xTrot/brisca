@@ -18,6 +18,7 @@ public class LeasingOffice implements Runnable {
     }
 
     public MakeGameLease getLease(String userId) {
+        // MakeGameLease lease;
         MakeGameLease lease = leases.get(userId);
         if (lease != null) {
             System.out.println("Existing Lease: " + (new JSONObject(lease).toString()));
@@ -28,8 +29,10 @@ public class LeasingOffice implements Runnable {
 
         String port = null;
         int server = 0;
+        GameServerState gsState = null;
         for (GameServerState state : GameServerPool.gameServers) {
             if (state != null && state.getState() == GameState.SPAWNED) {
+                gsState = state;
                 port = Integer.toString(EnvironmentVariable.BROWSER_GAME_PORT_RANGE_START + server);
                 break;
             }
@@ -37,6 +40,13 @@ public class LeasingOffice implements Runnable {
         }
 
         if (port == null) {
+            return null;
+        }
+
+        System.out.println("Query db to make lease for " + userId + ": " + gsState.server);
+
+        if (!BrowserPostgresConnectionPool.newGameLease(userId, gsState.server)) {
+            System.err.println("Failed to create db lease.");
             return null;
         }
 

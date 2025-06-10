@@ -17,10 +17,13 @@ import com.briscagame.gameServer.handlers.WaitingRoomHandler;
 import com.briscagame.httpHandlers.GameServerStateHandler;
 import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
+import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.StatusHandler;
 
 import java.io.IOException;
+// import java.net.InetAddress;
 import java.net.InetSocketAddress;
+// import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -74,7 +77,16 @@ public class SimpleHttpServer {
                     "Env variables GAME_HOSTNAME, GAME_PORT must be able start the http server.");
         }
 
-        GameServer.game = new Game(portString);
+        String HOSTNAME = "browser";
+        // try {
+        // HOSTNAME = InetAddress.getLocalHost().getHostName();
+        // } catch (UnknownHostException e) {
+        // System.err.println("Won't start http server.");
+        // e.printStackTrace();
+        // return;
+        // }
+
+        GameServer.game = new Game(HOSTNAME, portString);
         stateHandler = new GameServerStateHandler(GameServer.getGame());
 
         // Create a context for a specific path and set the handler
@@ -97,6 +109,7 @@ public class SimpleHttpServer {
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
+        Session.init();
         server.start();
 
         // System.out.println("Server is running on port " + port);

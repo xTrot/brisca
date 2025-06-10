@@ -29,6 +29,7 @@ public class GameConfiguration {
         this.swapBottomCard = json.getBoolean("swapBottomCard");
         this.maxPlayers = json.getInt("maxPlayers");
         this.gameType = json.getString("gameType");
+        this.gameId = json.optString("gameId");
         if (this.maxPlayers > MAX_PLAYERS || this.maxPlayers < MIN_PLAYERS) {
             throw new JSONException("maxPlayers out of bounds.");
         }

@@ -51,6 +51,7 @@ public class RegisterHandler implements HttpHandler {
 
         userSession.setUsername(username);
         HandlerHelper.sendStatus(exchange, Status.OK);
+        System.out.println("Registered user: " + username + " with userId: " + userId);
 
     }
 

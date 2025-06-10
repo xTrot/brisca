@@ -2,6 +2,8 @@ package com.briscagame.serverBrowser;
 
 import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
+import com.briscagame.httpHandlers.Session;
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 import com.briscagame.serverBrowser.handlers.LeaseHandler;
 import com.briscagame.serverBrowser.handlers.LobbyHandler;
 import com.briscagame.serverBrowser.handlers.ReplayHandler;
@@ -17,6 +19,7 @@ public class BrowserHttpServer {
     private static ReplayHandler replayHandler = new ReplayHandler();
     private static LobbyHandler lobbyHandler = new LobbyHandler();
     private static LeaseHandler leaseHandler = new LeaseHandler();
+    private static JoinPrivateGameHandler joinPrivateGameHandler = new JoinPrivateGameHandler();
 
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException {
@@ -45,9 +48,11 @@ public class BrowserHttpServer {
         server.createContext("/replay", replayHandler);
         server.createContext("/lobby", lobbyHandler);
         server.createContext("/lease", leaseHandler);
+        server.createContext("/joinprivategame", joinPrivateGameHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
+        Session.init();
         server.start();
 
     }

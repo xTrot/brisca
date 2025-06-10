@@ -1,10 +1,19 @@
 package com.briscagame.httpHandlers;
 
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 public class Session {
     private static LinkedHashMap<String, Session> sessions = new LinkedHashMap<String, Session>();
+
+    public static void init() {
+        PostgresConnectionPool.initDataSource();
+        PostgresConnectionPool.getActiveSessions();
+    }
+
+    public static void close() {
+        PostgresConnectionPool.shutdownDataSource();
+    }
 
     private final String userId;
 
@@ -13,22 +22,34 @@ public class Session {
     private String gameID;
     private String team;
     private int actionsSent;
+    private Timestamp refreshBy;
 
     public static Session getSession(String userId) {
-        if (!Session.sessions.containsKey(userId)) {
-            return null;
+        if (Session.sessions.containsKey(userId)) {
+            return sessions.get(userId);
         }
-        return sessions.get(userId);
+
+        PostgresConnectionPool.getActiveSessions();
+        if (Session.sessions.containsKey(userId)) {
+            return sessions.get(userId);
+        }
+
+        return null;
     }
 
     public Session() {
         this("Net Player #" + (Session.sessions.size() + 1));
-        register();
     }
 
     public Session(String username) {
         this.username = username;
-        this.userId = UUID.randomUUID().toString();
+        this.userId = PostgresConnectionPool.createGuestSession(this);
+        register();
+    }
+
+    public Session(String token, Timestamp refreshBy) {
+        this.userId = token;
+        this.refreshBy = refreshBy;
         register();
     }
 
@@ -56,6 +77,10 @@ public class Session {
         return actionsSent;
     }
 
+    public Timestamp getRefreshBy() {
+        return refreshBy;
+    }
+
     public synchronized void setUsername(String username) {
         this.username = username;
     }
@@ -70,6 +95,10 @@ public class Session {
 
     public synchronized void setActionsSent(int actionsSent) {
         this.actionsSent = actionsSent;
+    }
+
+    public void setRefreshBy(Timestamp refreshBy) {
+        this.refreshBy = refreshBy;
     }
 
 }

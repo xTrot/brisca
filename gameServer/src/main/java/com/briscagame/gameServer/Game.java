@@ -30,7 +30,6 @@ public class Game implements Runnable, EventListener, Stateful {
     private static ThreadPoolExecutor tpe;
 
     // Protect these with synchro
-    // private static Hashtable<String, Game> games = new Hashtable<String, Game>();
     private ArrayList<String> actions = new ArrayList<String>();
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
@@ -43,9 +42,10 @@ public class Game implements Runnable, EventListener, Stateful {
     private WaitingRoom waitingRoom;
     private GameServerState state = new GameServerState();
 
-    public Game(String port) {
+    public Game(String host, String port) {
         // Waiting room must be initialized before User joins.
         this.waitingRoom = new WaitingRoom(this);
+        this.state.server = host + ":" + port;
     }
 
     @Override
@@ -113,6 +113,7 @@ public class Game implements Runnable, EventListener, Stateful {
                 System.err.println("An error occurred writing to the file: " + e.getMessage());
             }
             SimpleHttpServer.stop();
+            Session.close();
         }
     }
 
@@ -377,6 +378,7 @@ public class Game implements Runnable, EventListener, Stateful {
     public void setGameConfiguration(GameConfiguration gameConfiguration) {
         gameConfiguration.gameId = this.uuid;
         this.gameConfiguration = gameConfiguration;
-        state.setGameConfiguration(gameConfiguration);
+        this.state.setGameConfiguration(gameConfiguration);
+
     }
 }

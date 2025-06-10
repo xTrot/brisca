@@ -2,6 +2,8 @@ package com.briscagame.serverBrowser;
 
 import java.time.Instant;
 
+import org.json.JSONObject;
+
 public class MakeGameLease {
     private String host = EnvironmentVariable.HOSTNAME;
     private String port;
@@ -36,4 +38,8 @@ public class MakeGameLease {
         this.host = host;
     }
 
+    @Override
+    public String toString() {
+        return new JSONObject(this).toString();
+    }
 }

@@ -1,8 +1,7 @@
 FROM openjdk:25-jdk-slim
 WORKDIR /app
 
-ADD jars/HttpHandlers.jar /app/libs/
-ADD jars/json.jar /app/libs/
+ADD jars/* /app/libs/
 
 # Copy the main jar file into the container
 ADD jars/ServerBrowser.jar /app/ServerBrowser.jar
