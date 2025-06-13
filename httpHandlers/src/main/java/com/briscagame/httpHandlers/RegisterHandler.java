@@ -2,10 +2,10 @@ package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpExchange;
+import org.json.JSONObject;
 
-import org.json.*;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class RegisterHandler implements HttpHandler {
 
@@ -35,7 +35,7 @@ public class RegisterHandler implements HttpHandler {
         Session userSession = null;
         if (userId == null) {
             userSession = new Session(username);
-            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId());
+            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId(), userSession.getRefreshBy());
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }
@@ -44,7 +44,7 @@ public class RegisterHandler implements HttpHandler {
         if (userSession == null) {
             userSession = new Session(username);
             System.out.println("Refreshing session for " + username);
-            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId());
+            HandlerHelper.setCookie(exchange, "userId", userSession.getUserId(), userSession.getRefreshBy());
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
         }

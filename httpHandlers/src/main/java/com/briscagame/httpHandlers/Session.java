@@ -6,15 +6,6 @@ import java.util.LinkedHashMap;
 public class Session {
     private static LinkedHashMap<String, Session> sessions = new LinkedHashMap<String, Session>();
 
-    public static void init() {
-        PostgresConnectionPool.initDataSource();
-        PostgresConnectionPool.getActiveSessions();
-    }
-
-    public static void close() {
-        PostgresConnectionPool.shutdownDataSource();
-    }
-
     private final String userId;
 
     // Protect these with synchro
@@ -25,16 +16,14 @@ public class Session {
     private Timestamp refreshBy;
 
     public static Session getSession(String userId) {
+        System.out.println("Trying to find user: " + userId);
         if (Session.sessions.containsKey(userId)) {
             return sessions.get(userId);
         }
 
-        PostgresConnectionPool.getActiveSessions();
-        if (Session.sessions.containsKey(userId)) {
-            return sessions.get(userId);
-        }
+        System.out.println("Couldn't find it here, checking db.");
 
-        return null;
+        return PostgresConnectionPool.getSession(userId);
     }
 
     public Session() {
@@ -43,13 +32,14 @@ public class Session {
 
     public Session(String username) {
         this.username = username;
-        this.userId = PostgresConnectionPool.createGuestSession(this);
+        this.userId = PostgresConnectionPool.createGuestSession(this, username);
         register();
     }
 
-    public Session(String token, Timestamp refreshBy) {
+    public Session(String token, Timestamp refreshBy, String username) {
         this.userId = token;
         this.refreshBy = refreshBy;
+        this.username = username;
         register();
     }
 

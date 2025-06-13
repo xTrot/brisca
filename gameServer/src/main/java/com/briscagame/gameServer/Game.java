@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import com.briscagame.httpHandlers.GameConfiguration;
 import com.briscagame.httpHandlers.GameServerState;
 import com.briscagame.httpHandlers.GameState;
+import com.briscagame.httpHandlers.PostgresConnectionPool;
 import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Stateful;
 
@@ -113,7 +114,7 @@ public class Game implements Runnable, EventListener, Stateful {
                 System.err.println("An error occurred writing to the file: " + e.getMessage());
             }
             SimpleHttpServer.stop();
-            Session.close();
+            PostgresConnectionPool.shutdownDataSource();
         }
     }
 

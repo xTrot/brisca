@@ -44,6 +44,7 @@ public class ConfigGameHandler implements HttpHandler {
 
         Session userSession = Session.getSession(userId);
         if (userSession == null) {
+            System.out.println("Didn't find it in the db either.");
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }

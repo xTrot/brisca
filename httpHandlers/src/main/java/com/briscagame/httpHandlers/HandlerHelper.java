@@ -2,6 +2,11 @@ package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
@@ -55,11 +60,15 @@ public class HandlerHelper {
         return cookie;
     }
 
-    public static void setCookie(HttpExchange exchange, String key, String value) {
+    public static void setCookie(HttpExchange exchange, String key, String value, Timestamp refreshby) {
         StringBuilder cookie = new StringBuilder();
         cookie.append(key);
         cookie.append("=");
         cookie.append(value);
+        cookie.append("; Expires=");
+        Instant instant = refreshby.toInstant();
+        ZonedDateTime gmtInstant = instant.atZone(ZoneId.of("GMT"));
+        cookie.append(gmtInstant.format(DateTimeFormatter.RFC_1123_DATE_TIME));
         cookie.append(";");
         exchange.getResponseHeaders().add("set-cookie", cookie.toString());
     }

@@ -1,16 +1,17 @@
 package com.briscagame.serverBrowser;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.Executor;
+
+import com.briscagame.httpHandlers.PostgresConnectionPool;
 import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
-import com.briscagame.httpHandlers.Session;
 import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 import com.briscagame.serverBrowser.handlers.LeaseHandler;
 import com.briscagame.serverBrowser.handlers.LobbyHandler;
 import com.briscagame.serverBrowser.handlers.ReplayHandler;
 import com.sun.net.httpserver.HttpServer;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
 
 public class BrowserHttpServer {
 
@@ -52,7 +53,8 @@ public class BrowserHttpServer {
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
-        Session.init();
+        PostgresConnectionPool.initDataSource();
+        PostgresConnectionPool.getActiveSessions();
         server.start();
 
     }

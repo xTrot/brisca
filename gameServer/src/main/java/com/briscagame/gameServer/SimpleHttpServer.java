@@ -1,7 +1,12 @@
 package com.briscagame.gameServer;
 
-// Java Program to Set up a Basic HTTP Server
-import com.sun.net.httpserver.HttpServer;
+import java.io.IOException;
+// import java.net.InetAddress;
+import java.net.InetSocketAddress;
+// import java.net.UnknownHostException;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+
 import com.briscagame.gameServer.handlers.ActionsHandler;
 import com.briscagame.gameServer.handlers.ChangeTeamHandler;
 import com.briscagame.gameServer.handlers.ConfigGameHandler;
@@ -15,17 +20,11 @@ import com.briscagame.gameServer.handlers.StartGameHandler;
 import com.briscagame.gameServer.handlers.SwapBottomCardHandler;
 import com.briscagame.gameServer.handlers.WaitingRoomHandler;
 import com.briscagame.httpHandlers.GameServerStateHandler;
-import com.briscagame.httpHandlers.RegisterHandler;
+import com.briscagame.httpHandlers.PostgresConnectionPool;
 import com.briscagame.httpHandlers.RootHandler;
-import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.StatusHandler;
-
-import java.io.IOException;
-// import java.net.InetAddress;
-import java.net.InetSocketAddress;
-// import java.net.UnknownHostException;
-import java.util.Optional;
-import java.util.concurrent.Executor;
+// Java Program to Set up a Basic HTTP Server
+import com.sun.net.httpserver.HttpServer;
 
 // Driver Class
 public class SimpleHttpServer {
@@ -34,7 +33,6 @@ public class SimpleHttpServer {
     private static String hostname;
 
     private static RootHandler rootHandler = new RootHandler("Game Server");
-    private static RegisterHandler registerHandler = new RegisterHandler();
     private static JoinGameHandler joinGameHandler = new JoinGameHandler();
     private static ChangeTeamHandler changeTeamHandler = new ChangeTeamHandler();
     private static ReadyHandler readyHandler = new ReadyHandler();
@@ -91,7 +89,6 @@ public class SimpleHttpServer {
 
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);
-        server.createContext("/register", registerHandler);
         server.createContext("/joingame", joinGameHandler);
         server.createContext("/changeteam", changeTeamHandler);
         server.createContext("/ready", readyHandler);
@@ -109,7 +106,7 @@ public class SimpleHttpServer {
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
-        Session.init();
+        PostgresConnectionPool.initDataSource();
         server.start();
 
         // System.out.println("Server is running on port " + port);

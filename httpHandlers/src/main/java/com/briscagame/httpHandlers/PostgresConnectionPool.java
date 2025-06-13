@@ -1,13 +1,13 @@
 package com.briscagame.httpHandlers;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class PostgresConnectionPool {
 
@@ -49,10 +49,15 @@ public class PostgresConnectionPool {
 
             String token = null;
             Timestamp refreshBy = null;
+            String username = null;
             while (resultSet.next()) {
                 token = resultSet.getString("token");
                 refreshBy = resultSet.getTimestamp("refreshby");
-                new Session(token, refreshBy);
+                username = resultSet.getString("username");
+                if (token == null || refreshBy == null || username == null) {
+                    continue;
+                }
+                new Session(token, refreshBy, username);
             }
 
         } catch (SQLException e) {
@@ -60,8 +65,8 @@ public class PostgresConnectionPool {
         }
     }
 
-    public static String createGuestSession(Session current) {
-        String query = "SELECT * FROM auth.create_guest_session();";
+    public static String createGuestSession(Session current, String username) {
+        String query = "SELECT * FROM auth.create_guest_session('" + username + "');";
         try ( // Auto-Closing try/catch closes resources inside parenthesis.
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
@@ -82,5 +87,47 @@ public class PostgresConnectionPool {
         }
 
         return null;
+    }
+
+    public static Session getSession(String userId) {
+        Session session = null;
+        String query = "SELECT * FROM auth.get_session('" + userId + "');";
+        try ( // Auto-Closing try/catch closes resources inside parenthesis.
+                Connection connection = dataSource.getConnection();
+                Statement stmt = connection.createStatement();
+                ResultSet resultSet = stmt.executeQuery(query)) {
+            System.out.println("Connection used: " + connection + " for query: " + query);
+
+            String token = null;
+            Timestamp refreshBy = null;
+            String username = null;
+            if (resultSet.next()) {
+
+                System.out.println("Found something.");
+
+                token = resultSet.getString("token");
+                refreshBy = resultSet.getTimestamp("refreshby");
+                username = resultSet.getString("username");
+
+                System.out.println("token, refreshby, username " +
+                        token + ", " +
+                        refreshBy.toString() + ", " +
+                        username + ", " +
+                        ";");
+
+                if (token == null || refreshBy == null || username == null) {
+                    return session;
+                }
+
+                session = new Session(token, refreshBy, username);
+
+                return session;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error querying database: " + e.getMessage());
+        }
+
+        return session;
     }
 }
