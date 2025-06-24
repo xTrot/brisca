@@ -34,3 +34,8 @@ recordings/
 
 # generated poms
 dependency-reduced-pom.xml
+
+# ignore neovim plugin temp files.
+.project
+.classpath
+.settings
