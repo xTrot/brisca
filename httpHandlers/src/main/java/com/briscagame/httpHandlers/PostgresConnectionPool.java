@@ -130,4 +130,30 @@ public class PostgresConnectionPool {
 
         return session;
     }
+
+    public static boolean refreshSession(Session session) {
+        String token = session.getUserId();
+        String old = session.getRefreshBy().toString();
+        String query = "SELECT * FROM auth.refresh_session('" + session.getUserId() + "');";
+        try ( // Auto-Closing try/catch closes resources inside parenthesis.
+                Connection connection = dataSource.getConnection();
+                Statement stmt = connection.createStatement();
+                ResultSet resultSet = stmt.executeQuery(query)) {
+            System.out.println("Connection used: " + connection + " for query: " + query);
+
+            Timestamp refreshBy = null;
+            if (resultSet.next()) {
+                refreshBy = resultSet.getTimestamp("refreshby");
+                String newRefresh = refreshBy.toString();
+                session.setRefreshBy(refreshBy);
+                System.out.println("Session refreshed for userId: " + token + " old: " + old + " new:" + newRefresh);
+                return true;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error querying database: " + e.getMessage());
+        }
+
+        return false;
+    }
 }

@@ -133,4 +133,12 @@ public class HandlerHelper {
     public static void sendStatus(HttpExchange x, int code) throws IOException {
         sendResponse(x, code, NO_RESPONSE_BODY);
     }
+
+    public static boolean refresh(HttpExchange exchange, Session userSession) {
+        if (!userSession.refresh()) {
+            return false;
+        }
+        HandlerHelper.setCookie(exchange, "userId", userSession.getUserId(), userSession.getRefreshBy());
+        return true;
+    }
 }

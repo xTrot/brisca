@@ -1,6 +1,7 @@
 package com.briscagame.httpHandlers;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 
 public class Session {
@@ -16,14 +17,27 @@ public class Session {
     private Timestamp refreshBy;
 
     public static Session getSession(String userId) {
-        System.out.println("Trying to find user: " + userId);
-        if (Session.sessions.containsKey(userId)) {
-            return sessions.get(userId);
+        Session session = Session.sessions.get(userId);
+        if (session != null) {
+            return session;
         }
 
         System.out.println("Couldn't find it here, checking db.");
 
         return PostgresConnectionPool.getSession(userId);
+    }
+
+    public boolean refresh() {
+        Instant minuteBeforeExpiry = refreshBy.toInstant().minusSeconds(60);
+        System.out.println("minuteBeforeExpiry:  " + minuteBeforeExpiry.toString());
+        Instant rightNow = Instant.now();
+        System.out.println("rightNow:            " + rightNow.toString());
+        if (rightNow.isAfter(minuteBeforeExpiry)) {
+            System.out.println("Trying refresh.");
+            return PostgresConnectionPool.refreshSession(this);
+        } else {
+            return false;
+        }
     }
 
     public Session() {
@@ -43,7 +57,8 @@ public class Session {
         register();
     }
 
-    public void register() {
+    private void register() {
+        System.out.println("Resgitered: " + userId);
         sessions.put(this.userId, this);
     }
 
