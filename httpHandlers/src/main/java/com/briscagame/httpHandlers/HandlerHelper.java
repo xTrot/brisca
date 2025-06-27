@@ -135,7 +135,7 @@ public class HandlerHelper {
     }
 
     public static boolean refresh(HttpExchange exchange, Session userSession) {
-        if (!userSession.refresh()) {
+        if (!PostgresConnectionPool.refreshSession(userSession)) {
             return false;
         }
         HandlerHelper.setCookie(exchange, "userId", userSession.getUserId(), userSession.getRefreshBy());
