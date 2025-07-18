@@ -5,6 +5,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class GameServer {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(GameServer.class);
+
     static Game game;
 
     public static void main(String[] args) throws IOException {

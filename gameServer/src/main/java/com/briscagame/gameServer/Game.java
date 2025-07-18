@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.httpHandlers.GameConfiguration;
 import com.briscagame.httpHandlers.GameServerState;
@@ -27,6 +29,8 @@ public class Game implements Runnable, EventListener, Stateful {
     public static final String RECORDING_EXTENSION = ".js";
     public static final String CURRENT_DIR = System.getProperty("user.dir");
     public static final Path RECORDING_DIR = Path.of(CURRENT_DIR, "recordings");
+
+    private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private static ThreadPoolExecutor tpe;
 
@@ -72,16 +76,16 @@ public class Game implements Runnable, EventListener, Stateful {
     private void waitingRoom() {
         // Players should be able to join, leave an change teams. Done
         // While players not ready or 2 minutes veryone gets kicked.
-        System.out.println("Join game: " + this.uuid);
+        logger.info("Join game: {}", this.uuid);
         try {
             while (!this.startGameLock) {
                 TimeUnit.MILLISECONDS.sleep(100);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
             this.cleanUp();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{}", e);
             this.cleanUp();
         }
 
@@ -101,17 +105,16 @@ public class Game implements Runnable, EventListener, Stateful {
             String actions = this.getActions(THE_START);
             JSONArray gameRecording = new JSONArray(actions);
             Path filename = Path.of(RECORDING_DIR.toString(), this.uuid + RECORDING_EXTENSION);
-            System.out.println(filename);
             try {
                 Files.createDirectories(RECORDING_DIR);
             } catch (IOException e) {
-                System.err.println("An error occurred creating directory: " + e.getMessage());
+                logger.error("An error occurred creating directory: {}", e);
             }
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename.toString()))) {
                 writer.write(gameRecording.toString());
-                System.out.println("Game recorded: " + filename);
+                logger.info("Game recorded: {}", filename);
             } catch (IOException e) {
-                System.err.println("An error occurred writing to the file: " + e.getMessage());
+                logger.error("An error occurred writing to the file: {}", e);
             }
             SimpleHttpServer.stop();
             PostgresConnectionPool.shutdownDataSource();
@@ -122,7 +125,7 @@ public class Game implements Runnable, EventListener, Stateful {
         if (this.startGameLock)
             return false;
         String userId = user.getUuid();
-        System.out.println("Adding player " + user.getPlayerName() + ": " + userId);
+        logger.info("Adding player {}: {}", user.getPlayerName(), userId);
         int playersSize = this.players.size();
         if (playersSize == 0) {
             this.players.add(user);
@@ -131,7 +134,7 @@ public class Game implements Runnable, EventListener, Stateful {
         }
         for (User existingUser : this.players) {
             if (userId.equals((existingUser).getUuid())) {
-                System.out.println("Player already joined, not added.");
+                logger.info("Player already joined, not added.");
                 return false;
             }
         }
@@ -157,7 +160,7 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     public synchronized boolean readyPlayer(String userId) {
-        System.out.println("Wants to ready player " + userId);
+        logger.info("Wants to ready player {}", userId);
         if (this.startGameLock)
             return false;
         if (this.players.size() == 0) {
@@ -165,7 +168,7 @@ public class Game implements Runnable, EventListener, Stateful {
         }
         for (User user : this.players) {
             if (userId.equals(user.getUuid())) {
-                System.out.println("Player found and readied.");
+                logger.info("Player found and readied.");
                 user.readyToggle();
                 this.waitingRoom.updateWaitingRoom();
                 return true;
@@ -201,10 +204,10 @@ public class Game implements Runnable, EventListener, Stateful {
                 TimeUnit.MILLISECONDS.sleep(10);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
             this.cleanUp();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{}", e);
             this.cleanUp();
         }
         this.waitingRoom.updateWaitingRoom();

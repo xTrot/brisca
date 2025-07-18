@@ -1,6 +1,8 @@
 package com.briscagame.gameServer;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlayAction {
     public static enum ActionType {
@@ -17,6 +19,8 @@ public class PlayAction {
         SEAT_NOT_AFK,
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(PlayAction.class);
+
     private ActionType type;
     private JSONObject payload = null;
 
@@ -28,7 +32,7 @@ public class PlayAction {
         this.type = type;
         this.payload = payload;
         Game.registerAction(game, this);
-        System.out.println(this);
+        logger.info("{}", this);
     }
 
     public JSONObject getPayload() {
@@ -39,7 +43,7 @@ public class PlayAction {
         return this.type;
     }
 
-    public String toString(){
+    public String toString() {
         return (new JSONObject(this)).toString();
     }
 

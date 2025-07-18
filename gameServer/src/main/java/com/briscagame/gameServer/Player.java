@@ -6,6 +6,8 @@ import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Player {
     public static final List<String> TEAM_TYPES = List.of("A", "B", "S"); // S=Spectator
@@ -18,6 +20,8 @@ public class Player {
             "yaMom", "Carloz", "klout");
     public static final int BOTS_SIZE = BOTS.size();
     public static final int FIVE_SEC = 5000; // Side-effect: Allows client animation time.
+
+    private static final Logger logger = LoggerFactory.getLogger(SimpleHttpServer.class);
 
     private static Random rand = new Random();
 
@@ -69,8 +73,8 @@ public class Player {
             try {
                 Thread.sleep(FIVE_SEC);
             } catch (InterruptedException e) {
-                System.err.println("Unexpected Interrupt while bot was thinking:");
-                System.err.println(e.getMessage());
+                logger.error("Unexpected Interrupt while bot was thinking:");
+                logger.error("{}", e);
             }
         }
         this.swapBottomCard(); // Only happens if possible.

@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.gameServer.Card.SUIT;
 import com.briscagame.httpHandlers.GameConfiguration;
@@ -14,6 +16,8 @@ public class GameManager {
     private static final int STARTING_HAND_SIZE = 3;
     private static final int TEN_SEC = 10000;
     private static final int TIE = -1;
+
+    private static final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
     private Deck deck;
     private ArrayList<Player> playerSeats;
@@ -173,10 +177,8 @@ public class GameManager {
             playerSeats.add(team2.remove(0));
         }
 
-        System.out.println(
-                "Team 1: " + playerSeats.get(0).getPlayerName() + " and " + playerSeats.get(2).getPlayerName());
-        System.out.println(
-                "Team 2: " + playerSeats.get(1).getPlayerName() + " and " + playerSeats.get(3).getPlayerName());
+        logger.info("Team 1: {} and {}", playerSeats.get(0).getPlayerName(), playerSeats.get(2).getPlayerName());
+        logger.info("Team 2: {} and {}", playerSeats.get(1).getPlayerName(), playerSeats.get(3).getPlayerName());
     }
 
     private void setTheTable() {
@@ -196,7 +198,7 @@ public class GameManager {
         }
 
         turn = rand.nextInt(playerSeats.size());
-        System.out.println(playerSeats.get(turn).getPlayerName() + " will start the game.\n");
+        logger.info("{} will start the game.", playerSeats.get(turn).getPlayerName());
 
         if (gameConfiguration.maxPlayers != playerSeats.size()) {
             playerSeats.get(gameConfiguration.maxPlayers - 1);
@@ -210,12 +212,12 @@ public class GameManager {
         new PlayAction(game, PlayAction.ActionType.GAME_STARTED, gameStartedJson);
         game.setGameStarted();
 
-        System.out.println("\n\nStarting a new game!.");
-        System.out.println("This bottom card was picked " + table.bottomCard);
+        logger.info("Starting a new game!.");
+        logger.info("This bottom card was picked {}", table.bottomCard);
         JSONObject bottomCardJson = new JSONObject();
         bottomCardJson.put("bottomCard", this.table.bottomCard);
         new PlayAction(game, PlayAction.ActionType.BOTTOM_CARD_SELECTED, bottomCardJson);
-        System.out.println("This is the suit for the game " + table.bottomCard.getSuit());
+        logger.info("This is the suit for the game {}", table.bottomCard.getSuit());
 
         for (int i = 0; i < STARTING_HAND_SIZE; i++) {
             for (Player player : playerSeats) {
@@ -228,7 +230,7 @@ public class GameManager {
         try {
             TimeUnit.MILLISECONDS.sleep(TEN_SEC);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
         }
 
         new PlayAction(game, PlayAction.ActionType.GRACE_PERIOD_ENDED);
@@ -296,19 +298,19 @@ public class GameManager {
 
         String winningTeam;
         if (team1Score > team2Score) {
-            System.out.println("Team 1 won.");
+            logger.info("Team 1 won.");
             winningTeam = Player.TEAM_TYPES.get(playerSeats.get(0).getTeam());
         } else if (team2Score > team1Score) {
-            System.out.println("Team 2 won.");
+            logger.info("Team 2 won.");
             winningTeam = Player.TEAM_TYPES.get(playerSeats.get(1).getTeam());
         } else {
-            System.out.println("Its a draw.");
+            logger.info("Its a draw.");
             winningTeam = "draw";
         }
 
-        System.out.println("Scores:" + team1Score + ", " + team2Score);
+        logger.info("Scores: {}, {}", team1Score, team2Score);
         for (Player player : playerSeats) {
-            System.out.println(player);
+            logger.info(player.toString());
         }
 
         JSONObject teamJson = new JSONObject();
@@ -335,10 +337,10 @@ public class GameManager {
 
         for (int i = 0; i < scores.length; i++) {
             if (scores[i] == maxScore && i != winner) {
-                System.out.println("Draw between " + playerSeats.get(i).getPlayerName() + " and "
-                        + playerSeats.get(winner).getPlayerName());
+                logger.info("Draw between {} and {}", playerSeats.get(i).getPlayerName(),
+                        playerSeats.get(winner).getPlayerName());
                 for (Player player : playerSeats) {
-                    System.out.println(player);
+                    logger.info("{}", player);
                 }
 
                 JSONObject seatJson = new JSONObject();
@@ -353,9 +355,9 @@ public class GameManager {
         seatJson.put("seat", winner);
         new PlayAction(game, PlayAction.ActionType.GAME_WON, seatJson);
 
-        System.out.println("\nThe winner is " + playerSeats.get(winner).getPlayerName());
+        logger.info("The winner is {}", playerSeats.get(winner).getPlayerName());
         for (Player player : playerSeats) {
-            System.out.println(player);
+            logger.info("{}", player);
         }
 
     }

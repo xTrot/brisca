@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.json.JSONObject;
 
-import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.Game;
+import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.User;
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Session;
@@ -14,6 +14,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class SeatHandler implements HttpHandler {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(SeatHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

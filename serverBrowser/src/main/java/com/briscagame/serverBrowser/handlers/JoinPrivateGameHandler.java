@@ -3,15 +3,19 @@ package com.briscagame.serverBrowser.handlers;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.sun.net.httpserver.HttpHandler;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Status;
 import com.briscagame.serverBrowser.Lobby;
 import com.sun.net.httpserver.HttpExchange;
-
-import org.json.*;
+import com.sun.net.httpserver.HttpHandler;
 
 public class JoinPrivateGameHandler implements HttpHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -22,7 +26,7 @@ public class JoinPrivateGameHandler implements HttpHandler {
 
         if (!params.containsKey("gameId")) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            System.err.println("No param gameId.");
+            logger.error("No param gameId.");
             return;
         }
 
@@ -31,7 +35,7 @@ public class JoinPrivateGameHandler implements HttpHandler {
         JSONObject game = Lobby.getPrivateGame(gameId);
         if (game == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            System.err.println("gameId:" + gameId + " not found.");
+            logger.error("gameId: {} not found.", gameId);
             return;
         }
 

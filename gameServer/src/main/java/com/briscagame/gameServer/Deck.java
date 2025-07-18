@@ -8,6 +8,8 @@ public class Deck {
 
     static final int THIS_CARD_NUMBER_CAN_SWAP = 2;
 
+    // private static final Logger logger = LoggerFactory.getLogger(Deck.class);
+
     private Stack<Card> deck;
 
     public Deck(Game game) {

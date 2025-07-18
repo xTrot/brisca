@@ -7,6 +7,9 @@ import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.briscagame.gameServer.handlers.ActionsHandler;
 import com.briscagame.gameServer.handlers.ChangeTeamHandler;
 import com.briscagame.gameServer.handlers.ConfigGameHandler;
@@ -28,6 +31,9 @@ import com.sun.net.httpserver.HttpServer;
 
 // Driver Class
 public class SimpleHttpServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(SimpleHttpServer.class);
+
     private static HttpServer server;
     private static int port;
     private static String hostname;
@@ -51,26 +57,26 @@ public class SimpleHttpServer {
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException {
         String portString = Optional.ofNullable(System.getenv("GAME_PORT")).orElse("8000");
-        System.out.println("Using port: " + portString);
+        logger.info("Using port: {}", portString);
         try {
             port = Integer.parseInt(portString);
         } catch (NumberFormatException e) {
-            System.err.println("Error parsing GAME_PORT env variable to int:");
-            System.err.println("GAME_PORT=" + portString);
-            System.err.println(e);
+            logger.error("Error parsing GAME_PORT env variable to int:");
+            logger.error("GAME_PORT={}", portString);
+            logger.error("{}", e);
             throw new IllegalStateException("Env variable GAME_PORT must be an int.");
         }
 
         hostname = Optional.ofNullable(System.getenv("GAME_HOSTNAME")).orElse("0.0.0.0");
-        System.out.println("Using hostname: " + hostname);
+        logger.info("Using hostname: {}", hostname);
         try {
             // Create an HttpServer instance
             server = HttpServer.create(new InetSocketAddress(hostname, port), 0);
         } catch (Exception e) {
-            System.err.println("Error initializing socket address:");
-            System.err.println("GAME_HOSTNAME=" + hostname);
-            System.err.println("GAME_PORT=" + port);
-            System.err.println(e);
+            logger.error("Error initializing socket address:");
+            logger.error("GAME_HOSTNAME={}", hostname);
+            logger.error("GAME_PORT={}", port);
+            logger.error("{}", e);
             throw new IllegalStateException(
                     "Env variables GAME_HOSTNAME, GAME_PORT must be able start the http server.");
         }
@@ -79,7 +85,7 @@ public class SimpleHttpServer {
         // try {
         // HOSTNAME = InetAddress.getLocalHost().getHostName();
         // } catch (UnknownHostException e) {
-        // System.err.println("Won't start http server.");
+        // logger.error("Won't start http server.");
         // e.printStackTrace();
         // return;
         // }
@@ -109,7 +115,6 @@ public class SimpleHttpServer {
         PostgresConnectionPool.initDataSource();
         server.start();
 
-        // System.out.println("Server is running on port " + port);
     }
 
     public static PlayCardHandler getPlayCardHandler() {

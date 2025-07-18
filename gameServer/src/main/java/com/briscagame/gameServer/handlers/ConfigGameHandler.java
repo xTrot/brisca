@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.gameServer.Game;
 import com.briscagame.gameServer.GamePostgresConnectionPool;
@@ -18,6 +20,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class ConfigGameHandler implements HttpHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConfigGameHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -44,7 +48,7 @@ public class ConfigGameHandler implements HttpHandler {
 
         Session userSession = Session.getSession(userId);
         if (userSession == null) {
-            System.out.println("Didn't find it in the db either.");
+            logger.info("Didn't find it in the db either.");
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
@@ -58,7 +62,7 @@ public class ConfigGameHandler implements HttpHandler {
         try {
             gc = new GameConfiguration(parsedJson);
         } catch (JSONException je) {
-            System.err.println(je.getMessage());
+            logger.error("{}", je);
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }

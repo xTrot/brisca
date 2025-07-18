@@ -6,10 +6,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class PostgresConnectionPool {
+
+    private static final Logger logger = LoggerFactory.getLogger(PostgresConnectionPool.class);
 
     public static HikariDataSource dataSource;
 
@@ -29,13 +34,13 @@ public class PostgresConnectionPool {
         config.setDriverClassName("org.postgresql.Driver");
 
         dataSource = new HikariDataSource(config);
-        System.out.println("HikariCP DataSource initialized successfully.");
+        logger.info("HikariCP DataSource initialized successfully.");
     }
 
     public static void shutdownDataSource() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            System.out.println("HikariCP DataSource shut down.");
+            logger.info("HikariCP DataSource shut down.");
         }
     }
 
@@ -45,7 +50,7 @@ public class PostgresConnectionPool {
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
-            System.out.println("Connection used: " + connection + " for query: " + query);
+            logger.info("Connection used: {} for query: {}", connection, query);
 
             String token = null;
             Timestamp refreshBy = null;
@@ -61,7 +66,7 @@ public class PostgresConnectionPool {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error querying database: " + e.getMessage());
+            logger.error("Error querying database: {}", e);
         }
     }
 
@@ -71,7 +76,7 @@ public class PostgresConnectionPool {
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
-            System.out.println("Connection used: " + connection + " for query: " + query);
+            logger.info("Connection used: " + connection + " for query: " + query);
 
             String token = null;
             Timestamp refreshBy = null;
@@ -83,7 +88,7 @@ public class PostgresConnectionPool {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error querying database: " + e.getMessage());
+            logger.error("Error querying database: {}", e);
         }
 
         return null;
@@ -96,24 +101,20 @@ public class PostgresConnectionPool {
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
-            System.out.println("Connection used: " + connection + " for query: " + query);
+            logger.info("Connection used: {} for query: {}", connection, query);
 
             String token = null;
             Timestamp refreshBy = null;
             String username = null;
             if (resultSet.next()) {
 
-                System.out.println("Found something.");
+                logger.info("Found something.");
 
                 token = resultSet.getString("token");
                 refreshBy = resultSet.getTimestamp("refreshby");
                 username = resultSet.getString("username");
 
-                System.out.println("token, refreshby, username " +
-                        token + ", " +
-                        refreshBy.toString() + ", " +
-                        username + ", " +
-                        ";");
+                logger.info("token={}, refreshby={}, username={}", token, refreshBy, username);
 
                 if (token == null || refreshBy == null || username == null) {
                     return session;
@@ -125,7 +126,7 @@ public class PostgresConnectionPool {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error querying database: " + e.getMessage());
+            logger.error("Error querying database: {}", e);
         }
 
         return session;
@@ -139,19 +140,19 @@ public class PostgresConnectionPool {
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
-            System.out.println("Connection used: " + connection + " for query: " + query);
+            logger.info("Connection used: {} for query: {}", connection, query);
 
             Timestamp refreshBy = null;
             if (resultSet.next()) {
                 refreshBy = resultSet.getTimestamp("refreshby");
                 String newRefresh = refreshBy.toString();
                 session.setRefreshBy(refreshBy);
-                System.out.println("Session refreshed for userId: " + token + " old: " + old + " new:" + newRefresh);
+                logger.info("Session refreshed for userId: {} old: {} new: {}", token, old, newRefresh);
                 return true;
             }
 
         } catch (SQLException e) {
-            System.err.println("Error querying database: " + e.getMessage());
+            logger.error("Error querying database: {}", e);
         }
 
         return false;

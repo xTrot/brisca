@@ -6,11 +6,16 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.httpHandlers.GameServerState;
 import com.briscagame.httpHandlers.GameState;
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 
 public class LeasingOffice implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
     private HashMap<String, MakeGameLease> leases = new HashMap<String, MakeGameLease>();
 
     public LeasingOffice(ThreadPoolExecutor tpe) {
@@ -21,11 +26,11 @@ public class LeasingOffice implements Runnable {
         // MakeGameLease lease;
         MakeGameLease lease = leases.get(userId);
         if (lease != null) {
-            System.out.println("Existing Lease: " + (new JSONObject(lease).toString()));
+            logger.info("Existing Lease: {}", new JSONObject(lease));
             return lease;
         }
 
-        System.out.println("No exisiting lease.");
+        logger.info("No exisiting lease.");
 
         String port = null;
         int server = 0;
@@ -43,17 +48,17 @@ public class LeasingOffice implements Runnable {
             return null;
         }
 
-        System.out.println("Query db to make lease for " + userId + ": " + gsState.server);
+        logger.info("Query db to make lease for {}: {}", userId, gsState.server);
 
         if (!BrowserPostgresConnectionPool.newGameLease(userId, gsState.server)) {
-            System.err.println("Failed to create db lease.");
+            logger.error("Failed to create db lease.");
             return null;
         }
 
         lease = new MakeGameLease(port);
         leases.put(userId, lease);
 
-        System.out.println("Lease: " + (new JSONObject(lease).toString()));
+        logger.info("New Lease: {}", new JSONObject(lease));
 
         return lease;
     }
@@ -64,7 +69,7 @@ public class LeasingOffice implements Runnable {
             try {
                 Thread.sleep(Duration.ofMillis(200));
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("{}", e);
                 break;
             }
             monitorExpiration();

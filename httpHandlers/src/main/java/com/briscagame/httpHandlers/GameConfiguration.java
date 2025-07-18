@@ -7,6 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GameConfiguration {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(GameConfiguration.class);
+
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
     public static final List<String> GAME_TYPE_STRINGS = List.of("solo", "public", "private");

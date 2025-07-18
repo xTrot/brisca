@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.briscagame.httpHandlers.PostgresConnectionPool;
 import com.briscagame.httpHandlers.RegisterHandler;
 import com.briscagame.httpHandlers.RootHandler;
@@ -15,6 +18,8 @@ import com.briscagame.serverBrowser.handlers.ReplayHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class BrowserHttpServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     private static RootHandler rootHandler = new RootHandler("Server Browser");
     private static RegisterHandler registerHandler = new RegisterHandler();
@@ -37,10 +42,10 @@ public class BrowserHttpServer {
             // Create an HttpServer instance
             server = HttpServer.create(new InetSocketAddress(hostname, port), 0);
         } catch (Exception e) {
-            System.err.println("Error initializing socket address:");
-            System.err.println("BROWSER_HOSTNAME=" + hostname);
-            System.err.println("BROWSER_PORT=" + port);
-            System.err.println(e);
+            logger.error("Error initializing socket address:");
+            logger.error("BROWSER_HOSTNAME={}", hostname);
+            logger.error("BROWSER_PORT={}", port);
+            logger.error("{}", e);
             throw new IllegalStateException(
                     "Env variables BROWSER_HOSTNAME, BROWSER_PORT must be able start the http server.");
         }

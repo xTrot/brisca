@@ -5,6 +5,9 @@ import java.time.Instant;
 import org.json.JSONObject;
 
 public class MakeGameLease {
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
     private String host = EnvironmentVariable.HOSTNAME;
     private String port;
     private Instant expiration;

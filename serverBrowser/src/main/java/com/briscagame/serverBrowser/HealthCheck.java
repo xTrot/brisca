@@ -1,11 +1,18 @@
 package com.briscagame.serverBrowser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
+
 public class HealthCheck {
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     public static boolean check(String gameServer,
             String retries, String retryInterval, String timeout) {
 
-        System.out.println("Healthcheck");
+        logger.info("Healthcheck");
         String command = EnvironmentVariable.BROWSER_GAME_HEALTHCHECK + " " +
                 gameServer + " " +
                 retries + " " +

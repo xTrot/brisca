@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36}: %msg%n
+        </Property>
+        <Property name="APP_NAME">serverBrowser</Property>
+        <Property name="LOG_DIR">logs</Property>
+    </Properties>
+
+    <Appenders>
+
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+
+        <RollingFile name="FileAppender"
+            fileName="${LOG_DIR}/${APP_NAME}.log"
+            filePattern="${LOG_DIR}/${APP_NAME}-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="7" />
+        </RollingFile>
+
+        <Async name="AsyncFileAppender" bufferSize="1024" blocking="false">
+            <AppenderRef ref="FileAppender" />
+        </Async>
+
+    </Appenders>
+
+    <Loggers>
+
+        <Logger name="com.briscagame.serverBrowser" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="AsyncFileAppender" />
+        </Logger>
+
+        <Logger name="com.briscagame.serverBrowser.handlers" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="AsyncFileAppender" />
+        </Logger>
+
+        <Logger name="com.briscagame.httpHandlers" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="AsyncFileAppender" />
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="AsyncFileAppender" />
+        </Root>
+
+    </Loggers>
+
+</Configuration>

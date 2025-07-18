@@ -5,9 +5,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.briscagame.httpHandlers.PostgresConnectionPool;
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 
 public class BrowserPostgresConnectionPool {
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     public static boolean newGameLease(String userId, String server) {
         StringBuilder sb = new StringBuilder();
@@ -21,7 +27,7 @@ public class BrowserPostgresConnectionPool {
                 Connection connection = PostgresConnectionPool.dataSource.getConnection();
                 Statement stmt = connection.createStatement();
                 ResultSet resultSet = stmt.executeQuery(query)) {
-            System.out.println("Connection used: " + connection + " for query: " + query);
+            logger.info("Connection used: {} for query: {}", connection, query);
 
             boolean found_lease = false;
             if (resultSet.next()) {
@@ -31,7 +37,7 @@ public class BrowserPostgresConnectionPool {
             return found_lease;
 
         } catch (SQLException e) {
-            System.err.println("Error querying database: " + e.getMessage());
+            logger.error("Error querying database: {}", e);
         }
         return false;
     }

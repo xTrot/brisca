@@ -7,6 +7,8 @@ import com.briscagame.httpHandlers.GameConfiguration;
 
 public class GamePlan {
 
+    // private static final Logger logger = LoggerFactory.getLogger(GamePlan.class);
+
     private GameConfiguration gameConfiguration;
     private Scanner scan = new Scanner(System.in);
 

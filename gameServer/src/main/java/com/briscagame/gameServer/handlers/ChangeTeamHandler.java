@@ -5,16 +5,19 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.Game;
+import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.Player;
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Status;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class ChangeTeamHandler implements HttpHandler {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(ChangeTeamHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

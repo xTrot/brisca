@@ -5,11 +5,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.httpHandlers.GameConfiguration;
 import com.briscagame.httpHandlers.GameServerState;
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 
 public class Lobby {
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
     private static AtomicReference<String> cacheReference = new AtomicReference<String>("[]");
     private static LinkedHashMap<String, JSONObject> privateGames = new LinkedHashMap<String, JSONObject>();
 
@@ -45,7 +50,7 @@ public class Lobby {
 
     public static JSONObject getPrivateGame(String gameId) {
         for (String key : privateGames.keySet()) {
-            System.out.println(key + " " + privateGames.get(key));
+            logger.info("{}: {}", key, privateGames.get(key));
         }
         return privateGames.get(gameId);
     }

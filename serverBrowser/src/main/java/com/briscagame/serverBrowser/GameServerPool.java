@@ -10,11 +10,17 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.httpHandlers.GameServerState;
 import com.briscagame.httpHandlers.GameState;
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 
 public class GameServerPool implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
     public static GameServerState[] gameServers;
     public static String[] diffStrings;
     public static int nextSpawnTry = 0;
@@ -49,7 +55,7 @@ public class GameServerPool implements Runnable {
                 monitorServers();
                 topOff();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("{}", e);
             }
         }
     }
@@ -95,7 +101,7 @@ public class GameServerPool implements Runnable {
 
             String json = response.body();
             if (!diffStrings[i].equals(json)) {
-                System.out.println("Server: " + port + " Update: " + json);
+                logger.info("Server: {} Update: {}", port, json);
                 dirty = true;
             }
             diffStrings[i] = json;

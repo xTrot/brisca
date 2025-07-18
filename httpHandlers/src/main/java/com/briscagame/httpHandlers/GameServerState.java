@@ -5,6 +5,9 @@ import org.json.JSONPropertyIgnore;
 
 public class GameServerState {
 
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(GameServerState.class);
+
     public GameState state = GameState.SPAWNED;
     public GameConfiguration gameConfiguration = null;
     public String fill = null;

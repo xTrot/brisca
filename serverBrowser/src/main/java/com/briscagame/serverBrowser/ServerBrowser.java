@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class ServerBrowser {
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     public static LeasingOffice leasingOffice;
 

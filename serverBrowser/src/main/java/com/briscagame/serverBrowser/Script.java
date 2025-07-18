@@ -2,11 +2,18 @@ package com.briscagame.serverBrowser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
 
 public class Script {
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
     public String cmd;
     public String in;
     public String out;
@@ -21,7 +28,7 @@ public class Script {
         InputStream stderr = null;
         try {
 
-            System.out.println("Trying: " + cmd);
+            logger.debug("Trying: {}", cmd);
             Process process = new ProcessBuilder(cmd.split("\\s+")).start();
 
             if (in != null) {
@@ -39,7 +46,7 @@ public class Script {
             while ((line = stdoutReader.readLine()) != null) {
                 out += line + "\n";
             }
-            System.out.println("Stdout:\n" + out);
+            logger.debug("Stdout: {}", out);
             stdout.close();
 
             // Read stderr
@@ -48,15 +55,15 @@ public class Script {
             while ((line = stderrReader.readLine()) != null) {
                 err += line + "\n";
             }
-            System.out.println("Stderr:\n" + err);
+            logger.debug("Stderr: {}", err);
             stderr.close();
 
             // Wait for the process to complete and get the return code
             exitCode = process.waitFor();
-            System.out.println("Exit Code: " + exitCode);
+            logger.debug("Exit Code: {}", exitCode);
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
         }
 
         Script rtn = new Script(cmd, in, out, err, exitCode);

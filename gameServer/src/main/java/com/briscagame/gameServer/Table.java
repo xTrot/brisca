@@ -9,6 +9,8 @@ public class Table {
 
     public static final int MAX_PLAYERS = 4;
 
+    // private static final Logger logger = LoggerFactory.getLogger(User.class);
+
     Game game;
     Deck deck;
     Card bottomCard;

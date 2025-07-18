@@ -3,7 +3,13 @@ package com.briscagame.httpHandlers;
 import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Session {
+
+    private static final Logger logger = LoggerFactory.getLogger(Session.class);
+
     private static LinkedHashMap<String, Session> sessions = new LinkedHashMap<String, Session>();
 
     private final String userId;
@@ -21,7 +27,7 @@ public class Session {
             return session;
         }
 
-        System.out.println("Couldn't find it here, checking db.");
+        logger.info("Couldn't find it here, checking db.");
 
         return PostgresConnectionPool.getSession(userId);
     }
@@ -44,7 +50,7 @@ public class Session {
     }
 
     private void register() {
-        System.out.println("Resgitered: " + userId);
+        logger.info("Resgitered: {}", userId);
         sessions.put(this.userId, this);
     }
 

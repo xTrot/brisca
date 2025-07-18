@@ -4,6 +4,8 @@ import java.util.EventListener;
 import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.briscagame.httpHandlers.Session;
 
@@ -11,6 +13,8 @@ public class User extends Player implements EventListener {
     private static final long WAIT_TENTH_SEC = 100;
     private static final int WAIT_ONE_MIN_COUNT = 600; // 600 count * tenths
     private static final int WAIT_FIVE_SEC_COUNT = 50; // 50 count * tenths
+
+    private static final Logger logger = LoggerFactory.getLogger(User.class);
 
     private boolean thinking = false;
     private boolean hasTimedOut = false;
@@ -33,7 +37,7 @@ public class User extends Player implements EventListener {
             try {
                 TimeUnit.MILLISECONDS.sleep(WAIT_TENTH_SEC);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("{}", e);
             }
             if (count == 0) {
                 this.setTimedOut();
@@ -56,7 +60,7 @@ public class User extends Player implements EventListener {
 
     @Override
     public int thinking() {
-        // System.out.println(this);
+        logger.trace("Thinking: {}", this);
         return this.startThinking();
     }
 

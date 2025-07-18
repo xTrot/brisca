@@ -9,6 +9,9 @@ import com.sun.net.httpserver.HttpHandler;
 
 public class GameServerStateHandler implements HttpHandler {
 
+    // private static Logger logger =
+    // LoggerFactory.getLogger(GameServerStateHandler.class);
+
     private Stateful game;
 
     public GameServerStateHandler(Stateful game) {

@@ -7,15 +7,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 
-import com.sun.net.httpserver.HttpHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Status;
 import com.briscagame.serverBrowser.EnvironmentVariable;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class ReplayHandler implements HttpHandler {
 
     private static final String RECORDING_EXTENSION = ".js";
+
+    private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -46,8 +51,8 @@ public class ReplayHandler implements HttpHandler {
                 actions += line;
             }
         } catch (IOException e) {
-            System.err.println("Error reading file: " + filename);
-            System.err.println(e);
+            logger.error("Error reading file: {}", filename);
+            logger.error("{}", e);
             reader.close();
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;

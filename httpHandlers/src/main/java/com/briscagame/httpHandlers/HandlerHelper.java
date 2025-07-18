@@ -11,10 +11,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.net.httpserver.HttpExchange;
 
 public class HandlerHelper {
     private static final String NO_RESPONSE_BODY = "";
+
+    private static final Logger logger = LoggerFactory.getLogger(HandlerHelper.class);
 
     public static LinkedHashMap<String, String> getCookies(HttpExchange exchange) {
         LinkedHashMap<String, String> cookiesHashMap = new LinkedHashMap<String, String>();
@@ -89,7 +94,7 @@ public class HandlerHelper {
 
     public static void getMethod(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("GET") != 0) {
-            // System.out.println("Warning: 404 on " + exchange.getRequestURI());
+            logger.warn("Warning: 404 on {}", exchange.getRequestURI());
             sendStatus(exchange, Status.NOT_FOUND);
             return;
         }
@@ -109,7 +114,7 @@ public class HandlerHelper {
 
     public static String postMethod(HttpExchange exchange) throws IOException {
         if (exchange.getRequestMethod().compareTo("POST") != 0) {
-            // System.out.println("Warning: 404 on " + exchange.getRequestURI());
+            logger.warn("Warning: 404 on {}", exchange.getRequestURI());
             sendStatus(exchange, Status.NOT_FOUND);
             return null;
         }

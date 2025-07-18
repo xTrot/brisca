@@ -2,18 +2,21 @@ package com.briscagame.gameServer.handlers;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpHandler;
-import com.briscagame.gameServer.GameServer;
+import org.json.JSONObject;
+
 import com.briscagame.gameServer.Game;
+import com.briscagame.gameServer.GameServer;
 import com.briscagame.gameServer.User;
 import com.briscagame.httpHandlers.HandlerHelper;
 import com.briscagame.httpHandlers.Session;
 import com.briscagame.httpHandlers.Status;
 import com.sun.net.httpserver.HttpExchange;
-
-import org.json.*;
+import com.sun.net.httpserver.HttpHandler;
 
 public class PlayCardHandler implements HttpHandler {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(ActionsHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

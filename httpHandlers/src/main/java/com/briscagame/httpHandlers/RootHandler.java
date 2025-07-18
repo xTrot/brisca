@@ -2,10 +2,12 @@ package com.briscagame.httpHandlers;
 
 import java.io.IOException;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class RootHandler implements HttpHandler {
+
+    // private static Logger logger = LoggerFactory.getLogger(RootHandler.class);
 
     private String serverType;
 

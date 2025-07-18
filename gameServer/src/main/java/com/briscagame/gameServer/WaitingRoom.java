@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class WaitingRoom {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(WaitingRoom.class);
+
     private AtomicReference<String> cacheReference = new AtomicReference<String>(null);
     private Game game;
 

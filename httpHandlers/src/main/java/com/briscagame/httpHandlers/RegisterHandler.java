@@ -3,11 +3,15 @@ package com.briscagame.httpHandlers;
 import java.io.IOException;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class RegisterHandler implements HttpHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(RegisterHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -43,7 +47,7 @@ public class RegisterHandler implements HttpHandler {
         userSession = Session.getSession(userId);
         if (userSession == null) {
             userSession = new Session(username);
-            System.out.println("Refreshing session for " + username);
+            logger.info("Refreshing session for {}", username);
             HandlerHelper.setCookie(exchange, "userId", userSession.getUserId(), userSession.getRefreshBy());
             HandlerHelper.sendStatus(exchange, Status.OK);
             return;
@@ -51,7 +55,7 @@ public class RegisterHandler implements HttpHandler {
 
         userSession.setUsername(username);
         HandlerHelper.sendStatus(exchange, Status.OK);
-        System.out.println("Registered user: " + username + " with userId: " + userId);
+        logger.info("Registered user: {} with userId: {}", username, userId);
 
     }
 

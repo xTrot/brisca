@@ -4,6 +4,11 @@ package com.briscagame.serverBrowser;
 // import java.net.UnknownHostException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.briscagame.serverBrowser.handlers.JoinPrivateGameHandler;
+
 public class EnvironmentVariable {
 	public static int BROWSER_PORT;
 	public static String BROWSER_HOSTNAME;
@@ -15,19 +20,21 @@ public class EnvironmentVariable {
 	public static String RECORDING_DIR;
 	public static String HOSTNAME;
 
+	private static final Logger logger = LoggerFactory.getLogger(JoinPrivateGameHandler.class);
+
 	static void load() {
 		String portString = Optional
 				.ofNullable(System
 						.getenv("BROWSER_PORT"))
 				.orElse("9000");
 
-		System.out.println("Using port: " + portString);
+		logger.info("Using port: {}", portString);
 		try {
 			BROWSER_PORT = Integer.parseInt(portString);
 		} catch (NumberFormatException e) {
-			System.err.println("Error parsing BROWSER_PORT env variable to int:");
-			System.err.println("BROWSER_PORT=" + portString);
-			System.err.println(e);
+			logger.error("Error parsing BROWSER_PORT env variable to int:");
+			logger.error("BROWSER_PORT={}", portString);
+			logger.error("{}", e);
 			throw new IllegalStateException("Env variable BROWSER_PORT must be an int.");
 		}
 
