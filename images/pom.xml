@@ -4,19 +4,19 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.briscagame</groupId>
+    <groupId>sh.brisca</groupId>
     <artifactId>images</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.briscagame.serverBrowser</groupId>
+            <groupId>sh.brisca.serverBrowser</groupId>
             <artifactId>ServerBrowser</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.briscagame.gameServer</groupId>
+            <groupId>sh.brisca.gameServer</groupId>
             <artifactId>GameServer</artifactId>
             <version>1.0.0</version>
         </dependency>

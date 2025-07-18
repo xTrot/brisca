@@ -29,4 +29,4 @@ EXPOSE 8000-12000
 # =============================================================================
 
 # Command to run the application
-CMD ["java", "-cp", "/app/ServerBrowser.jar:libs/*", "com.briscagame.serverBrowser.ServerBrowser"]
+CMD ["java", "-cp", "/app/ServerBrowser.jar:libs/*", "sh.brisca.serverBrowser.ServerBrowser"]

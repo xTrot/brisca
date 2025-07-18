@@ -1,14 +1,14 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.briscagame</groupId>
+    <groupId>sh.brisca</groupId>
     <artifactId>brisca</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
     <modules>
         <module>gameServer</module>
-        <module>httpHandlers</module>
+        <module>common</module>
         <module>serverBrowser</module>
         <module>images</module>
     </modules>

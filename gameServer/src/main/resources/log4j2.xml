@@ -34,17 +34,17 @@
 
     <Loggers>
 
-        <Logger name="com.briscagame.gameServer" level="INFO" additivity="false">
+        <Logger name="sh.brisca.gameServer" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="AsyncFileAppender" />
         </Logger>
 
-        <Logger name="com.briscagame.gameServer.handlers" level="INFO" additivity="false">
+        <Logger name="sh.brisca.gameServer.handlers" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="AsyncFileAppender" />
         </Logger>
 
-        <Logger name="com.briscagame.httpHandlers" level="INFO" additivity="false">
+        <Logger name="sh.brisca.common" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="AsyncFileAppender" />
         </Logger>
