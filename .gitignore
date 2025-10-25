@@ -39,3 +39,4 @@ dependency-reduced-pom.xml
 .project
 .classpath
 .settings
+.factorypath
