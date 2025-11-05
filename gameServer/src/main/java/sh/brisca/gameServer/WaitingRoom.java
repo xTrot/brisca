@@ -2,17 +2,22 @@ package sh.brisca.gameServer;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.time.Instant;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class WaitingRoom {
 
+    public static final int TIMEOUT_DEFAULT = 2;
+
     // private static final Logger logger =
     // LoggerFactory.getLogger(WaitingRoom.class);
 
     private AtomicReference<String> cacheReference = new AtomicReference<String>(null);
     private Game game;
+    Instant timeout;
+    boolean timedOut = false;
 
     public WaitingRoom(Game game) {
         this.game = game;
@@ -43,6 +48,10 @@ public class WaitingRoom {
         json.put("fill", fill);
         json.put("started", game.hasStarted());
         json.put("type", this.game.getGameType());
+
+        if (this.timedOut) {
+            json.put("timedOut", this.timedOut);
+        }
 
         cacheReference.set(json.toString());
     }
