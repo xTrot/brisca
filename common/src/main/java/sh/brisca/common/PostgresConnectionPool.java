@@ -84,12 +84,15 @@ public class PostgresConnectionPool {
                 token = resultSet.getString("token");
                 refreshBy = resultSet.getTimestamp("refreshby");
                 current.setRefreshBy(refreshBy);
+                logger.debug("DB returned token: {}, refreshBy: {}", token, refreshBy);
                 return token;
             }
 
         } catch (SQLException e) {
             logger.error("Error querying database: {}", e);
         }
+
+        logger.warn("Unlikely scenario where DB returns null");
 
         return null;
     }
