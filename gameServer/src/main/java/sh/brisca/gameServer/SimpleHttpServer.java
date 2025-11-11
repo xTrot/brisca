@@ -1,9 +1,9 @@
 package sh.brisca.gameServer;
 
 import java.io.IOException;
-// import java.net.InetAddress;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-// import java.net.UnknownHostException;
+import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -82,17 +82,20 @@ public class SimpleHttpServer {
                     "Env variables GAME_HOSTNAME, GAME_PORT must be able start the http server.");
         }
 
-        String HOSTNAME = "browser";
-        // try {
-        // HOSTNAME = InetAddress.getLocalHost().getHostName();
-        // } catch (UnknownHostException e) {
-        // logger.error("Won't start http server.");
-        // e.printStackTrace();
-        // return;
-        // }
+        // String HOSTNAME = "browser";
+
+        String HOSTNAME;
+        try {
+            HOSTNAME = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            logger.error("Won't start http server.");
+            e.printStackTrace();
+            return;
+        }
 
         GameServer.game = new Game(HOSTNAME, portString);
         stateHandler = new GameServerStateHandler(GameServer.getGame());
+        logger.info("Server: {}:{}", HOSTNAME, portString);
 
         // Create a context for a specific path and set the handler
         server.createContext("/", rootHandler);

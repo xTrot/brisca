@@ -1,4 +1,4 @@
-FROM openjdk:25-jdk-slim
+FROM ibm-semeru-runtimes:open-21-jre
 WORKDIR /app
 
 ADD jars/* /app/libs/

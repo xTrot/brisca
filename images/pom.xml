@@ -82,7 +82,7 @@
                             <workingDirectory>./</workingDirectory>
                             <arguments>
                                 <argument>pull</argument>
-                                <argument>openjdk:25-jdk-slim</argument>
+                                <argument>ibm-semeru-runtimes:open-21-jre</argument>
                             </arguments>
                             <successCodes>
                                 <successCode>0</successCode>
