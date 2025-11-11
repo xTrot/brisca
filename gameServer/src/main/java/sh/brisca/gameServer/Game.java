@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.UUID;
@@ -77,9 +79,16 @@ public class Game implements Runnable, EventListener, Stateful {
         // Players should be able to join, leave an change teams. Done
         // While players not ready or 2 minutes veryone gets kicked.
         logger.info("Join game: {}", this.uuid);
+        this.waitingRoom.timeout = Instant.now().plus(WaitingRoom.TIMEOUT_DEFAULT, ChronoUnit.MINUTES);
         try {
             while (!this.startGameLock) {
                 TimeUnit.MILLISECONDS.sleep(100);
+                if (Instant.now().isAfter(this.waitingRoom.timeout)) {
+                    this.waitingRoom.timedOut = true;
+                    this.waitingRoom.updateWaitingRoom();
+                    logger.info("The game {}, timed out.", this.uuid);
+                    this.cleanUp();
+                }
             }
         } catch (InterruptedException e) {
             logger.error("{}", e);
@@ -95,11 +104,22 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     private void cleanUp() {
-        // Game.games.remove(this.uuid);
+
         state.setState(GameState.COMPLETED);
+
+        if (this.waitingRoom.timedOut) {
+            Instant waitForKick = Instant.now().plusSeconds(5);
+            while (true) {
+                if (Instant.now().isAfter(waitForKick)) {
+                    break;
+                }
+            }
+        }
+
         for (User user : this.players) {
             Session.getSession(user.getUuid()).setGameID(null);
         }
+
         if (this.gameCompleted) {
             int THE_START = 0;
             String actions = this.getActions(THE_START);
@@ -119,10 +139,13 @@ public class Game implements Runnable, EventListener, Stateful {
             SimpleHttpServer.stop();
             PostgresConnectionPool.shutdownDataSource();
         }
+
+        logger.info("Cleaned game {}.", this.uuid);
+
     }
 
     public synchronized boolean addPlayer(User user) {
-        if (this.startGameLock)
+        if (this.startGameLock || this.waitingRoom.timedOut)
             return false;
         String userId = user.getUuid();
         logger.info("Adding player {}: {}", user.getPlayerName(), userId);
@@ -192,6 +215,9 @@ public class Game implements Runnable, EventListener, Stateful {
     public synchronized boolean startGame(String userId) {
         if (this.startGameLock)
             return false;
+        if (Instant.now().isAfter(this.waitingRoom.timeout)) {
+            return false;
+        }
         if (!(players.get(HOST)).getUuid().equals(userId)) {
             return false;
         }

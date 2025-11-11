@@ -9,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 public class HandlerHelper {
     private static final String NO_RESPONSE_BODY = "";
+    private static final String RFC1123_GOLANG = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
     private static final Logger logger = LoggerFactory.getLogger(HandlerHelper.class);
 
@@ -73,7 +75,9 @@ public class HandlerHelper {
         cookie.append("; Expires=");
         Instant instant = refreshby.toInstant();
         ZonedDateTime gmtInstant = instant.atZone(ZoneId.of("GMT"));
-        cookie.append(gmtInstant.format(DateTimeFormatter.RFC_1123_DATE_TIME));
+        // DateTimeFormatter.RFC_1123_DATE_TIME uses "EEE, d MMM yyyy HH:mm:ss zzz"
+        // instead of "EEE, dd MMM yyyy HH:mm:ss zzz" it was missing a d for the date.
+        cookie.append(gmtInstant.format(DateTimeFormatter.ofPattern(RFC1123_GOLANG, Locale.ENGLISH)));
         cookie.append(";");
         exchange.getResponseHeaders().add("set-cookie", cookie.toString());
     }
