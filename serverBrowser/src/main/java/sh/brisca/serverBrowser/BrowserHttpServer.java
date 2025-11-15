@@ -13,7 +13,6 @@ import sh.brisca.common.PostgresConnectionPool;
 import sh.brisca.common.RegisterHandler;
 import sh.brisca.common.RootHandler;
 import sh.brisca.serverBrowser.handlers.JoinPrivateGameHandler;
-import sh.brisca.serverBrowser.handlers.LeaseHandler;
 import sh.brisca.serverBrowser.handlers.LobbyHandler;
 import sh.brisca.serverBrowser.handlers.RefreshHandler;
 import sh.brisca.serverBrowser.handlers.ReplayHandler;
@@ -26,7 +25,6 @@ public class BrowserHttpServer {
     private static RegisterHandler registerHandler = new RegisterHandler();
     private static ReplayHandler replayHandler = new ReplayHandler();
     private static LobbyHandler lobbyHandler = new LobbyHandler();
-    private static LeaseHandler leaseHandler = new LeaseHandler();
     private static JoinPrivateGameHandler joinPrivateGameHandler = new JoinPrivateGameHandler();
     private static RefreshHandler refreshHandler = new RefreshHandler();
 
@@ -56,7 +54,6 @@ public class BrowserHttpServer {
         server.createContext("/register", registerHandler);
         server.createContext("/replay", replayHandler);
         server.createContext("/lobby", lobbyHandler);
-        server.createContext("/lease", leaseHandler);
         server.createContext("/joinprivategame", joinPrivateGameHandler);
         server.createContext("/refresh", refreshHandler);
 

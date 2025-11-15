@@ -18,10 +18,10 @@ public class GameConfiguration {
     public static final int PUBLIC = 1;
     public static final int PRIVATE = 2;
 
-    public boolean swapBottomCard;
-    public int maxPlayers;
-    public String gameType;
-    public String gameId = UUID.randomUUID().toString();
+    private boolean swapBottomCard;
+    private int maxPlayers;
+    private String gameType;
+    private String gameId = UUID.randomUUID().toString();
 
     public GameConfiguration() {
         this.swapBottomCard = false;

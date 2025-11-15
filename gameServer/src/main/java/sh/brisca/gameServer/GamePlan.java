@@ -22,9 +22,9 @@ public class GamePlan {
         String gameType = askOptions("Which game type?", options);
 
         this.gameConfiguration = new GameConfiguration();
-        gameConfiguration.maxPlayers = maxPlayers;
-        gameConfiguration.swapBottomCard = swapBottomCard;
-        gameConfiguration.gameType = gameType;
+        gameConfiguration.setMaxPlayers(maxPlayers);
+        gameConfiguration.setSwapBottomCard(swapBottomCard);
+        gameConfiguration.setGameType(gameType);
     }
 
     private String askOptions(String question, ArrayList<String> options) {

@@ -1,6 +1,9 @@
 package sh.brisca.gameServer.handlers;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,10 +19,10 @@ import sh.brisca.common.HandlerHelper;
 import sh.brisca.common.Session;
 import sh.brisca.common.Status;
 import sh.brisca.gameServer.Game;
-import sh.brisca.gameServer.GamePostgresConnectionPool;
-import sh.brisca.gameServer.GameServer;
+import sh.brisca.gameServer.SimpleHttpServer;
 import sh.brisca.gameServer.User;
 
+// TODO: Rename class to MakeGameHandler.
 public class ConfigGameHandler implements HttpHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigGameHandler.class);
@@ -44,17 +47,13 @@ public class ConfigGameHandler implements HttpHandler {
 
         String userId = HandlerHelper.getCookie(exchange, "userId");
         if (userId == null) {
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            logger.error("Error getting cookie userId for exchange: {}", exchange);
+            // HandlerHelper.sendStatus(exchange, Status.NOT_OK);
         }
 
         Session userSession = Session.getSession(userId);
         if (userSession == null) {
             logger.info("Didn't find it in the db either.");
-            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
-            return;
-        }
-
-        if (!GamePostgresConnectionPool.sessionHasMylease(userId)) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;
         }
@@ -68,7 +67,7 @@ public class ConfigGameHandler implements HttpHandler {
             return;
         }
 
-        Game game = GameServer.getGame();
+        Game game = new Game(SimpleHttpServer.getHostname(), Integer.toString(SimpleHttpServer.getPort()));
 
         if (game.getState().getState() == GameState.SPAWNED) {
 
@@ -79,18 +78,25 @@ public class ConfigGameHandler implements HttpHandler {
             String gameId = game.getUUID();
 
             userSession.setGameID(gameId);
+            HandlerHelper.setCookie(exchange, "gameId", gameId,
+                    Timestamp.from(Instant.now().plus(1, ChronoUnit.HOURS)));
             userSession.setActionsSent(0);
             JSONObject gameJson = new JSONObject();
             gameJson.put("gameId", gameId);
+            gameJson.put("gameServer", game.getState().getServer());
             HandlerHelper.sendResponse(exchange, Status.OK, gameJson.toString());
+
             return;
         } else if (game.getState().getState() == GameState.WAITING_ROOM) {
             game.setGameConfiguration(gc);
             HandlerHelper.sendStatus(exchange, Status.OK);
+            logger.info("Registering Game: {}", game.getUUID());
+
             return;
         }
 
         HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+
     }
 
 }

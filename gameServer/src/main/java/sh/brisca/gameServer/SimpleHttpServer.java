@@ -13,16 +13,18 @@ import org.slf4j.LoggerFactory;
 // Java Program to Set up a Basic HTTP Server
 import com.sun.net.httpserver.HttpServer;
 
-import sh.brisca.common.GameServerStateHandler;
 import sh.brisca.common.PostgresConnectionPool;
+import sh.brisca.common.RegisterHandler;
 import sh.brisca.common.RootHandler;
 import sh.brisca.common.StatusHandler;
 import sh.brisca.gameServer.handlers.ActionsHandler;
 import sh.brisca.gameServer.handlers.ChangeTeamHandler;
 import sh.brisca.gameServer.handlers.ConfigGameHandler;
+import sh.brisca.gameServer.handlers.GameListHandler;
 import sh.brisca.gameServer.handlers.HandHandler;
 import sh.brisca.gameServer.handlers.JoinGameHandler;
 import sh.brisca.gameServer.handlers.LeaveGameHandler;
+import sh.brisca.gameServer.handlers.LobbyHandler;
 import sh.brisca.gameServer.handlers.PlayCardHandler;
 import sh.brisca.gameServer.handlers.ReadyHandler;
 import sh.brisca.gameServer.handlers.SeatHandler;
@@ -52,8 +54,10 @@ public class SimpleHttpServer {
     private static StatusHandler statusHandler = new StatusHandler();
     private static SeatHandler seatHandler = new SeatHandler();
     private static SwapBottomCardHandler swapHandler = new SwapBottomCardHandler();
-    private static GameServerStateHandler stateHandler;
     private static ConfigGameHandler configHandler = new ConfigGameHandler();
+    private static RegisterHandler registerHandler = new RegisterHandler();
+    private static LobbyHandler lobbyHandler = new LobbyHandler();
+    private static GameListHandler gameListHandler = new GameListHandler();
 
     // Main Method
     public static void start(Executor threadPoolExecutor) throws IOException {
@@ -93,8 +97,8 @@ public class SimpleHttpServer {
             return;
         }
 
-        GameServer.game = new Game(HOSTNAME, portString);
-        stateHandler = new GameServerStateHandler(GameServer.getGame());
+        hostname = HOSTNAME;
+
         logger.info("Server: {}:{}", HOSTNAME, portString);
 
         // Create a context for a specific path and set the handler
@@ -111,13 +115,18 @@ public class SimpleHttpServer {
         server.createContext("/status", statusHandler);
         server.createContext("/seat", seatHandler);
         server.createContext("/swapBottomCard", swapHandler);
-        server.createContext("/state", stateHandler);
         server.createContext("/config", configHandler);
+        server.createContext("/register", registerHandler);
+        server.createContext("/lobby", lobbyHandler);
+        server.createContext("/gameList", gameListHandler);
 
         // Start the server
         server.setExecutor(threadPoolExecutor); // Use the default executor
         PostgresConnectionPool.initDataSource();
         server.start();
+
+        logger.info("Registering gameServer: {}", hostname);
+        GamePostgresConnectionPool.registerGameServer(hostname + ":" + port);
 
     }
 
@@ -136,4 +145,13 @@ public class SimpleHttpServer {
     public static void stop() {
         server.stop(5);
     }
+
+    public static int getPort() {
+        return port;
+    }
+
+    public static String getHostname() {
+        return hostname;
+    }
+
 }

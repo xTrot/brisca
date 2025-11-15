@@ -83,12 +83,12 @@ public class Player {
 
     @Override
     public String toString() {
-        String rtn = "User: ";
-        rtn += this.playerName + "\n Hand: ";
-        rtn += this.hand + "\n Score Pile: ";
-        rtn += this.scorePile + "\n Score: ";
-        rtn += this.getScore() + "\n";
-        return rtn;
+        return (new JSONObject())
+                .put("user", this.playerName)
+                .put("hand", this.hand)
+                .put("scorePile", this.scorePile)
+                .put("score", this.getScore())
+                .toString();
     }
 
     public int getHandSize() {

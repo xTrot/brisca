@@ -21,8 +21,8 @@ public class Table {
     public Table(Game game, Deck deck, GameConfiguration gameConfiguration) {
         this.game = game;
         this.deck = deck;
-        this.swapBottomCard = gameConfiguration.swapBottomCard;
-        if (gameConfiguration.maxPlayers == 3) {
+        this.swapBottomCard = gameConfiguration.getSwapBottomCard();
+        if (gameConfiguration.getMaxPlayers() == 3) {
             this.bottomCard = deck.getBottomCard3Player();
         } else {
             this.bottomCard = deck.draw();

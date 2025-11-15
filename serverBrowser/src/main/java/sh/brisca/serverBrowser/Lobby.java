@@ -1,6 +1,7 @@
 package sh.brisca.serverBrowser;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONArray;
@@ -22,14 +23,15 @@ public class Lobby {
         LinkedHashMap<String, JSONObject> updatePrivateGames = new LinkedHashMap<String, JSONObject>();
         JSONObject json = new JSONObject();
         JSONArray gamesJson = new JSONArray();
-        for (GameServerState state : GameServerPool.gameServers) {
+        for (Map.Entry<String, GameServerState> server : GameServerMonitor.gameStates.entrySet()) {
+            GameServerState state = server.getValue();
             GameConfiguration gc = state != null ? state.getGameConfiguration() : null;
             if (state == null || gc == null || state.hasStarted()) {
                 continue;
             }
             String fill = state.getFill();
             JSONObject gameJSON = new JSONObject();
-            String gameId = state.getGameConfiguration().gameId;
+            String gameId = state.getGameConfiguration().getGameId();
             gameJSON.put("gameId", gameId);
             gameJSON.put("fill", fill);
             gameJSON.put("server", state.getServer());

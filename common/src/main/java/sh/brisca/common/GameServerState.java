@@ -8,10 +8,10 @@ public class GameServerState {
     // private static final Logger logger =
     // LoggerFactory.getLogger(GameServerState.class);
 
-    public GameState state = GameState.SPAWNED;
-    public GameConfiguration gameConfiguration = null;
-    public String fill = null;
-    public String server = null;
+    private GameState state = GameState.SPAWNED;
+    private GameConfiguration gameConfiguration = null;
+    private String fill = null;
+    private String server = null;
 
     public GameServerState() {
     }
@@ -29,6 +29,7 @@ public class GameServerState {
         this.gameConfiguration = gc;
         this.fill = fill;
         this.server = server;
+
     }
 
     public void setState(GameState state) {
@@ -68,7 +69,7 @@ public class GameServerState {
         if (gameConfiguration == null) {
             return false;
         }
-        return gameConfiguration.gameType
+        return gameConfiguration.getGameType()
                 .equals(GameConfiguration.GAME_TYPE_STRINGS
                         .get(GameConfiguration.PUBLIC));
     }
@@ -77,5 +78,10 @@ public class GameServerState {
     public boolean hasStarted() {
         return state.equals(GameState.IN_PROGRESS)
                 || state.equals(GameState.COMPLETED);
+    }
+
+    @Override
+    public String toString() {
+        return (new JSONObject(this)).toString();
     }
 }

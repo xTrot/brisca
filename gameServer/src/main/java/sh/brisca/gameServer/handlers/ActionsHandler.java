@@ -9,7 +9,6 @@ import sh.brisca.common.HandlerHelper;
 import sh.brisca.common.Session;
 import sh.brisca.common.Status;
 import sh.brisca.gameServer.Game;
-import sh.brisca.gameServer.GameServer;
 
 public class ActionsHandler implements HttpHandler {
 
@@ -39,7 +38,7 @@ public class ActionsHandler implements HttpHandler {
             return;
         }
 
-        Game game = GameServer.getGame();
+        Game game = Game.getGame(gameId);
         if (game == null) {
             HandlerHelper.sendStatus(exchange, Status.NOT_OK);
             return;

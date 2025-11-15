@@ -36,7 +36,7 @@ public class GameManager {
     }
 
     public void start(ArrayList<User> players) {
-        if (this.gameConfiguration.gameType.equals(
+        if (this.gameConfiguration.getGameType().equals(
                 GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO))) {
             int HOST = 0;
             this.playerSeats = assignSeatsSolo(players.get(HOST));
@@ -59,7 +59,7 @@ public class GameManager {
         ArrayList<Player> teamA = new ArrayList<Player>();
         ArrayList<Player> teamB = new ArrayList<Player>();
 
-        if (gameConfiguration.maxPlayers == 4) {
+        if (gameConfiguration.getMaxPlayers() == 4) {
             for (Player player : players) {
                 int team = player.getTeam();
                 switch (team) {
@@ -95,7 +95,7 @@ public class GameManager {
         ArrayList<Player> players = new ArrayList<Player>();
         host.setTeam(Player.TEAM_TYPES.get(0));
         players.add(host);
-        for (int i = 1; i < this.gameConfiguration.maxPlayers; i++) {
+        for (int i = 1; i < this.gameConfiguration.getMaxPlayers(); i++) {
             Player bot = new Player();
             bot.setTeam(Player.TEAM_TYPES.get(i % 2));
             players.add(bot);
@@ -104,7 +104,7 @@ public class GameManager {
         ArrayList<Player> teamA = new ArrayList<Player>();
         ArrayList<Player> teamB = new ArrayList<Player>();
 
-        if (gameConfiguration.maxPlayers == 4) {
+        if (gameConfiguration.getMaxPlayers() == 4) {
             for (Player player : players) {
                 int team = player.getTeam();
                 switch (team) {
@@ -152,7 +152,7 @@ public class GameManager {
 
     private void setSimPlayers() {
         this.playerSeats = new ArrayList<Player>();
-        for (int i = 0; i < gameConfiguration.maxPlayers; i++) {
+        for (int i = 0; i < gameConfiguration.getMaxPlayers(); i++) {
             playerSeats.add(new Player(this.table, "Sim Player #" + (i + 1)));
             playerSeats.get(i).sit(i);
         }
@@ -182,7 +182,7 @@ public class GameManager {
     }
 
     private void setTheTable() {
-        if (gameConfiguration.swapBottomCard)
+        if (gameConfiguration.getSwapBottomCard())
             table.swapBottomCard = true;
         JSONArray seatsJson = new JSONArray();
         JSONObject seatJson;
@@ -200,8 +200,8 @@ public class GameManager {
         turn = rand.nextInt(playerSeats.size());
         logger.info("{} will start the game.", playerSeats.get(turn).getPlayerName());
 
-        if (gameConfiguration.maxPlayers != playerSeats.size()) {
-            playerSeats.get(gameConfiguration.maxPlayers - 1);
+        if (gameConfiguration.getMaxPlayers() != playerSeats.size()) {
+            playerSeats.get(gameConfiguration.getMaxPlayers() - 1);
             // Fail if player counts are invalid.
         }
 

@@ -5,12 +5,9 @@ ADD jars/* /app/libs/
 
 # Copy the main jar file into the container
 ADD jars/ServerBrowser.jar /app/ServerBrowser.jar
-ADD jars/GameServer.jar /app/GameServer.jar
 
-ADD scripts/java-spawner /app/spawner
-ADD scripts/healthcheck /app/healthcheck
 
-EXPOSE 8000-12000
+EXPOSE 9000
 
 # Configurable env variables
 # =============================================================================

@@ -1,7 +1,5 @@
 package sh.brisca.serverBrowser;
 
-// import java.net.InetAddress;
-// import java.net.UnknownHostException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -17,6 +15,7 @@ public class EnvironmentVariable {
 	public static int BROWSER_GAME_PORT_RANGE_START;
 	public static int BROWSER_GAME_PORT_RANGE_COUNT;
 	public static int BROWSER_TARGET_SERVER_POOL;
+	public static int BROWSER_GAMELIST_REFRESH;
 	public static String RECORDING_DIR;
 	public static String HOSTNAME;
 
@@ -80,12 +79,14 @@ public class EnvironmentVariable {
 				.orElse("/app/recordings");
 		// TODO: Write a validator
 
+		BROWSER_GAMELIST_REFRESH = Integer
+				.parseInt(Optional
+						.ofNullable(System
+								.getenv("BROWSER_GAMELIST_REFRESH"))
+						.orElse("1000"));
+
 		HOSTNAME = "browser";
-		// try {
-		// HOSTNAME = InetAddress.getLocalHost().getHostName();
-		// } catch (UnknownHostException e) {
-		// e.printStackTrace();
-		// }
+
 	}
 
 }

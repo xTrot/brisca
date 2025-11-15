@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.Hashtable;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import sh.brisca.common.GameConfiguration;
 import sh.brisca.common.GameServerState;
 import sh.brisca.common.GameState;
-import sh.brisca.common.PostgresConnectionPool;
 import sh.brisca.common.Session;
 import sh.brisca.common.Stateful;
 
@@ -37,6 +37,7 @@ public class Game implements Runnable, EventListener, Stateful {
     private static ThreadPoolExecutor tpe;
 
     // Protect these with synchro
+    private static Hashtable<String, Game> games = new Hashtable<String, Game>();
     private ArrayList<String> actions = new ArrayList<String>();
     private ArrayList<User> players = new ArrayList<User>();
     private boolean startGameLock = false;
@@ -45,62 +46,65 @@ public class Game implements Runnable, EventListener, Stateful {
 
     private GameManager gameManager;
     private GameConfiguration gameConfiguration;
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
     private WaitingRoom waitingRoom;
     private GameServerState state = new GameServerState();
 
     public Game(String host, String port) {
+        this.uuid = UUID.randomUUID().toString();
+        games.put(this.uuid, this);
         // Waiting room must be initialized before User joins.
         this.waitingRoom = new WaitingRoom(this);
-        this.state.server = host + ":" + port;
+        this.state.setServer(host + ":" + port);
     }
 
     @Override
     public void run() {
-        class ProgrammerIsStupidException extends Exception {
-        }
-        try {
-            try {
-                this.gameConfiguration.getGameId();
-            } catch (NullPointerException e) {
-                throw new ProgrammerIsStupidException();
-            }
-        } catch (ProgrammerIsStupidException e) {
-            // You don't deserve handling.
-        }
+
+        Lobby.update();
         state.setState(GameState.WAITING_ROOM);
         new PlayAction(this, PlayAction.ActionType.GAME_CONFIG, new JSONObject(gameConfiguration.toString()));
         this.gameManager = new GameManager(this, this.gameConfiguration);
         this.waitingRoom();
         this.cleanUp();
+
     }
 
     private void waitingRoom() {
-        // Players should be able to join, leave an change teams. Done
-        // While players not ready or 2 minutes veryone gets kicked.
+
         logger.info("Join game: {}", this.uuid);
         this.waitingRoom.timeout = Instant.now().plus(WaitingRoom.TIMEOUT_DEFAULT, ChronoUnit.MINUTES);
+
         try {
-            while (!this.startGameLock) {
+            while (true) {
+
+                this.waitingRoom.updateWaitingRoom();
                 TimeUnit.MILLISECONDS.sleep(100);
+
                 if (Instant.now().isAfter(this.waitingRoom.timeout)) {
+
                     this.waitingRoom.timedOut = true;
                     this.waitingRoom.updateWaitingRoom();
                     logger.info("The game {}, timed out.", this.uuid);
-                    this.cleanUp();
+                    break;
+
                 }
+
+                if (this.startGameLock) {
+
+                    state.setState(GameState.IN_PROGRESS);
+                    gameManager.start(this.players);
+                    this.gameCompleted = true;
+                    break;
+
+                }
+
             }
-        } catch (InterruptedException e) {
-            logger.error("{}", e);
-            this.cleanUp();
+
         } catch (Exception e) {
             logger.error("{}", e);
-            this.cleanUp();
         }
 
-        state.setState(GameState.IN_PROGRESS);
-        gameManager.start(this.players);
-        this.gameCompleted = true;
     }
 
     private void cleanUp() {
@@ -136,10 +140,10 @@ public class Game implements Runnable, EventListener, Stateful {
             } catch (IOException e) {
                 logger.error("An error occurred writing to the file: {}", e);
             }
-            SimpleHttpServer.stop();
-            PostgresConnectionPool.shutdownDataSource();
         }
 
+        games.remove(this.uuid);
+        Lobby.update();
         logger.info("Cleaned game {}.", this.uuid);
 
     }
@@ -161,11 +165,12 @@ public class Game implements Runnable, EventListener, Stateful {
                 return false;
             }
         }
-        if (playersSize >= this.gameConfiguration.maxPlayers) {
+        if (playersSize >= this.gameConfiguration.getMaxPlayers()) {
             user.setTeam("S");
         }
         this.players.add(user);
         this.waitingRoom.updateWaitingRoom();
+        Lobby.update();
         return true;
     }
 
@@ -176,6 +181,7 @@ public class Game implements Runnable, EventListener, Stateful {
             if (userId.equals(user.getUuid())) {
                 players.remove(user);
                 this.waitingRoom.updateWaitingRoom();
+                Lobby.update();
                 return true;
             }
         }
@@ -215,29 +221,30 @@ public class Game implements Runnable, EventListener, Stateful {
     public synchronized boolean startGame(String userId) {
         if (this.startGameLock)
             return false;
-        if (Instant.now().isAfter(this.waitingRoom.timeout)) {
+
+        if (Instant.now().isAfter(this.waitingRoom.timeout))
             return false;
-        }
-        if (!(players.get(HOST)).getUuid().equals(userId)) {
+
+        if (!(players.get(HOST)).getUuid().equals(userId))
             return false;
-        }
-        if (!this.ready()) {
+
+        if (!this.ready())
             return false;
-        }
+
         this.startGameLock = true;
         try {
+
             while (!this.gameStarted) {
                 TimeUnit.MILLISECONDS.sleep(10);
             }
-        } catch (InterruptedException e) {
-            logger.error("{}", e);
-            this.cleanUp();
+
         } catch (Exception e) {
             logger.error("{}", e);
-            this.cleanUp();
         }
+
         this.waitingRoom.updateWaitingRoom();
         return true;
+
     }
 
     public String getActions(Session userSession) {
@@ -271,7 +278,7 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     private boolean ready() {
-        if (this.gameConfiguration.gameType.equals(
+        if (this.gameConfiguration.getGameType().equals(
                 GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO))) {
             return this.players.get(HOST).isReady();
         }
@@ -283,7 +290,7 @@ public class Game implements Runnable, EventListener, Stateful {
                 return false;
             playingCount++;
         }
-        if (this.gameConfiguration.maxPlayers == 4) {
+        if (this.gameConfiguration.getMaxPlayers() == 4) {
             int teamB = 0;
             int teamA = 0;
             for (Player player : players) {
@@ -301,20 +308,20 @@ public class Game implements Runnable, EventListener, Stateful {
             }
             return (teamB == 2 && teamA == 2);
         }
-        return gameConfiguration.maxPlayers == playingCount;
+        return gameConfiguration.getMaxPlayers() == playingCount;
     }
 
     public static void registerAction(Game game, PlayAction action) {
         game.actions.add(action.toString() + ","); // Storing with comma, ready for array construction.
     }
 
-    // public static Game getGame(String gameId) {
-    // return Game.games.get(gameId);
-    // }
+    public static Game getGame(String gameId) {
+        return Game.games.get(gameId);
+    }
 
-    // public static Hashtable<String, Game> getGames() {
-    // return Game.games;
-    // }
+    public static Hashtable<String, Game> getGames() {
+        return Game.games;
+    }
 
     public String getUUID() {
         return this.uuid;
@@ -344,7 +351,7 @@ public class Game implements Runnable, EventListener, Stateful {
                     break;
             }
         }
-        fill[1] = this.gameConfiguration.maxPlayers;
+        fill[1] = this.gameConfiguration.getMaxPlayers();
         String fillString;
         StringBuilder sb = new StringBuilder();
         sb.append(fill[0]);
@@ -357,12 +364,12 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     public boolean isPublic() {
-        return gameConfiguration.gameType.equals(
+        return gameConfiguration.getGameType().equals(
                 GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.PUBLIC));
     }
 
     public boolean isJoinable() {
-        return !gameConfiguration.gameType.equals(
+        return !gameConfiguration.getGameType().equals(
                 GameConfiguration.GAME_TYPE_STRINGS.get(GameConfiguration.SOLO));
     }
 
@@ -393,7 +400,7 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     public String getGameType() {
-        return gameConfiguration.gameType;
+        return gameConfiguration.getGameType();
     }
 
     @Override
@@ -406,9 +413,10 @@ public class Game implements Runnable, EventListener, Stateful {
     }
 
     public void setGameConfiguration(GameConfiguration gameConfiguration) {
-        gameConfiguration.gameId = this.uuid;
+        gameConfiguration.setGameId(this.uuid);
         this.gameConfiguration = gameConfiguration;
         this.state.setGameConfiguration(gameConfiguration);
 
     }
+
 }
