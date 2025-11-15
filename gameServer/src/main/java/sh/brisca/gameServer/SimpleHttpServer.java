@@ -86,8 +86,6 @@ public class SimpleHttpServer {
                     "Env variables GAME_HOSTNAME, GAME_PORT must be able start the http server.");
         }
 
-        // String HOSTNAME = "browser";
-
         String HOSTNAME;
         try {
             HOSTNAME = InetAddress.getLocalHost().getHostName();

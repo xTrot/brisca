@@ -48,7 +48,8 @@ public class ConfigGameHandler implements HttpHandler {
         String userId = HandlerHelper.getCookie(exchange, "userId");
         if (userId == null) {
             logger.error("Error getting cookie userId for exchange: {}", exchange);
-            // HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            HandlerHelper.sendStatus(exchange, Status.NOT_OK);
+            return;
         }
 
         Session userSession = Session.getSession(userId);
