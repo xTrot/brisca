@@ -126,6 +126,9 @@ public class SimpleHttpServer {
         logger.info("Registering gameServer: {}", hostname);
         GamePostgresConnectionPool.registerGameServer(hostname + ":" + port);
 
+        Runtime.getRuntime().addShutdownHook(new ShutdownCleanUp());
+        logger.info("Shutdown hook activated.");
+
     }
 
     public static PlayCardHandler getPlayCardHandler() {
@@ -150,6 +153,14 @@ public class SimpleHttpServer {
 
     public static String getHostname() {
         return hostname;
+    }
+
+    public static void removeStatusContext() {
+        server.removeContext("/status");
+    }
+
+    public static void removeMakeGameContext() {
+        server.removeContext("/makeGame");
     }
 
 }
