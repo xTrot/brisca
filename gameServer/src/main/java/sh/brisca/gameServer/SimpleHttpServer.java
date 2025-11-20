@@ -19,7 +19,7 @@ import sh.brisca.common.RootHandler;
 import sh.brisca.common.StatusHandler;
 import sh.brisca.gameServer.handlers.ActionsHandler;
 import sh.brisca.gameServer.handlers.ChangeTeamHandler;
-import sh.brisca.gameServer.handlers.ConfigGameHandler;
+import sh.brisca.gameServer.handlers.MakeGameHandler;
 import sh.brisca.gameServer.handlers.GameListHandler;
 import sh.brisca.gameServer.handlers.HandHandler;
 import sh.brisca.gameServer.handlers.JoinGameHandler;
@@ -54,7 +54,7 @@ public class SimpleHttpServer {
     private static StatusHandler statusHandler = new StatusHandler();
     private static SeatHandler seatHandler = new SeatHandler();
     private static SwapBottomCardHandler swapHandler = new SwapBottomCardHandler();
-    private static ConfigGameHandler configHandler = new ConfigGameHandler();
+    private static MakeGameHandler makeGameHandler = new MakeGameHandler();
     private static RegisterHandler registerHandler = new RegisterHandler();
     private static LobbyHandler lobbyHandler = new LobbyHandler();
     private static GameListHandler gameListHandler = new GameListHandler();
@@ -113,7 +113,7 @@ public class SimpleHttpServer {
         server.createContext("/status", statusHandler);
         server.createContext("/seat", seatHandler);
         server.createContext("/swapBottomCard", swapHandler);
-        server.createContext("/config", configHandler);
+        server.createContext("/makeGame", makeGameHandler);
         server.createContext("/register", registerHandler);
         server.createContext("/lobby", lobbyHandler);
         server.createContext("/gameList", gameListHandler);

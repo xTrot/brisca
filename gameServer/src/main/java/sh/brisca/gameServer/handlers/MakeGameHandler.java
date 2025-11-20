@@ -22,10 +22,9 @@ import sh.brisca.gameServer.Game;
 import sh.brisca.gameServer.SimpleHttpServer;
 import sh.brisca.gameServer.User;
 
-// TODO: Rename class to MakeGameHandler.
-public class ConfigGameHandler implements HttpHandler {
+public class MakeGameHandler implements HttpHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConfigGameHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MakeGameHandler.class);
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
