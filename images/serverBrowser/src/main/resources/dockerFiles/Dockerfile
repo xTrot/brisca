@@ -26,4 +26,8 @@ EXPOSE 9000
 # =============================================================================
 
 # Command to run the application
-CMD ["java", "-cp", "/app/ServerBrowser.jar:libs/*", "sh.brisca.serverBrowser.ServerBrowser"]
+CMD [ \
+    "java", \
+    "-javaagent:/app/libs/opentelemetry-javaagent.jar", \
+    "-cp", "/app/ServerBrowser.jar:libs/*", "sh.brisca.serverBrowser.ServerBrowser" \
+]

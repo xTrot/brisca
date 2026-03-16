@@ -26,4 +26,8 @@ EXPOSE 9000
 # =============================================================================
 
 # Command to run the application
-CMD ["java", "-cp", "/app/GameServer.jar:libs/*", "sh.brisca.gameServer.GameServer"]
+CMD [ \
+    "java", \
+    "-javaagent:/app/libs/opentelemetry-javaagent.jar", \
+    "-cp", "/app/GameServer.jar:libs/*", "sh.brisca.gameServer.GameServer" \
+]
